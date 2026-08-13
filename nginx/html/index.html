@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>example.com</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    height: 100%;
+    background: #060c1f;
+    color: #e0e8ff;
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    overflow-y: auto;
+}
+
+/* ── 动态背景粒子画布 ───────────────────────────── */
+canvas#bg { position: fixed; inset: 0; z-index: 0; }
+
+/* ── 主内容 ────────────────────────────────────── */
+.hero {
+    position: relative; z-index: 10;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+/* 顶部品牌标志 */
+.brand-logo {
+    font-size: clamp(18px, 3vw, 26px);
+    letter-spacing: 6px;
+    color: rgba(150, 180, 255, 0.5);
+    margin-bottom: 48px;
+    text-transform: uppercase;
+}
+
+/* 动态光晕圆 */
+.glow-ring {
+    width: clamp(160px, 24vw, 220px);
+    height: clamp(160px, 24vw, 220px);
+    border-radius: 50%;
+    border: 2px solid rgba(100, 160, 255, 0.3);
+    position: relative;
+    margin-bottom: 40px;
+    animation: ring-pulse 3s ease-in-out infinite;
+    flex-shrink: 0;
+}
+.glow-ring::before {
+    content: '';
+    position: absolute; inset: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(100, 160, 255, 0.2);
+    animation: ring-pulse 3s ease-in-out infinite 0.3s;
+}
+.glow-ring::after {
+    content: '';
+    position: absolute; inset: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(40, 100, 255, 0.18) 0%, transparent 70%);
+    animation: ring-glow 3s ease-in-out infinite;
+}
+.ring-icon {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    animation: icon-float 4s ease-in-out infinite;
+}
+/* 孤波图标：圆形裁切 + 边缘羽化 */
+.ring-icon img {
+    width: 68%;
+    height: 68%;
+    object-fit: cover;
+    border-radius: 50%;
+    /* 用 radial-gradient mask 实现边缘羽化，中心清晰向外渐隐 */
+    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 45%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0) 80%);
+    mask-image: radial-gradient(circle, rgba(0,0,0,1) 45%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0) 80%);
+    /* 叠加蓝色调以融入深色背景 */
+    filter: brightness(1.15) saturate(0.9) hue-rotate(10deg);
+}
+@keyframes ring-pulse {
+    0%, 100% { transform: scale(1);   border-color: rgba(100,160,255,0.3); }
+    50%       { transform: scale(1.06); border-color: rgba(100,200,255,0.55); }
+}
+@keyframes ring-glow {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1.0; }
+}
+@keyframes icon-float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+
+/* 主标题 */
+.site-title {
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #a0c4ff 0%, #e0e8ff 40%, #7eb8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    animation: title-shimmer 4s ease-in-out infinite;
+}
+@keyframes title-shimmer {
+    0%, 100% { filter: brightness(1); }
+    50%       { filter: brightness(1.2); }
+}
+
+/* 副标题 */
+.subtitle {
+    font-size: clamp(13px, 2vw, 16px);
+    color: rgba(180, 200, 255, 0.55);
+    letter-spacing: 3px;
+    margin-bottom: 52px;
+}
+
+/* 进入按钮 */
+.enter-btn {
+    display: inline-flex;
+    align-items: center; gap: 12px;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #1a4fcf 0%, #0a2d8f 100%);
+    border: 1px solid rgba(100, 160, 255, 0.4);
+    border-radius: 50px;
+    color: #e0ecff;
+    font-size: clamp(15px, 2.5vw, 18px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 28px rgba(30, 80, 200, 0.4), 0 4px 24px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+.enter-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+}
+.enter-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 48px rgba(50, 120, 255, 0.6), 0 8px 32px rgba(0,0,0,0.5);
+    border-color: rgba(120, 180, 255, 0.7);
+}
+.enter-btn:hover::before { opacity: 1; }
+.enter-btn:active { transform: translateY(0) scale(1); }
+.enter-btn.disabled {
+    background: linear-gradient(135deg, #2a2e3a 0%, #1a1e2a 100%);
+    border-color: rgba(80, 90, 110, 0.3);
+    color: rgba(120, 130, 150, 0.5);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.enter-btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(80, 90, 110, 0.3);
+}
+
+.btn-arrow {
+    font-size: 20px;
+    transition: transform 0.3s;
+}
+.enter-btn:hover .btn-arrow { transform: translateX(6px); }
+
+/* 课程选择网格 */
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 20px;
+}
+.course-btn {
+    display: inline-flex;
+    align-items: center; gap: 12px;
+    padding: 16px 48px;
+    border-radius: 50px;
+    font-size: clamp(15px, 2.5vw, 18px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid;
+}
+.course-btn.active {
+    background: linear-gradient(135deg, #1a4fcf 0%, #0a2d8f 100%);
+    border-color: rgba(100, 160, 255, 0.4);
+    color: #e0ecff;
+    box-shadow: 0 0 20px rgba(30, 80, 200, 0.3);
+}
+.course-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 36px rgba(50, 120, 255, 0.5);
+}
+.course-btn.inactive {
+    background: rgba(30, 36, 52, 0.6);
+    border-color: rgba(80, 90, 110, 0.25);
+    color: rgba(100, 110, 130, 0.5);
+    cursor: not-allowed;
+}
+
+/* 底部版权 */
+.footer {
+    position: fixed; bottom: 24px; left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(120, 140, 200, 0.35);
+    z-index: 10;
+    letter-spacing: 1px;
+}
+@media (max-width: 768px) {
+    .footer { position: static; margin-top: 20px; padding-bottom: 16px; }
+    .hero { min-height: 100vh; padding-bottom: 10px; }
+}
+
+/* 响应式 */
+@media (max-height: 600px) {
+    .glow-ring { width: 120px; height: 120px; margin-bottom: 20px; }
+    .brand-logo { margin-bottom: 20px; }
+    .subtitle { margin-bottom: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 粒子背景 -->
+<canvas id="bg"></canvas>
+
+<!-- 主体 -->
+<main class="hero">
+    <div class="brand-logo">solitons · top</div>
+
+    <div class="glow-ring">
+        <div class="ring-icon"><img src="/soliton.png" alt="孤波"></div>
+    </div>
+
+    <h1 class="site-title">致知力行</h1>
+    <p class="subtitle">知行合一 · 智慧课堂</p>
+
+    <a class="enter-btn" href="/ZZLX/">
+        材料力学
+        <span class="btn-arrow">→</span>
+    </a>
+
+    <div class="course-grid">
+        <a class="course-btn active" href="/LLLX/">理论力学</a>
+        <a class="course-btn active" href="/GCLX/">工程力学</a>
+        <a class="course-btn active" href="/HHLX/">航海力学</a>
+    </div>
+</main>
+
+<footer class="footer">© 2025 example.com &nbsp;·&nbsp; 致知力行教学平台 / </footer>
+
+<script>
+/* ── 粒子背景 ────────────────────────────────────────────── */
+(function () {
+    const canvas = document.getElementById('bg');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const N = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 14000));
+
+    function mkParticle() {
+        return {
+            x:  Math.random() * W,
+            y:  Math.random() * H,
+            r:  0.5 + Math.random() * 2,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+            a:  0.2 + Math.random() * 0.5,
+        };
+    }
+
+    for (let i = 0; i < N; i++) particles.push(mkParticle());
+
+    // 连线距离阈值
+    const LINK = 120;
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(120,170,255,${p.a})`;
+            ctx.fill();
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < LINK) {
+                    const alpha = (1 - d / LINK) * 0.18;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(100,160,255,${alpha})`;
+                    ctx.lineWidth   = 0.7;
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2854 @@
+{
+  "id": "材料力学",
+  "label": "材料力学",
+  "level": 0,
+  "children": [
+    {
+      "id": "chap1",
+      "label": "第一章 绪论",
+      "level": 1,
+      "children": [
+        {
+          "id": "1-1",
+          "label": "1-1",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-1-kp1",
+              "label": "内力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-1-kp2",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-1-kp3",
+              "label": "截面法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-2",
+          "label": "1-2",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-2-kp1",
+              "label": "内力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-2-kp2",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-2-kp3",
+              "label": "截面法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-3",
+          "label": "1-3",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-3-kp1",
+              "label": "内力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-3-kp2",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-3-kp3",
+              "label": "截面法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-4",
+          "label": "1-4",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-4-kp1",
+              "label": "变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-4-kp2",
+              "label": "应变",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-4-kp3",
+              "label": "线应变",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-5",
+          "label": "1-5",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-5-kp1",
+              "label": "变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-5-kp2",
+              "label": "应变",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-5-kp3",
+              "label": "角应变",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-6",
+          "label": "1-6",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-6-kp1",
+              "label": "变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-6-kp2",
+              "label": "应变",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-6-kp3",
+              "label": "线应变",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "1-7",
+          "label": "1-7",
+          "level": 2,
+          "children": [
+            {
+              "id": "1-7-kp1",
+              "label": "变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-7-kp2",
+              "label": "应变",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-7-kp3",
+              "label": "线应变",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "1-7-kp4",
+              "label": "角应变",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap2",
+      "label": "第二章 拉伸、压缩与剪切",
+      "level": 1,
+      "children": [
+        {
+          "id": "2-1",
+          "label": "2-1",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-1-kp1",
+              "label": "轴力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-1-kp2",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-1-kp3",
+              "label": "轴力正负规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-1-kp4",
+              "label": "截面法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-2",
+          "label": "2-2",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-2-kp1",
+              "label": "轴力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-2-kp2",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-2-kp3",
+              "label": "轴力正负规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-2-kp4",
+              "label": "截面法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-2-kp5",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-5",
+          "label": "2-5",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-5-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-5-kp2",
+              "label": "二力杆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-5-kp3",
+              "label": "应力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-5-kp4",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-7",
+          "label": "2-7",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-7-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-7-kp2",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-7-kp3",
+              "label": "强度计算",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-7-kp4",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-9",
+          "label": "2-9",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-9-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-9-kp2",
+              "label": "二力杆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-9-kp3",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-9-kp4",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-9-kp5",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-10",
+          "label": "2-10",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-10-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-10-kp2",
+              "label": "二力杆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-10-kp3",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-10-kp4",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-10-kp5",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-11",
+          "label": "2-11",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-11-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-11-kp2",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-11-kp3",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-11-kp4",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-12",
+          "label": "2-12",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-12-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-12-kp2",
+              "label": "二力杆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-12-kp3",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-12-kp4",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-12-kp5",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-17",
+          "label": "2-17",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-17-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-17-kp2",
+              "label": "二力杆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-17-kp3",
+              "label": "轴向拉压强度公式：σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-17-kp4",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-17-kp5",
+              "label": "结构设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-20",
+          "label": "2-20",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-20-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-20-kp2",
+              "label": "轴向拉压变形: Δl=Fl/EA",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-20-kp3",
+              "label": "拉压超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-20-kp4",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-30",
+          "label": "2-30",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-30-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-30-kp2",
+              "label": "轴向拉压变形: Δl=Fl/EA",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-30-kp3",
+              "label": "轴力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-30-kp4",
+              "label": "应变能",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-30-kp5",
+              "label": "应变能密度",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-39",
+          "label": "2-39",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-39-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-39-kp2",
+              "label": "轴向拉压变形: Δl=Fl/EA",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-39-kp3",
+              "label": "轴向拉压强度公式: σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-39-kp4",
+              "label": "强度分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-39-kp5",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-43",
+          "label": "2-43",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-43-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-43-kp2",
+              "label": "轴向拉压变形: Δl=Fl/EA",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-43-kp3",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-43-kp4",
+              "label": "拉伸压缩超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-43-kp5",
+              "label": "轴力正负号规则",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "2-54",
+          "label": "2-54",
+          "level": 2,
+          "children": [
+            {
+              "id": "2-54-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-54-kp2",
+              "label": "轴向拉压变形: Δl=Fl/EA",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-54-kp3",
+              "label": "轴向拉压强度公式: σ=N/A",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-54-kp4",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "2-54-kp5",
+              "label": "拉伸压缩超静定问题",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap3",
+      "label": "第三章 扭转",
+      "level": 1,
+      "children": [
+        {
+          "id": "3-7",
+          "label": "3-7",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-7-kp1",
+              "label": "外力偶公式: M=9549*P/n",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-7-kp2",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-7-kp3",
+              "label": "力偶矩平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-7-kp4",
+              "label": "传动比",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-7-kp5",
+              "label": "扭转强度公式: τ=T/Wt",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-8",
+          "label": "3-8",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-8-kp1",
+              "label": "扭矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-8-kp2",
+              "label": "扭转强度公式: τ=T/Wt",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-8-kp3",
+              "label": "扭转刚度公式: θ=(180*T)/(π*GI)",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-8-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-8-kp5",
+              "label": "刚度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-9",
+          "label": "3-9",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-9-kp1",
+              "label": "扭转强度公式: τ=T/Wt",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-9-kp2",
+              "label": "力偶矩平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-9-kp3",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-9-kp4",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-14",
+          "label": "3-14",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-14-kp1",
+              "label": "扭矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-14-kp2",
+              "label": "扭转强度公式: τ=T/Wt",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-14-kp3",
+              "label": "扭转刚度公式: θ=(180*T)/(π*GI)",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-14-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-14-kp5",
+              "label": "刚度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-23",
+          "label": "3-23",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-23-kp1",
+              "label": "扭矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-23-kp2",
+              "label": "扭转强度公式: τ=T/Wt",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-23-kp3",
+              "label": "相对扭转角公式: φ=Tl/GI",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-23-kp4",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-24",
+          "label": "3-24",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-24-kp1",
+              "label": "力偶矩平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-24-kp2",
+              "label": "相对扭转角公式: φ=Tl/GI",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-24-kp3",
+              "label": "扭转超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-24-kp4",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "3-31",
+          "label": "3-31",
+          "level": 2,
+          "children": [
+            {
+              "id": "3-31-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-31-kp2",
+              "label": "相对扭转角公式: φ=Tl/GI",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-31-kp3",
+              "label": "变形叠加",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "3-31-kp4",
+              "label": "弹簧刚度",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap4",
+      "label": "第四章 弯曲内力",
+      "level": 1,
+      "children": [
+        {
+          "id": "4-1",
+          "label": "4-1",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-1-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-1-kp2",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-1-kp3",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-1-kp4",
+              "label": "弯矩和剪力正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-1-kp5",
+              "label": "弯矩方程和剪力方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "4-4",
+          "label": "4-4",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-4-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-4-kp2",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-4-kp3",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-4-kp4",
+              "label": "弯矩和剪力正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-4-kp5",
+              "label": "弯矩方程和剪力方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "4-6",
+          "label": "4-6",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-6-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-6-kp2",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-6-kp3",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-6-kp4",
+              "label": "弯矩图和剪力图正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-6-kp5",
+              "label": "弯矩方程和剪力方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "4-13",
+          "label": "4-13",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-13-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-13-kp2",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-13-kp3",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-13-kp4",
+              "label": "弯矩和剪力的正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-13-kp5",
+              "label": "弯矩方程和剪力方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "4-16",
+          "label": "4-16",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-16-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-16-kp2",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-16-kp3",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-16-kp4",
+              "label": "弯矩和剪力正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-16-kp5",
+              "label": "弯矩方程和剪力方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "4-20",
+          "label": "4-20",
+          "level": 2,
+          "children": [
+            {
+              "id": "4-20-kp1",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-20-kp2",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-20-kp3",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-20-kp4",
+              "label": "弯矩和剪力正负号规则",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "4-20-kp5",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap5",
+      "label": "第五章 弯曲应力",
+      "level": 1,
+      "children": [
+        {
+          "id": "5-4",
+          "label": "5-4",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-4-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-4-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-4-kp3",
+              "label": "矩形抗弯截面系数: W=bh^2/6",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-4-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-4-kp5",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-5",
+          "label": "5-5",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-5-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-5-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-5-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-5-kp4",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-5-kp5",
+              "label": "型钢表查询",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-8",
+          "label": "5-8",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-8-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-8-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-8-kp3",
+              "label": "截面惯性矩计算与叠加",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-8-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-12",
+          "label": "5-12",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-12-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-12-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-12-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-12-kp4",
+              "label": "脆性材料",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-12-kp5",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-16",
+          "label": "5-16",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-16-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-16-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-16-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-16-kp4",
+              "label": "脆性材料",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-16-kp5",
+              "label": "截面设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-19",
+          "label": "5-19",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-19-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-19-kp2",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-19-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-19-kp4",
+              "label": "型钢表查询",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-21",
+          "label": "5-21",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-21-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-21-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-21-kp3",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-21-kp4",
+              "label": "型钢表查询",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-21-kp5",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-22",
+          "label": "5-22",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-22-kp1",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-22-kp2",
+              "label": "剪力图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-22-kp3",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-22-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-22-kp5",
+              "label": "载荷设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-25",
+          "label": "5-25",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-25-kp1",
+              "label": "弯曲切应力公式: τ=QSz/Ib",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-25-kp2",
+              "label": "截面静矩（一次矩）",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-25-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "5-27",
+          "label": "5-27",
+          "level": 2,
+          "children": [
+            {
+              "id": "5-27-kp1",
+              "label": "弯曲切应力公式: τ=QSz/Ib",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-27-kp2",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-27-kp3",
+              "label": "剪切与挤压",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "5-27-kp4",
+              "label": "结构综合分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap6",
+      "label": "第六章 弯曲变形",
+      "level": 1,
+      "children": [
+        {
+          "id": "6-8",
+          "label": "6-8",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-8-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-8-kp2",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-8-kp3",
+              "label": "积分法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-8-kp4",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-8-kp5",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-10",
+          "label": "6-10",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-10-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-10-kp2",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-10-kp3",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-11",
+          "label": "6-11",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-11-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-11-kp2",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-11-kp3",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-18",
+          "label": "6-18",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-18-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-18-kp2",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-18-kp3",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-27",
+          "label": "6-27",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-27-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-27-kp2",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-27-kp3",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-27-kp4",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-35",
+          "label": "6-35",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-35-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-35-kp2",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-35-kp3",
+              "label": "弯曲超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-35-kp4",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-35-kp5",
+              "label": "弯矩图",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-37",
+          "label": "6-37",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-37-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-37-kp2",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-37-kp3",
+              "label": "弯曲超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-37-kp4",
+              "label": "剪力图与弯矩图",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-37-kp5",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-40",
+          "label": "6-40",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-40-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-40-kp2",
+              "label": "弯曲超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-40-kp3",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-40-kp4",
+              "label": "轴线拉压变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-40-kp5",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-42",
+          "label": "6-42",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-42-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-42-kp2",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-42-kp3",
+              "label": "弹簧刚度",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-42-kp4",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-42-kp5",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "6-43",
+          "label": "6-43",
+          "level": 2,
+          "children": [
+            {
+              "id": "6-43-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-43-kp2",
+              "label": "轴向拉压变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-43-kp3",
+              "label": "变形协调条件",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-43-kp4",
+              "label": "弯曲超静定问题",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "6-43-kp5",
+              "label": "挠度与转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap7",
+      "label": "第七章 应力和应变分析、强度理论",
+      "level": 1,
+      "children": [
+        {
+          "id": "7-10",
+          "label": "7-10",
+          "level": 2,
+          "children": [
+            {
+              "id": "7-10-kp1",
+              "label": "薄壁圆筒扭转",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-10-kp2",
+              "label": "轴向拉伸压缩",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-10-kp3",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-10-kp4",
+              "label": "应力单元体",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-10-kp5",
+              "label": "主应力",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "7-12",
+          "label": "7-12",
+          "level": 2,
+          "children": [
+            {
+              "id": "7-12-kp1",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-12-kp2",
+              "label": "应力圆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-12-kp3",
+              "label": "主应力",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "7-11",
+          "label": "7-11",
+          "level": 2,
+          "children": [
+            {
+              "id": "7-11-kp1",
+              "label": "梁的弯曲",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-11-kp2",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-11-kp3",
+              "label": "应力圆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-11-kp4",
+              "label": "主应力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-11-kp5",
+              "label": "应力单元体",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "7-37",
+          "label": "7-37",
+          "level": 2,
+          "children": [
+            {
+              "id": "7-37-kp1",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-37-kp2",
+              "label": "知应力圆",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-37-kp3",
+              "label": "主应力",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "7-37-kp4",
+              "label": "强度理论",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap8",
+      "label": "第八章 组合变形",
+      "level": 1,
+      "children": [
+        {
+          "id": "8-3",
+          "label": "8-3",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-3-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-3-kp2",
+              "label": "拉伸弯曲组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-3-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-3-kp4",
+              "label": "危险工况分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-7",
+          "label": "8-7",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-7-kp1",
+              "label": "压缩弯曲组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-7-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-7-kp3",
+              "label": "矩形截面惯性矩: I=bh^3/12",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-7-kp4",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-7-kp5",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-9",
+          "label": "8-9",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-9-kp1",
+              "label": "压力容器",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-9-kp2",
+              "label": "弯曲正应力公式: σ = My/I",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-9-kp3",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-9-kp4",
+              "label": "静力平衡",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-9-kp5",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-14",
+          "label": "8-14",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-14-kp1",
+              "label": "弯曲与扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-14-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-14-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-14-kp4",
+              "label": "强度理论",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-14-kp5",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-15",
+          "label": "8-15",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-15-kp1",
+              "label": "压缩扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-15-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-15-kp3",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-15-kp4",
+              "label": "强度理论",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-15-kp5",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-16",
+          "label": "8-16",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-16-kp1",
+              "label": "弯曲扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-16-kp2",
+              "label": "强度理论",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-16-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-16-kp4",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-16-kp5",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-17",
+          "label": "8-17",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-17-kp1",
+              "label": "弯曲扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-17-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-17-kp3",
+              "label": "强度理论",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-17-kp4",
+              "label": "危险截面",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-17-kp5",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "8-24",
+          "label": "8-24",
+          "level": 2,
+          "children": [
+            {
+              "id": "8-24-kp1",
+              "label": "弯曲扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-24-kp2",
+              "label": "压力容器",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-24-kp3",
+              "label": "强度校核",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-24-kp4",
+              "label": "应力状态分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "8-24-kp5",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap9",
+      "label": "第九章 压杆稳定",
+      "level": 1,
+      "children": [
+        {
+          "id": "9-3",
+          "label": "9-3",
+          "level": 2,
+          "children": [
+            {
+              "id": "9-3-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-3-kp2",
+              "label": "稳定性分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-3-kp3",
+              "label": "轴向压缩",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-3-kp4",
+              "label": "压杆柔度",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-3-kp5",
+              "label": "欧拉公式",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "9-8",
+          "label": "9-8",
+          "level": 2,
+          "children": [
+            {
+              "id": "9-8-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-8-kp2",
+              "label": "稳定性分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-8-kp3",
+              "label": "压杆柔度",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-8-kp4",
+              "label": "欧拉公式",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "9-10",
+          "label": "9-10",
+          "level": 2,
+          "children": [
+            {
+              "id": "9-10-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-10-kp2",
+              "label": "稳定性分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-10-kp3",
+              "label": "压杆柔度",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-10-kp4",
+              "label": "欧拉公式",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-10-kp5",
+              "label": "经验直线公式",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "9-13",
+          "label": "9-13",
+          "level": 2,
+          "children": [
+            {
+              "id": "9-13-kp1",
+              "label": "稳定性分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-13-kp2",
+              "label": "约束分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-13-kp3",
+              "label": "不同方向的压杆柔度",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-13-kp4",
+              "label": "欧拉公式",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-13-kp5",
+              "label": "安全校核",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "9-15",
+          "label": "9-15",
+          "level": 2,
+          "children": [
+            {
+              "id": "9-15-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-15-kp2",
+              "label": "稳定性分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-15-kp3",
+              "label": "型钢表查询",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "9-15-kp4",
+              "label": "压杆柔度",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap10",
+      "label": "第十章 动载荷",
+      "level": 1,
+      "children": [
+        {
+          "id": "10-12",
+          "label": "10-12",
+          "level": 2,
+          "children": [
+            {
+              "id": "10-12-kp1",
+              "label": "自由落体冲击载荷",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-12-kp2",
+              "label": "梁的弯曲",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-12-kp3",
+              "label": "挠度计算",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-12-kp4",
+              "label": "动力放大系数",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-12-kp5",
+              "label": "动应力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "10-13",
+          "label": "10-13",
+          "level": 2,
+          "children": [
+            {
+              "id": "10-13-kp1",
+              "label": "水平冲击载荷",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-13-kp2",
+              "label": "梁的弯曲",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-13-kp3",
+              "label": "挠度计算",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-13-kp4",
+              "label": "动力放大系数",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-13-kp5",
+              "label": "动应力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "10-16",
+          "label": "10-16",
+          "level": 2,
+          "children": [
+            {
+              "id": "10-16-kp1",
+              "label": "自由落体冲击载荷",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-16-kp2",
+              "label": "轴向压缩",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-16-kp3",
+              "label": "动力放大系数",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-16-kp4",
+              "label": "动应力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-16-kp5",
+              "label": "缓冲设计",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "10-18",
+          "label": "10-18",
+          "level": 2,
+          "children": [
+            {
+              "id": "10-18-kp1",
+              "label": "自由落体冲击载荷",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-18-kp2",
+              "label": "梁的弯曲",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-18-kp3",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-18-kp4",
+              "label": "动力放大系数",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-18-kp5",
+              "label": "动应力分析",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "10-19",
+          "label": "10-19",
+          "level": 2,
+          "children": [
+            {
+              "id": "10-19-kp1",
+              "label": "自由落体冲击载荷",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-19-kp2",
+              "label": "圆轴扭转",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-19-kp3",
+              "label": "动力放大系数",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-19-kp4",
+              "label": "动应力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "10-19-kp5",
+              "label": "相对扭转角",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap13",
+      "label": "第十三章 能量方法",
+      "level": 1,
+      "children": [
+        {
+          "id": "13-4",
+          "label": "13-4",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-4-kp1",
+              "label": "弯曲扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-4-kp2",
+              "label": "应变能",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-4-kp3",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-4-kp4",
+              "label": "弯矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-4-kp5",
+              "label": "扭转方程",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "13-6",
+          "label": "13-6",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-6-kp1",
+              "label": "弯曲变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-6-kp2",
+              "label": "叠加法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-6-kp3",
+              "label": "弯矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-6-kp4",
+              "label": "卡氏定理",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-6-kp5",
+              "label": "单位载荷法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "13-14",
+          "label": "13-14",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-14-kp1",
+              "label": "弯矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-14-kp2",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-14-kp3",
+              "label": "能量方法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-14-kp4",
+              "label": "对称性和反对称性",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "13-15",
+          "label": "13-15",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-15-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-15-kp2",
+              "label": "弯矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-15-kp3",
+              "label": "能量方法",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-15-kp4",
+              "label": "变量分离处理",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "13-16",
+          "label": "13-16",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-16-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-16-kp2",
+              "label": "轴向拉伸压缩",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-16-kp3",
+              "label": "能量方法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "13-26",
+          "label": "13-26",
+          "level": 2,
+          "children": [
+            {
+              "id": "13-26-kp1",
+              "label": "静力分析",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-26-kp2",
+              "label": "弯曲扭转组合变形",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-26-kp3",
+              "label": "弯矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-26-kp4",
+              "label": "扭矩方程",
+              "level": 3,
+              "description": ""
+            },
+            {
+              "id": "13-26-kp5",
+              "label": "能量方法",
+              "level": 3,
+              "description": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

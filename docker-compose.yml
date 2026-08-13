@@ -1,0 +1,59 @@
+services:
+
+  # ── Flask 应用（gunicorn）────────────────────────────────
+  web:
+    build: .
+    restart: unless-stopped
+    command: gunicorn --bind 0.0.0.0:5000 --workers 3 --worker-class sync --timeout 120 --access-logfile - --log-level warning run:app
+    environment:
+      # 生产环境请修改为随机强密钥
+      - SECRET_KEY=change-me-to-a-random-string
+      # 数据库目录（4个.db文件，宿主机管理）
+      - DATABASE_URL=sqlite:////app/db/zzlx.db
+      # DeepSeek API Key（如不使用 AI 功能可留空）
+      - DEEPSEEK_API_KEY=your-deepseek-key
+      # 阿里云NLS语音识别（AppKey必填，AK/SK若ECS已配RAM角色可留空）
+      - ALIYUN_NLS_APPKEY=your-aliyun-nls-appkey
+      - ALIYUN_ACCESS_KEY_ID=your-aliyun-access-key-id
+      - ALIYUN_ACCESS_KEY_SECRET=your-aliyun-access-key-secret
+      # 阿里云 DashScope ASR 语音识别 Key（视频 AI 评分用）
+      - ALIYUN_DASHSCOPE_KEY=your-dashscope-key
+    volumes:
+      # 数据库目录（4个.db文件，宿主机管理）
+      - /opt/ZZLXWeb/db:/app/db
+      # 持久化用户上传文件（zzlx在根目录，其他课在子目录）
+      - zzlx_uploads:/app/app/static/uploads
+      # 同心协力视频（路径历史原因存在 /static/cooperation/）
+      - /opt/ZZLXWeb/app/static/cooperation:/app/app/static/cooperation
+      # 代码热挂载：宿主机文件实时生效，重建容器不丢失修改
+      - /opt/ZZLXWeb/app:/app/app
+      # config.py 和 run.py 在项目根目录，不在 app/ 下，需单独挂载
+      - /opt/ZZLXWeb/config.py:/app/config.py
+      - /opt/ZZLXWeb/run.py:/app/run.py
+      - /opt/ZZLXWeb/KG.json:/app/KG.json
+      - /opt/ZZLXWeb/QG.json:/app/QG.json
+      # 其他课程图谱（航海力学共享工程力学的文件，不单独挂载）
+      - /opt/ZZLXWeb/lllx_KG.json:/app/KG_lllx.json
+      - /opt/ZZLXWeb/lllx_QG.json:/app/QG_lllx.json
+      - /opt/ZZLXWeb/gclx_KG.json:/app/KG_gclx.json
+      - /opt/ZZLXWeb/gclx_QG.json:/app/QG_gclx.json
+    expose:
+      - "5000"
+
+  # ── Nginx 反向代理 ────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/html:/usr/share/nginx/html:ro   # 主页静态文件
+      - ./SSL:/etc/nginx/ssl:ro                  # SSL 证书
+    depends_on:
+      - web
+
+# ── 命名卷（Docker 管理，重启不丢失）─────────────────────────
+volumes:
+  zzlx_uploads:

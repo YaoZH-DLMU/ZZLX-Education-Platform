@@ -1,0 +1,1217 @@
+{
+  "id": "理论力学",
+  "label": "理论力学",
+  "level": 0,
+  "children": [
+    {
+      "id": "chap1",
+      "label": "第一章 静力学公理和物体的受力分析",
+      "level": 1,
+      "children": [
+        {
+          "id": "1-1",
+          "label": "1-1",
+          "level": 2,
+          "children": [
+            {"id": "1-1-kp1", "label": "二力平衡条件", "level": 3, "description": ""},
+            {"id": "1-1-kp2", "label": "力的平行四边形法则", "level": 3, "description": ""},
+            {"id": "1-1-kp3", "label": "作用和反作用定律", "level": 3, "description": ""},
+            {"id": "1-1-kp4", "label": "加减平衡力系原理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "1-2",
+          "label": "1-2",
+          "level": 2,
+          "children": [
+            {"id": "1-2-kp1", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "1-2-kp2", "label": "光滑铰链约束", "level": 3, "description": ""},
+            {"id": "1-2-kp3", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "1-2-kp4", "label": "柔索约束", "level": 3, "description": ""},
+            {"id": "1-2-kp5", "label": "光滑接触面约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "1-3",
+          "label": "1-3",
+          "level": 2,
+          "children": [
+            {"id": "1-3-kp1", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "1-3-kp2", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "1-3-kp3", "label": "光滑铰链约束", "level": 3, "description": ""},
+            {"id": "1-3-kp4", "label": "受力分析步骤", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap2",
+      "label": "第二章 平面力系",
+      "level": 1,
+      "children": [
+        {
+          "id": "2-1",
+          "label": "2-1",
+          "level": 2,
+          "children": [
+            {"id": "2-1-kp1", "label": "平面汇交力系平衡的解析条件", "level": 3, "description": ""},
+            {"id": "2-1-kp2", "label": "力多边形法则", "level": 3, "description": ""},
+            {"id": "2-1-kp3", "label": "合力投影定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-2",
+          "label": "2-2",
+          "level": 2,
+          "children": [
+            {"id": "2-2-kp1", "label": "平面汇交力系平衡的解析条件", "level": 3, "description": ""},
+            {"id": "2-2-kp2", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "2-2-kp3", "label": "光滑铰链约束", "level": 3, "description": ""},
+            {"id": "2-2-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-4",
+          "label": "2-4",
+          "level": 2,
+          "children": [
+            {"id": "2-4-kp1", "label": "平面汇交力系平衡的解析条件", "level": 3, "description": ""},
+            {"id": "2-4-kp2", "label": "柔索约束", "level": 3, "description": ""},
+            {"id": "2-4-kp3", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "2-4-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-5",
+          "label": "2-5",
+          "level": 2,
+          "children": [
+            {"id": "2-5-kp1", "label": "平面汇交力系平衡的解析条件", "level": 3, "description": ""},
+            {"id": "2-5-kp2", "label": "柔索约束", "level": 3, "description": ""},
+            {"id": "2-5-kp3", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "2-5-kp4", "label": "力的平行四边形法则", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-9",
+          "label": "2-9",
+          "level": 2,
+          "children": [
+            {"id": "2-9-kp1", "label": "力对点之矩", "level": 3, "description": ""},
+            {"id": "2-9-kp2", "label": "合力矩定理", "level": 3, "description": ""},
+            {"id": "2-9-kp3", "label": "力偶与力偶矩", "level": 3, "description": ""},
+            {"id": "2-9-kp4", "label": "平面力偶系的合成与平衡", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-11",
+          "label": "2-11",
+          "level": 2,
+          "children": [
+            {"id": "2-11-kp1", "label": "平面力偶系的合成与平衡", "level": 3, "description": ""},
+            {"id": "2-11-kp2", "label": "力偶与力偶矩", "level": 3, "description": ""},
+            {"id": "2-11-kp3", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "2-11-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-13",
+          "label": "2-13",
+          "level": 2,
+          "children": [
+            {"id": "2-13-kp1", "label": "平面力偶系的合成与平衡", "level": 3, "description": ""},
+            {"id": "2-13-kp2", "label": "力偶与力偶矩", "level": 3, "description": ""},
+            {"id": "2-13-kp3", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "2-13-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-16",
+          "label": "2-16",
+          "level": 2,
+          "children": [
+            {"id": "2-16-kp1", "label": "平面任意力系向一点简化", "level": 3, "description": ""},
+            {"id": "2-16-kp2", "label": "简化结果分析", "level": 3, "description": ""},
+            {"id": "2-16-kp3", "label": "力线平移定理", "level": 3, "description": ""},
+            {"id": "2-16-kp4", "label": "合力投影定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-19",
+          "label": "2-19",
+          "level": 2,
+          "children": [
+            {"id": "2-19-kp1", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-19-kp2", "label": "平面任意力系平衡条件", "level": 3, "description": ""},
+            {"id": "2-19-kp3", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "2-19-kp4", "label": "固定端约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-22",
+          "label": "2-22",
+          "level": 2,
+          "children": [
+            {"id": "2-22-kp1", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-22-kp2", "label": "平面任意力系平衡条件", "level": 3, "description": ""},
+            {"id": "2-22-kp3", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "2-22-kp4", "label": "分布载荷简化", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-27",
+          "label": "2-27",
+          "level": 2,
+          "children": [
+            {"id": "2-27-kp1", "label": "物体系平衡问题求解", "level": 3, "description": ""},
+            {"id": "2-27-kp2", "label": "静定与超静定概念", "level": 3, "description": ""},
+            {"id": "2-27-kp3", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-27-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-28",
+          "label": "2-28",
+          "level": 2,
+          "children": [
+            {"id": "2-28-kp1", "label": "物体系平衡问题求解", "level": 3, "description": ""},
+            {"id": "2-28-kp2", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-28-kp3", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "2-28-kp4", "label": "二矩式平衡方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-33",
+          "label": "2-33",
+          "level": 2,
+          "children": [
+            {"id": "2-33-kp1", "label": "物体系平衡问题求解", "level": 3, "description": ""},
+            {"id": "2-33-kp2", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-33-kp3", "label": "力偶与力偶矩", "level": 3, "description": ""},
+            {"id": "2-33-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-37",
+          "label": "2-37",
+          "level": 2,
+          "children": [
+            {"id": "2-37-kp1", "label": "物体系平衡问题求解", "level": 3, "description": ""},
+            {"id": "2-37-kp2", "label": "一矩式平衡方程", "level": 3, "description": ""},
+            {"id": "2-37-kp3", "label": "受力图绘制", "level": 3, "description": ""},
+            {"id": "2-37-kp4", "label": "弹性力", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-57",
+          "label": "2-57",
+          "level": 2,
+          "children": [
+            {"id": "2-57-kp1", "label": "节点法", "level": 3, "description": ""},
+            {"id": "2-57-kp2", "label": "截面法", "level": 3, "description": ""},
+            {"id": "2-57-kp3", "label": "零杆判断", "level": 3, "description": ""},
+            {"id": "2-57-kp4", "label": "桁架的基本假设", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "2-58",
+          "label": "2-58",
+          "level": 2,
+          "children": [
+            {"id": "2-58-kp1", "label": "截面法", "level": 3, "description": ""},
+            {"id": "2-58-kp2", "label": "节点法", "level": 3, "description": ""},
+            {"id": "2-58-kp3", "label": "零杆判断", "level": 3, "description": ""},
+            {"id": "2-58-kp4", "label": "桁架的基本假设", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap3",
+      "label": "第三章 空间力系",
+      "level": 1,
+      "children": [
+        {
+          "id": "3-1",
+          "label": "3-1",
+          "level": 2,
+          "children": [
+            {"id": "3-1-kp1", "label": "空间汇交力系平衡方程", "level": 3, "description": ""},
+            {"id": "3-1-kp2", "label": "力在空间直角坐标轴上的投影", "level": 3, "description": ""},
+            {"id": "3-1-kp3", "label": "球铰链", "level": 3, "description": ""},
+            {"id": "3-1-kp4", "label": "二力构件", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-2",
+          "label": "3-2",
+          "level": 2,
+          "children": [
+            {"id": "3-2-kp1", "label": "空间汇交力系平衡方程", "level": 3, "description": ""},
+            {"id": "3-2-kp2", "label": "球铰链", "level": 3, "description": ""},
+            {"id": "3-2-kp3", "label": "二力构件", "level": 3, "description": ""},
+            {"id": "3-2-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-5",
+          "label": "3-5",
+          "level": 2,
+          "children": [
+            {"id": "3-5-kp1", "label": "力对轴之矩", "level": 3, "description": ""},
+            {"id": "3-5-kp2", "label": "力对点之矩与对轴之矩的关系", "level": 3, "description": ""},
+            {"id": "3-5-kp3", "label": "力对点之矩的矢量表示", "level": 3, "description": ""},
+            {"id": "3-5-kp4", "label": "合力矩定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-7",
+          "label": "3-7",
+          "level": 2,
+          "children": [
+            {"id": "3-7-kp1", "label": "力对轴之矩", "level": 3, "description": ""},
+            {"id": "3-7-kp2", "label": "力对点之矩与对轴之矩的关系", "level": 3, "description": ""},
+            {"id": "3-7-kp3", "label": "力对点之矩的矢量表示", "level": 3, "description": ""},
+            {"id": "3-7-kp4", "label": "合力矩定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-9",
+          "label": "3-9",
+          "level": 2,
+          "children": [
+            {"id": "3-9-kp1", "label": "空间力系向一点简化", "level": 3, "description": ""},
+            {"id": "3-9-kp2", "label": "空间力系简化结果分析", "level": 3, "description": ""},
+            {"id": "3-9-kp3", "label": "力线平移定理", "level": 3, "description": ""},
+            {"id": "3-9-kp4", "label": "主矢与主矩", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-11",
+          "label": "3-11",
+          "level": 2,
+          "children": [
+            {"id": "3-11-kp1", "label": "空间力偶系的合成与平衡", "level": 3, "description": ""},
+            {"id": "3-11-kp2", "label": "力偶矩的矢量表示", "level": 3, "description": ""},
+            {"id": "3-11-kp3", "label": "空间力偶等效定理", "level": 3, "description": ""},
+            {"id": "3-11-kp4", "label": "空间任意力系平衡方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-12",
+          "label": "3-12",
+          "level": 2,
+          "children": [
+            {"id": "3-12-kp1", "label": "空间任意力系平衡方程", "level": 3, "description": ""},
+            {"id": "3-12-kp2", "label": "空间力偶系的合成与平衡", "level": 3, "description": ""},
+            {"id": "3-12-kp3", "label": "止推轴承", "level": 3, "description": ""},
+            {"id": "3-12-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "3-13",
+          "label": "3-13",
+          "level": 2,
+          "children": [
+            {"id": "3-13-kp1", "label": "空间任意力系平衡方程", "level": 3, "description": ""},
+            {"id": "3-13-kp2", "label": "重心坐标公式", "level": 3, "description": ""},
+            {"id": "3-13-kp3", "label": "组合法求重心", "level": 3, "description": ""},
+            {"id": "3-13-kp4", "label": "均质物体重心", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap4",
+      "label": "第四章 摩擦",
+      "level": 1,
+      "children": [
+        {
+          "id": "4-1",
+          "label": "4-1",
+          "level": 2,
+          "children": [
+            {"id": "4-1-kp1", "label": "静滑动摩擦力", "level": 3, "description": ""},
+            {"id": "4-1-kp2", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "4-1-kp3", "label": "平面任意力系平衡条件", "level": 3, "description": ""},
+            {"id": "4-1-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "4-4",
+          "label": "4-4",
+          "level": 2,
+          "children": [
+            {"id": "4-4-kp1", "label": "静滑动摩擦力", "level": 3, "description": ""},
+            {"id": "4-4-kp2", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "4-4-kp3", "label": "临界平衡状态分析", "level": 3, "description": ""},
+            {"id": "4-4-kp4", "label": "一矩式平衡方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "4-5",
+          "label": "4-5",
+          "level": 2,
+          "children": [
+            {"id": "4-5-kp1", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "4-5-kp2", "label": "摩擦角", "level": 3, "description": ""},
+            {"id": "4-5-kp3", "label": "自锁现象", "level": 3, "description": ""},
+            {"id": "4-5-kp4", "label": "临界平衡状态分析", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "4-6",
+          "label": "4-6",
+          "level": 2,
+          "children": [
+            {"id": "4-6-kp1", "label": "自锁现象", "level": 3, "description": ""},
+            {"id": "4-6-kp2", "label": "摩擦角", "level": 3, "description": ""},
+            {"id": "4-6-kp3", "label": "临界平衡状态分析", "level": 3, "description": ""},
+            {"id": "4-6-kp4", "label": "库仑摩擦定律", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "4-8",
+          "label": "4-8",
+          "level": 2,
+          "children": [
+            {"id": "4-8-kp1", "label": "滚动摩阻力偶", "level": 3, "description": ""},
+            {"id": "4-8-kp2", "label": "滚动摩阻定律", "level": 3, "description": ""},
+            {"id": "4-8-kp3", "label": "临界平衡状态分析", "level": 3, "description": ""},
+            {"id": "4-8-kp4", "label": "一矩式平衡方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "4-11",
+          "label": "4-11",
+          "level": 2,
+          "children": [
+            {"id": "4-11-kp1", "label": "考虑摩擦的平衡问题求解", "level": 3, "description": ""},
+            {"id": "4-11-kp2", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "4-11-kp3", "label": "物体系平衡问题求解", "level": 3, "description": ""},
+            {"id": "4-11-kp4", "label": "受力图绘制", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap5",
+      "label": "第五章 点的运动学",
+      "level": 1,
+      "children": [
+        {
+          "id": "5-1",
+          "label": "5-1",
+          "level": 2,
+          "children": [
+            {"id": "5-1-kp1", "label": "直角坐标运动方程", "level": 3, "description": ""},
+            {"id": "5-1-kp2", "label": "速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-1-kp3", "label": "加速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-1-kp4", "label": "矢量表示的点的运动方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "5-3",
+          "label": "5-3",
+          "level": 2,
+          "children": [
+            {"id": "5-3-kp1", "label": "直角坐标运动方程", "level": 3, "description": ""},
+            {"id": "5-3-kp2", "label": "速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-3-kp3", "label": "点的相对运动", "level": 3, "description": ""},
+            {"id": "5-3-kp4", "label": "加速度的直角坐标表示", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "5-4",
+          "label": "5-4",
+          "level": 2,
+          "children": [
+            {"id": "5-4-kp1", "label": "直角坐标运动方程", "level": 3, "description": ""},
+            {"id": "5-4-kp2", "label": "速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-4-kp3", "label": "加速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-4-kp4", "label": "矢量表示的点的运动方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "5-5",
+          "label": "5-5",
+          "level": 2,
+          "children": [
+            {"id": "5-5-kp1", "label": "弧坐标表示的运动方程", "level": 3, "description": ""},
+            {"id": "5-5-kp2", "label": "速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-5-kp3", "label": "加速度的直角坐标表示", "level": 3, "description": ""},
+            {"id": "5-5-kp4", "label": "自然轴系", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "5-7",
+          "label": "5-7",
+          "level": 2,
+          "children": [
+            {"id": "5-7-kp1", "label": "弧坐标表示的运动方程", "level": 3, "description": ""},
+            {"id": "5-7-kp2", "label": "自然轴系", "level": 3, "description": ""},
+            {"id": "5-7-kp3", "label": "切向加速度", "level": 3, "description": ""},
+            {"id": "5-7-kp4", "label": "法向加速度", "level": 3, "description": ""},
+            {"id": "5-7-kp5", "label": "直角坐标运动方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "5-8",
+          "label": "5-8",
+          "level": 2,
+          "children": [
+            {"id": "5-8-kp1", "label": "极坐标运动方程", "level": 3, "description": ""},
+            {"id": "5-8-kp2", "label": "极坐标中的速度", "level": 3, "description": ""},
+            {"id": "5-8-kp3", "label": "极坐标中的加速度", "level": 3, "description": ""},
+            {"id": "5-8-kp4", "label": "弧坐标表示的运动方程", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap6",
+      "label": "第六章 刚体的简单运动",
+      "level": 1,
+      "children": [
+        {
+          "id": "6-1",
+          "label": "6-1",
+          "level": 2,
+          "children": [
+            {"id": "6-1-kp1", "label": "刚体平动定义", "level": 3, "description": ""},
+            {"id": "6-1-kp2", "label": "平动刚体的运动特征", "level": 3, "description": ""},
+            {"id": "6-1-kp3", "label": "转动方程", "level": 3, "description": ""},
+            {"id": "6-1-kp4", "label": "角速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "6-3",
+          "label": "6-3",
+          "level": 2,
+          "children": [
+            {"id": "6-3-kp1", "label": "齿轮传动比", "level": 3, "description": ""},
+            {"id": "6-3-kp2", "label": "平动刚体的运动特征", "level": 3, "description": ""},
+            {"id": "6-3-kp3", "label": "转动刚体内各点的速度和加速度", "level": 3, "description": ""},
+            {"id": "6-3-kp4", "label": "角速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "6-4",
+          "label": "6-4",
+          "level": 2,
+          "children": [
+            {"id": "6-4-kp1", "label": "转动方程", "level": 3, "description": ""},
+            {"id": "6-4-kp2", "label": "角速度", "level": 3, "description": ""},
+            {"id": "6-4-kp3", "label": "角加速度", "level": 3, "description": ""},
+            {"id": "6-4-kp4", "label": "转动刚体内各点的速度和加速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "6-5",
+          "label": "6-5",
+          "level": 2,
+          "children": [
+            {"id": "6-5-kp1", "label": "转动方程", "level": 3, "description": ""},
+            {"id": "6-5-kp2", "label": "角速度", "level": 3, "description": ""},
+            {"id": "6-5-kp3", "label": "角加速度", "level": 3, "description": ""},
+            {"id": "6-5-kp4", "label": "转动刚体内各点的速度和加速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "6-6",
+          "label": "6-6",
+          "level": 2,
+          "children": [
+            {"id": "6-6-kp1", "label": "转动方程", "level": 3, "description": ""},
+            {"id": "6-6-kp2", "label": "角加速度", "level": 3, "description": ""},
+            {"id": "6-6-kp3", "label": "转动刚体内各点的速度和加速度", "level": 3, "description": ""},
+            {"id": "6-6-kp4", "label": "全加速度", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap7",
+      "label": "第七章 点的合成运动",
+      "level": 1,
+      "children": [
+        {
+          "id": "7-1",
+          "label": "7-1",
+          "level": 2,
+          "children": [
+            {"id": "7-1-kp1", "label": "绝对运动", "level": 3, "description": ""},
+            {"id": "7-1-kp2", "label": "相对运动", "level": 3, "description": ""},
+            {"id": "7-1-kp3", "label": "牵连运动", "level": 3, "description": ""},
+            {"id": "7-1-kp4", "label": "速度合成定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "7-2",
+          "label": "7-2",
+          "level": 2,
+          "children": [
+            {"id": "7-2-kp1", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "7-2-kp2", "label": "牵连点与牵连速度", "level": 3, "description": ""},
+            {"id": "7-2-kp3", "label": "绝对运动", "level": 3, "description": ""},
+            {"id": "7-2-kp4", "label": "相对运动", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "7-4",
+          "label": "7-4",
+          "level": 2,
+          "children": [
+            {"id": "7-4-kp1", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "7-4-kp2", "label": "牵连点与牵连速度", "level": 3, "description": ""},
+            {"id": "7-4-kp3", "label": "绝对运动", "level": 3, "description": ""},
+            {"id": "7-4-kp4", "label": "相对运动", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "7-7",
+          "label": "7-7",
+          "level": 2,
+          "children": [
+            {"id": "7-7-kp1", "label": "加速度合成定理（平移牵连）", "level": 3, "description": ""},
+            {"id": "7-7-kp2", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "7-7-kp3", "label": "牵连运动", "level": 3, "description": ""},
+            {"id": "7-7-kp4", "label": "相对运动", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "7-10",
+          "label": "7-10",
+          "level": 2,
+          "children": [
+            {"id": "7-10-kp1", "label": "加速度合成定理（转动牵连）", "level": 3, "description": ""},
+            {"id": "7-10-kp2", "label": "科氏加速度", "level": 3, "description": ""},
+            {"id": "7-10-kp3", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "7-10-kp4", "label": "牵连运动", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "7-14",
+          "label": "7-14",
+          "level": 2,
+          "children": [
+            {"id": "7-14-kp1", "label": "加速度合成定理（转动牵连）", "level": 3, "description": ""},
+            {"id": "7-14-kp2", "label": "科氏加速度", "level": 3, "description": ""},
+            {"id": "7-14-kp3", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "7-14-kp4", "label": "牵连点与牵连速度", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap8",
+      "label": "第八章 刚体的平面运动",
+      "level": 1,
+      "children": [
+        {
+          "id": "8-1",
+          "label": "8-1",
+          "level": 2,
+          "children": [
+            {"id": "8-1-kp1", "label": "平面运动分解", "level": 3, "description": ""},
+            {"id": "8-1-kp2", "label": "平面运动方程", "level": 3, "description": ""},
+            {"id": "8-1-kp3", "label": "基点法速度合成", "level": 3, "description": ""},
+            {"id": "8-1-kp4", "label": "速度投影定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "8-2",
+          "label": "8-2",
+          "level": 2,
+          "children": [
+            {"id": "8-2-kp1", "label": "基点法速度合成", "level": 3, "description": ""},
+            {"id": "8-2-kp2", "label": "速度投影定理", "level": 3, "description": ""},
+            {"id": "8-2-kp3", "label": "平面运动分解", "level": 3, "description": ""},
+            {"id": "8-2-kp4", "label": "瞬心法求速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "8-4",
+          "label": "8-4",
+          "level": 2,
+          "children": [
+            {"id": "8-4-kp1", "label": "瞬心法求速度", "level": 3, "description": ""},
+            {"id": "8-4-kp2", "label": "瞬心位置的确定", "level": 3, "description": ""},
+            {"id": "8-4-kp3", "label": "基点法速度合成", "level": 3, "description": ""},
+            {"id": "8-4-kp4", "label": "速度投影定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "8-7",
+          "label": "8-7",
+          "level": 2,
+          "children": [
+            {"id": "8-7-kp1", "label": "基点法加速度合成", "level": 3, "description": ""},
+            {"id": "8-7-kp2", "label": "基点法速度合成", "level": 3, "description": ""},
+            {"id": "8-7-kp3", "label": "瞬心法求速度", "level": 3, "description": ""},
+            {"id": "8-7-kp4", "label": "平面运动分解", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "8-10",
+          "label": "8-10",
+          "level": 2,
+          "children": [
+            {"id": "8-10-kp1", "label": "基点法加速度合成", "level": 3, "description": ""},
+            {"id": "8-10-kp2", "label": "基点法速度合成", "level": 3, "description": ""},
+            {"id": "8-10-kp3", "label": "运动学综合分析", "level": 3, "description": ""},
+            {"id": "8-10-kp4", "label": "速度投影定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "8-12",
+          "label": "8-12",
+          "level": 2,
+          "children": [
+            {"id": "8-12-kp1", "label": "运动学综合分析", "level": 3, "description": ""},
+            {"id": "8-12-kp2", "label": "基点法加速度合成", "level": 3, "description": ""},
+            {"id": "8-12-kp3", "label": "速度合成定理", "level": 3, "description": ""},
+            {"id": "8-12-kp4", "label": "加速度合成定理（转动牵连）", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap9",
+      "label": "第九章 质点动力学的基本方程",
+      "level": 1,
+      "children": [
+        {
+          "id": "9-1",
+          "label": "9-1",
+          "level": 2,
+          "children": [
+            {"id": "9-1-kp1", "label": "牛顿第二定律", "level": 3, "description": ""},
+            {"id": "9-1-kp2", "label": "自然形式的运动微分方程", "level": 3, "description": ""},
+            {"id": "9-1-kp3", "label": "质点动力学两类基本问题", "level": 3, "description": ""},
+            {"id": "9-1-kp4", "label": "摩擦角", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "9-2",
+          "label": "9-2",
+          "level": 2,
+          "children": [
+            {"id": "9-2-kp1", "label": "直角坐标形式的运动微分方程", "level": 3, "description": ""},
+            {"id": "9-2-kp2", "label": "牛顿第二定律", "level": 3, "description": ""},
+            {"id": "9-2-kp3", "label": "质点动力学两类基本问题", "level": 3, "description": ""},
+            {"id": "9-2-kp4", "label": "质点运动微分方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "9-4",
+          "label": "9-4",
+          "level": 2,
+          "children": [
+            {"id": "9-4-kp1", "label": "自然形式的运动微分方程", "level": 3, "description": ""},
+            {"id": "9-4-kp2", "label": "牛顿第二定律", "level": 3, "description": ""},
+            {"id": "9-4-kp3", "label": "质点动力学两类基本问题", "level": 3, "description": ""},
+            {"id": "9-4-kp4", "label": "法向加速度", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "9-5",
+          "label": "9-5",
+          "level": 2,
+          "children": [
+            {"id": "9-5-kp1", "label": "直角坐标形式的运动微分方程", "level": 3, "description": ""},
+            {"id": "9-5-kp2", "label": "质点运动微分方程", "level": 3, "description": ""},
+            {"id": "9-5-kp3", "label": "质点动力学两类基本问题", "level": 3, "description": ""},
+            {"id": "9-5-kp4", "label": "牛顿第二定律", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "9-7",
+          "label": "9-7",
+          "level": 2,
+          "children": [
+            {"id": "9-7-kp1", "label": "自然形式的运动微分方程", "level": 3, "description": ""},
+            {"id": "9-7-kp2", "label": "牛顿第二定律", "level": 3, "description": ""},
+            {"id": "9-7-kp3", "label": "法向加速度", "level": 3, "description": ""},
+            {"id": "9-7-kp4", "label": "质点动力学两类基本问题", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap10",
+      "label": "第十章 动量定理",
+      "level": 1,
+      "children": [
+        {
+          "id": "10-1",
+          "label": "10-1",
+          "level": 2,
+          "children": [
+            {"id": "10-1-kp1", "label": "动量", "level": 3, "description": ""},
+            {"id": "10-1-kp2", "label": "冲量", "level": 3, "description": ""},
+            {"id": "10-1-kp3", "label": "质点动量定理", "level": 3, "description": ""},
+            {"id": "10-1-kp4", "label": "质点系动量定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-2",
+          "label": "10-2",
+          "level": 2,
+          "children": [
+            {"id": "10-2-kp1", "label": "质点系的动量", "level": 3, "description": ""},
+            {"id": "10-2-kp2", "label": "动量", "level": 3, "description": ""},
+            {"id": "10-2-kp3", "label": "质心运动定理", "level": 3, "description": ""},
+            {"id": "10-2-kp4", "label": "质点系动量定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-3",
+          "label": "10-3",
+          "level": 2,
+          "children": [
+            {"id": "10-3-kp1", "label": "动量守恒定律", "level": 3, "description": ""},
+            {"id": "10-3-kp2", "label": "质点系动量定理", "level": 3, "description": ""},
+            {"id": "10-3-kp3", "label": "动量", "level": 3, "description": ""},
+            {"id": "10-3-kp4", "label": "质心运动定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-4",
+          "label": "10-4",
+          "level": 2,
+          "children": [
+            {"id": "10-4-kp1", "label": "质心运动定理", "level": 3, "description": ""},
+            {"id": "10-4-kp2", "label": "质心运动守恒", "level": 3, "description": ""},
+            {"id": "10-4-kp3", "label": "动量守恒定律", "level": 3, "description": ""},
+            {"id": "10-4-kp4", "label": "质点系的动量", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-6",
+          "label": "10-6",
+          "level": 2,
+          "children": [
+            {"id": "10-6-kp1", "label": "质点系动量定理", "level": 3, "description": ""},
+            {"id": "10-6-kp2", "label": "动量", "level": 3, "description": ""},
+            {"id": "10-6-kp3", "label": "冲量", "level": 3, "description": ""},
+            {"id": "10-6-kp4", "label": "质点动量定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-8",
+          "label": "10-8",
+          "level": 2,
+          "children": [
+            {"id": "10-8-kp1", "label": "质心运动守恒", "level": 3, "description": ""},
+            {"id": "10-8-kp2", "label": "质心运动定理", "level": 3, "description": ""},
+            {"id": "10-8-kp3", "label": "动量守恒定律", "level": 3, "description": ""},
+            {"id": "10-8-kp4", "label": "质点系的动量", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "10-11",
+          "label": "10-11",
+          "level": 2,
+          "children": [
+            {"id": "10-11-kp1", "label": "质心运动定理", "level": 3, "description": ""},
+            {"id": "10-11-kp2", "label": "质点系动量定理", "level": 3, "description": ""},
+            {"id": "10-11-kp3", "label": "质心运动守恒", "level": 3, "description": ""},
+            {"id": "10-11-kp4", "label": "动量", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap11",
+      "label": "第十一章 动量矩定理",
+      "level": 1,
+      "children": [
+        {
+          "id": "11-1",
+          "label": "11-1",
+          "level": 2,
+          "children": [
+            {"id": "11-1-kp1", "label": "质点对点的动量矩", "level": 3, "description": ""},
+            {"id": "11-1-kp2", "label": "质点对轴的动量矩", "level": 3, "description": ""},
+            {"id": "11-1-kp3", "label": "质点系的动量矩", "level": 3, "description": ""},
+            {"id": "11-1-kp4", "label": "转动惯量定义", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-2",
+          "label": "11-2",
+          "level": 2,
+          "children": [
+            {"id": "11-2-kp1", "label": "质点对点的动量矩", "level": 3, "description": ""},
+            {"id": "11-2-kp2", "label": "质点系的动量矩", "level": 3, "description": ""},
+            {"id": "11-2-kp3", "label": "动量矩守恒定律", "level": 3, "description": ""},
+            {"id": "11-2-kp4", "label": "转动惯量定义", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-3",
+          "label": "11-3",
+          "level": 2,
+          "children": [
+            {"id": "11-3-kp1", "label": "质点系的动量矩", "level": 3, "description": ""},
+            {"id": "11-3-kp2", "label": "转动惯量定义", "level": 3, "description": ""},
+            {"id": "11-3-kp3", "label": "平行轴定理", "level": 3, "description": ""},
+            {"id": "11-3-kp4", "label": "质点对轴的动量矩", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-4",
+          "label": "11-4",
+          "level": 2,
+          "children": [
+            {"id": "11-4-kp1", "label": "质点系动量矩定理", "level": 3, "description": ""},
+            {"id": "11-4-kp2", "label": "动量矩守恒定律", "level": 3, "description": ""},
+            {"id": "11-4-kp3", "label": "质点系的动量矩", "level": 3, "description": ""},
+            {"id": "11-4-kp4", "label": "质点动量矩定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-7",
+          "label": "11-7",
+          "level": 2,
+          "children": [
+            {"id": "11-7-kp1", "label": "转动惯量定义", "level": 3, "description": ""},
+            {"id": "11-7-kp2", "label": "平行轴定理", "level": 3, "description": ""},
+            {"id": "11-7-kp3", "label": "回转半径", "level": 3, "description": ""},
+            {"id": "11-7-kp4", "label": "刚体定轴转动微分方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-8",
+          "label": "11-8",
+          "level": 2,
+          "children": [
+            {"id": "11-8-kp1", "label": "动量矩守恒定律", "level": 3, "description": ""},
+            {"id": "11-8-kp2", "label": "质点系动量矩定理", "level": 3, "description": ""},
+            {"id": "11-8-kp3", "label": "刚体定轴转动微分方程", "level": 3, "description": ""},
+            {"id": "11-8-kp4", "label": "转动惯量定义", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-11",
+          "label": "11-11",
+          "level": 2,
+          "children": [
+            {"id": "11-11-kp1", "label": "刚体定轴转动微分方程", "level": 3, "description": ""},
+            {"id": "11-11-kp2", "label": "转动惯量定义", "level": 3, "description": ""},
+            {"id": "11-11-kp3", "label": "质点系动量矩定理", "level": 3, "description": ""},
+            {"id": "11-11-kp4", "label": "牛顿第二定律", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-15",
+          "label": "11-15",
+          "level": 2,
+          "children": [
+            {"id": "11-15-kp1", "label": "动量矩守恒定律", "level": 3, "description": ""},
+            {"id": "11-15-kp2", "label": "质点系动量矩定理", "level": 3, "description": ""},
+            {"id": "11-15-kp3", "label": "转动惯量定义", "level": 3, "description": ""},
+            {"id": "11-15-kp4", "label": "刚体定轴转动微分方程", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-20",
+          "label": "11-20",
+          "level": 2,
+          "children": [
+            {"id": "11-20-kp1", "label": "刚体平面运动微分方程", "level": 3, "description": ""},
+            {"id": "11-20-kp2", "label": "相对于质心的动量矩定理", "level": 3, "description": ""},
+            {"id": "11-20-kp3", "label": "质心运动定理", "level": 3, "description": ""},
+            {"id": "11-20-kp4", "label": "库仑摩擦定律", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "11-23",
+          "label": "11-23",
+          "level": 2,
+          "children": [
+            {"id": "11-23-kp1", "label": "刚体定轴转动微分方程", "level": 3, "description": ""},
+            {"id": "11-23-kp2", "label": "转动惯量定义", "level": 3, "description": ""},
+            {"id": "11-23-kp3", "label": "质点系动量矩定理", "level": 3, "description": ""},
+            {"id": "11-23-kp4", "label": "平行轴定理", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap12",
+      "label": "第十二章 动能定理",
+      "level": 1,
+      "children": [
+        {
+          "id": "12-1",
+          "label": "12-1",
+          "level": 2,
+          "children": [
+            {"id": "12-1-kp1", "label": "功的定义", "level": 3, "description": ""},
+            {"id": "12-1-kp2", "label": "变力的功", "level": 3, "description": ""},
+            {"id": "12-1-kp3", "label": "重力的功", "level": 3, "description": ""},
+            {"id": "12-1-kp4", "label": "定轴转动刚体上力的功", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-2",
+          "label": "12-2",
+          "level": 2,
+          "children": [
+            {"id": "12-2-kp1", "label": "功的定义", "level": 3, "description": ""},
+            {"id": "12-2-kp2", "label": "变力的功", "level": 3, "description": ""},
+            {"id": "12-2-kp3", "label": "重力的功", "level": 3, "description": ""},
+            {"id": "12-2-kp4", "label": "弹性力的功", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-3",
+          "label": "12-3",
+          "level": 2,
+          "children": [
+            {"id": "12-3-kp1", "label": "质点系的动能", "level": 3, "description": ""},
+            {"id": "12-3-kp2", "label": "定轴转动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-3-kp3", "label": "平动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-3-kp4", "label": "质点的动能", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-5",
+          "label": "12-5",
+          "level": 2,
+          "children": [
+            {"id": "12-5-kp1", "label": "质点系动能定理", "level": 3, "description": ""},
+            {"id": "12-5-kp2", "label": "弹性力的功", "level": 3, "description": ""},
+            {"id": "12-5-kp3", "label": "质点的动能", "level": 3, "description": ""},
+            {"id": "12-5-kp4", "label": "功的定义", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-7",
+          "label": "12-7",
+          "level": 2,
+          "children": [
+            {"id": "12-7-kp1", "label": "质点系动能定理", "level": 3, "description": ""},
+            {"id": "12-7-kp2", "label": "定轴转动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-7-kp3", "label": "平面运动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-7-kp4", "label": "定轴转动刚体上力的功", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-8",
+          "label": "12-8",
+          "level": 2,
+          "children": [
+            {"id": "12-8-kp1", "label": "质点系动能定理", "level": 3, "description": ""},
+            {"id": "12-8-kp2", "label": "平面运动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-8-kp3", "label": "重力的功", "level": 3, "description": ""},
+            {"id": "12-8-kp4", "label": "定轴转动刚体上力的功", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-10",
+          "label": "12-10",
+          "level": 2,
+          "children": [
+            {"id": "12-10-kp1", "label": "质点系动能定理", "level": 3, "description": ""},
+            {"id": "12-10-kp2", "label": "定轴转动刚体的动能", "level": 3, "description": ""},
+            {"id": "12-10-kp3", "label": "质点的动能", "level": 3, "description": ""},
+            {"id": "12-10-kp4", "label": "重力的功", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "12-13",
+          "label": "12-13",
+          "level": 2,
+          "children": [
+            {"id": "12-13-kp1", "label": "机械能守恒定律", "level": 3, "description": ""},
+            {"id": "12-13-kp2", "label": "势力场", "level": 3, "description": ""},
+            {"id": "12-13-kp3", "label": "势能", "level": 3, "description": ""},
+            {"id": "12-13-kp4", "label": "质点系动能定理", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap13",
+      "label": "第十三章 达朗贝尔原理",
+      "level": 1,
+      "children": [
+        {
+          "id": "13-1",
+          "label": "13-1",
+          "level": 2,
+          "children": [
+            {"id": "13-1-kp1", "label": "惯性力", "level": 3, "description": ""},
+            {"id": "13-1-kp2", "label": "质点的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-1-kp3", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "13-1-kp4", "label": "牛顿第二定律", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-2",
+          "label": "13-2",
+          "level": 2,
+          "children": [
+            {"id": "13-2-kp1", "label": "质点的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-2-kp2", "label": "惯性力", "level": 3, "description": ""},
+            {"id": "13-2-kp3", "label": "平动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-2-kp4", "label": "质心运动定理", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-5",
+          "label": "13-5",
+          "level": 2,
+          "children": [
+            {"id": "13-5-kp1", "label": "定轴转动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-5-kp2", "label": "惯性力", "level": 3, "description": ""},
+            {"id": "13-5-kp3", "label": "质点的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-5-kp4", "label": "动约束力与静约束力", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-7",
+          "label": "13-7",
+          "level": 2,
+          "children": [
+            {"id": "13-7-kp1", "label": "平面运动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-7-kp2", "label": "惯性力", "level": 3, "description": ""},
+            {"id": "13-7-kp3", "label": "质点系的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-7-kp4", "label": "动约束力与静约束力", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-9",
+          "label": "13-9",
+          "level": 2,
+          "children": [
+            {"id": "13-9-kp1", "label": "平面运动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-9-kp2", "label": "质点系的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-9-kp3", "label": "刚体平面运动微分方程", "level": 3, "description": ""},
+            {"id": "13-9-kp4", "label": "惯性力", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-12",
+          "label": "13-12",
+          "level": 2,
+          "children": [
+            {"id": "13-12-kp1", "label": "定轴转动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-12-kp2", "label": "质点系的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-12-kp3", "label": "刚体定轴转动微分方程", "level": 3, "description": ""},
+            {"id": "13-12-kp4", "label": "动约束力与静约束力", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "13-16",
+          "label": "13-16",
+          "level": 2,
+          "children": [
+            {"id": "13-16-kp1", "label": "平面运动刚体惯性力系的简化", "level": 3, "description": ""},
+            {"id": "13-16-kp2", "label": "质点系的达朗贝尔原理", "level": 3, "description": ""},
+            {"id": "13-16-kp3", "label": "库仑摩擦定律", "level": 3, "description": ""},
+            {"id": "13-16-kp4", "label": "刚体平面运动微分方程", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap14",
+      "label": "第十四章 虚位移原理",
+      "level": 1,
+      "children": [
+        {
+          "id": "14-1",
+          "label": "14-1",
+          "level": 2,
+          "children": [
+            {"id": "14-1-kp1", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-1-kp2", "label": "虚功", "level": 3, "description": ""},
+            {"id": "14-1-kp3", "label": "理想约束", "level": 3, "description": ""},
+            {"id": "14-1-kp4", "label": "约束分类", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-2",
+          "label": "14-2",
+          "level": 2,
+          "children": [
+            {"id": "14-2-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-2-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-2-kp3", "label": "虚功", "level": 3, "description": ""},
+            {"id": "14-2-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-3",
+          "label": "14-3",
+          "level": 2,
+          "children": [
+            {"id": "14-3-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-3-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-3-kp3", "label": "虚功", "level": 3, "description": ""},
+            {"id": "14-3-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-5",
+          "label": "14-5",
+          "level": 2,
+          "children": [
+            {"id": "14-5-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-5-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-5-kp3", "label": "虚功", "level": 3, "description": ""},
+            {"id": "14-5-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-7",
+          "label": "14-7",
+          "level": 2,
+          "children": [
+            {"id": "14-7-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-7-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-7-kp3", "label": "弹性力的功", "level": 3, "description": ""},
+            {"id": "14-7-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-9",
+          "label": "14-9",
+          "level": 2,
+          "children": [
+            {"id": "14-9-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-9-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-9-kp3", "label": "重力的功", "level": 3, "description": ""},
+            {"id": "14-9-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-13",
+          "label": "14-13",
+          "level": 2,
+          "children": [
+            {"id": "14-13-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-13-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-13-kp3", "label": "理想约束", "level": 3, "description": ""},
+            {"id": "14-13-kp4", "label": "滚动摩阻力偶", "level": 3, "description": ""}
+          ]
+        },
+        {
+          "id": "14-16",
+          "label": "14-16",
+          "level": 2,
+          "children": [
+            {"id": "14-16-kp1", "label": "虚位移原理", "level": 3, "description": ""},
+            {"id": "14-16-kp2", "label": "虚位移", "level": 3, "description": ""},
+            {"id": "14-16-kp3", "label": "虚功", "level": 3, "description": ""},
+            {"id": "14-16-kp4", "label": "理想约束", "level": 3, "description": ""}
+          ]
+        }
+      ]
+    }
+  ]
+}

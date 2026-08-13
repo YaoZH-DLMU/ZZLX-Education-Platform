@@ -1,0 +1,1704 @@
+{
+  "id": "工程力学",
+  "label": "工程力学",
+  "level": 0,
+  "description": "涵盖理论力学（静力学和运动学）与材料力学的基本内容，研究物体的机械运动规律和构件的强度、刚度、稳定性",
+  "children": [
+    {
+      "id": "绪论",
+      "label": "绪论 工程力学概述",
+      "level": 1,
+      "description": "介绍理论力学和材料力学的基本概念、研究范畴及基本假设",
+      "children": [
+        {
+          "id": "理论力学与机械运动",
+          "label": "0.1 理论力学和机械运动",
+          "level": 2,
+          "description": "介绍理论力学的研究对象和机械运动的概念",
+          "children": [
+            {
+              "id": "机械运动概念",
+              "label": "0.1.1 机械运动概念",
+              "level": 3,
+              "description": "物体在空间的位置随时间的变化，是物质运动最简单的形式",
+              "seek_time": 30
+            },
+            {
+              "id": "理论力学研究对象",
+              "label": "0.1.2 理论力学研究对象",
+              "level": 3,
+              "description": "研究物体机械运动的一般规律，包括静力学、运动学和动力学",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "材料力学任务",
+          "label": "0.3 材料力学的任务",
+          "level": 2,
+          "description": "研究构件的强度、刚度和稳定性，为设计经济安全的构件提供理论基础",
+          "children": [
+            {
+              "id": "强度概念",
+              "label": "0.3.1 强度",
+              "level": 3,
+              "description": "构件抵抗破坏（断裂或塑性变形）的能力",
+              "seek_time": 30
+            },
+            {
+              "id": "刚度概念",
+              "label": "0.3.2 刚度",
+              "level": 3,
+              "description": "构件抵抗弹性变形的能力",
+              "seek_time": 60
+            },
+            {
+              "id": "稳定性概念",
+              "label": "0.3.3 稳定性",
+              "level": 3,
+              "description": "细长构件在压力作用下保持原有平衡形态的能力",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "材料力学基本假设",
+          "label": "0.4 材料力学的基本假设",
+          "level": 2,
+          "description": "连续性、均匀性、各向同性假设",
+          "children": [
+            {
+              "id": "连续性假设",
+              "label": "0.4.1 连续性假设",
+              "level": 3,
+              "description": "假设材料无空隙地充满物体所占空间",
+              "seek_time": 30
+            },
+            {
+              "id": "均匀性假设",
+              "label": "0.4.2 均匀性假设",
+              "level": 3,
+              "description": "假设材料各处力学性质相同",
+              "seek_time": 60
+            },
+            {
+              "id": "各向同性假设",
+              "label": "0.4.3 各向同性假设",
+              "level": 3,
+              "description": "假设材料沿各方向力学性质相同",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "杆件变形基本形式",
+          "label": "0.6 杆件变形的基本形式",
+          "level": 2,
+          "description": "轴向拉压、剪切、扭转、弯曲",
+          "children": [
+            {
+              "id": "轴向拉压",
+              "label": "0.6.1 轴向拉伸与压缩",
+              "level": 3,
+              "description": "杆件沿轴线方向受拉或受压产生的变形",
+              "seek_time": 30
+            },
+            {
+              "id": "剪切变形",
+              "label": "0.6.2 剪切",
+              "level": 3,
+              "description": "构件受大小相等、方向相反、作用线很近的一对力作用产生的变形",
+              "seek_time": 60
+            },
+            {
+              "id": "扭转变形",
+              "label": "0.6.3 扭转",
+              "level": 3,
+              "description": "杆件受绕轴线的外力偶作用产生的变形",
+              "seek_time": 90
+            },
+            {
+              "id": "弯曲变形",
+              "label": "0.6.4 弯曲",
+              "level": 3,
+              "description": "杆件受垂直于轴线的外力作用产生的变形",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap1",
+      "label": "第1章 静力学的基本概念和物体的受力分析",
+      "level": 1,
+      "description": "介绍静力学基本概念、公理、约束类型及物体的受力分析",
+      "children": [
+        {
+          "id": "1-1",
+          "label": "1.1 静力学的基本概念",
+          "level": 2,
+          "description": "介绍力、刚体、平衡等静力学基本概念",
+          "children": [
+            {
+              "id": "力的概念",
+              "label": "1.1.1 力的概念",
+              "level": 3,
+              "description": "力是物体间相互的机械作用，使物体运动状态或形状发生改变",
+              "seek_time": 30
+            },
+            {
+              "id": "刚体概念",
+              "label": "1.1.2 刚体",
+              "level": 3,
+              "description": "在力作用下不变形的物体，是理想化的力学模型",
+              "seek_time": 60
+            },
+            {
+              "id": "平衡概念",
+              "label": "1.1.3 平衡",
+              "level": 3,
+              "description": "物体相对于惯性参考系保持静止或匀速直线运动的状态",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "1-2",
+          "label": "1.2 静力学公理",
+          "level": 2,
+          "description": "静力学的五条公理及两条推理",
+          "children": [
+            {
+              "id": "平行四边形法则",
+              "label": "1.2.1 力的平行四边形法则",
+              "level": 3,
+              "description": "作用在同一点的两个力可合成为一合力，合力由平行四边形对角线确定",
+              "seek_time": 30
+            },
+            {
+              "id": "二力平衡公理",
+              "label": "1.2.2 二力平衡条件",
+              "level": 3,
+              "description": "刚体在两个力作用下平衡的充要条件是等值、反向、共线",
+              "seek_time": 60
+            },
+            {
+              "id": "加减平衡力系公理",
+              "label": "1.2.3 加减平衡力系原理",
+              "level": 3,
+              "description": "在力系上加减任意平衡力系不改变对刚体的作用效果",
+              "seek_time": 90
+            },
+            {
+              "id": "力的可传性",
+              "label": "1.2.4 力的可传性",
+              "level": 3,
+              "description": "力可沿其作用线在刚体内移动而不改变对刚体的作用",
+              "seek_time": 120
+            },
+            {
+              "id": "三力平衡汇交定理",
+              "label": "1.2.5 三力平衡汇交定理",
+              "level": 3,
+              "description": "刚体受三力平衡，若两力交于一点则第三力也通过该点且三力共面",
+              "seek_time": 150
+            },
+            {
+              "id": "作用反作用定律",
+              "label": "1.2.6 作用和反作用定律",
+              "level": 3,
+              "description": "作用力与反作用力等值、反向、共线，分别作用在两个物体上",
+              "seek_time": 180
+            }
+          ]
+        },
+        {
+          "id": "1-3",
+          "label": "1.3 约束与约束反力",
+          "level": 2,
+          "description": "介绍约束的概念及常见约束类型的约束反力",
+          "children": [
+            {
+              "id": "约束概念",
+              "label": "1.3.1 约束与约束反力",
+              "level": 3,
+              "description": "限制物体位移的周围物体称为约束，约束对物体的作用力为约束反力",
+              "seek_time": 30
+            },
+            {
+              "id": "光滑面约束",
+              "label": "1.3.2 光滑接触面约束",
+              "level": 3,
+              "description": "约束反力沿接触面公法线指向被约束物体",
+              "seek_time": 60
+            },
+            {
+              "id": "柔索约束",
+              "label": "1.3.3 柔索约束",
+              "level": 3,
+              "description": "绳索等只能承受拉力，约束反力沿柔索背离物体",
+              "seek_time": 90
+            },
+            {
+              "id": "铰链约束",
+              "label": "1.3.4 光滑铰链约束",
+              "level": 3,
+              "description": "包括圆柱铰链和固定铰链支座，约束反力用两个正交分力表示",
+              "seek_time": 120
+            },
+            {
+              "id": "滚动支座",
+              "label": "1.3.5 滚动支座",
+              "level": 3,
+              "description": "约束反力垂直于支承面且通过铰链中心",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "1-4",
+          "label": "1.4 物体的受力分析和受力图",
+          "level": 2,
+          "description": "受力分析的方法和受力图的绘制",
+          "children": [
+            {
+              "id": "受力分析步骤",
+              "label": "1.4.1 受力分析步骤",
+              "level": 3,
+              "description": "选取研究对象、解除约束、画主动力和约束反力",
+              "seek_time": 30
+            },
+            {
+              "id": "受力图绘制",
+              "label": "1.4.2 受力图绘制",
+              "level": 3,
+              "description": "在分离体上画出所有主动力和约束反力",
+              "seek_time": 60
+            },
+            {
+              "id": "二力构件",
+              "label": "1.4.3 二力构件",
+              "level": 3,
+              "description": "只在两个力作用下平衡的构件，两力等值、反向、共线",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap2",
+      "label": "第2章 汇交力系与力偶系",
+      "level": 1,
+      "description": "研究汇交力系和力偶系的合成与平衡问题",
+      "children": [
+        {
+          "id": "2-1",
+          "label": "2.1 汇交力系合成与平衡的几何法",
+          "level": 2,
+          "description": "用几何法（力多边形法则）研究汇交力系的合成与平衡",
+          "children": [
+            {
+              "id": "力多边形法则",
+              "label": "2.1.1 力多边形法则",
+              "level": 3,
+              "description": "汇交力系合力等于各分力的矢量和，合力作用线通过汇交点",
+              "seek_time": 30
+            },
+            {
+              "id": "汇交力系平衡几何条件",
+              "label": "2.1.2 平衡的几何条件",
+              "level": 3,
+              "description": "力多边形自行封闭",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "2-2",
+          "label": "2.2 汇交力系合成与平衡的解析法",
+          "level": 2,
+          "description": "用解析法（投影法）研究汇交力系的合成与平衡",
+          "children": [
+            {
+              "id": "合力投影定理",
+              "label": "2.2.1 合力投影定理",
+              "level": 3,
+              "description": "合力在任一轴上的投影等于各分力在同一轴上投影的代数和",
+              "seek_time": 30
+            },
+            {
+              "id": "汇交力系平衡解析条件",
+              "label": "2.2.2 平衡的解析条件",
+              "level": 3,
+              "description": "各力在坐标轴上投影代数和分别为零：ΣFx=0, ΣFy=0",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "2-3",
+          "label": "2.3 力偶与力偶的性质",
+          "level": 2,
+          "description": "力偶的概念、力偶矩及力偶的性质",
+          "children": [
+            {
+              "id": "力偶概念",
+              "label": "2.3.1 力偶与力偶矩",
+              "level": 3,
+              "description": "两个等值、反向、不共线的平行力组成的力系，力偶矩为力与力偶臂的乘积",
+              "seek_time": 30
+            },
+            {
+              "id": "力偶等效定理",
+              "label": "2.3.2 同平面力偶等效定理",
+              "level": 3,
+              "description": "同平面内力偶矩相等的力偶等效",
+              "seek_time": 60
+            },
+            {
+              "id": "力偶性质",
+              "label": "2.3.3 力偶的性质",
+              "level": 3,
+              "description": "力偶不能合成为一个力，力偶只能用力偶来平衡",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "2-4",
+          "label": "2.4 力偶系的合成与平衡",
+          "level": 2,
+          "description": "力偶系的合成及平衡条件",
+          "children": [
+            {
+              "id": "力偶系合成",
+              "label": "2.4.1 力偶系的合成",
+              "level": 3,
+              "description": "合力偶矩等于各分力偶矩的代数和",
+              "seek_time": 30
+            },
+            {
+              "id": "力偶系平衡",
+              "label": "2.4.2 力偶系的平衡条件",
+              "level": 3,
+              "description": "所有力偶矩的代数和为零：ΣM=0",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap3",
+      "label": "第3章 一般力系",
+      "level": 1,
+      "description": "研究平面一般力系和空间力系的简化与平衡，及摩擦和重心问题",
+      "children": [
+        {
+          "id": "3-1",
+          "label": "3.1 平面力对点之矩",
+          "level": 2,
+          "description": "平面力对点之矩的概念和计算",
+          "children": [
+            {
+              "id": "力对点之矩",
+              "label": "3.1.1 力对点之矩",
+              "level": 3,
+              "description": "力的大小与力臂的乘积，正负号表示转向",
+              "seek_time": 30
+            },
+            {
+              "id": "合力矩定理",
+              "label": "3.1.2 合力矩定理",
+              "level": 3,
+              "description": "合力对任一点之矩等于各分力对同一点之矩的代数和",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "3-2",
+          "label": "3.2 平面一般力系的简化",
+          "level": 2,
+          "description": "力线平移定理及平面一般力系向一点简化",
+          "children": [
+            {
+              "id": "力线平移定理",
+              "label": "3.2.1 力线平移定理",
+              "level": 3,
+              "description": "力可平移到任一点，但需附加一个力偶",
+              "seek_time": 30
+            },
+            {
+              "id": "平面力系简化",
+              "label": "3.2.2 平面一般力系向一点简化",
+              "level": 3,
+              "description": "简化为主矢和主矩，主矢等于各力矢量和，主矩等于各力对简化点之矩代数和",
+              "seek_time": 60
+            },
+            {
+              "id": "简化结果分析",
+              "label": "3.2.3 简化结果分析",
+              "level": 3,
+              "description": "结果可能为合力、合力偶或平衡",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-3",
+          "label": "3.3 平面一般力系的平衡",
+          "level": 2,
+          "description": "平面一般力系的平衡条件和平衡方程",
+          "children": [
+            {
+              "id": "平衡条件",
+              "label": "3.3.1 平面一般力系平衡条件",
+              "level": 3,
+              "description": "主矢和主矩都为零",
+              "seek_time": 30
+            },
+            {
+              "id": "一矩式方程",
+              "label": "3.3.2 一矩式平衡方程",
+              "level": 3,
+              "description": "ΣFx=0, ΣFy=0, ΣMO(F)=0",
+              "seek_time": 60
+            },
+            {
+              "id": "二矩式方程",
+              "label": "3.3.3 二矩式平衡方程",
+              "level": 3,
+              "description": "ΣMA(F)=0, ΣMB(F)=0, ΣFx=0",
+              "seek_time": 90
+            },
+            {
+              "id": "物体系平衡",
+              "label": "3.3.4 物体系的平衡",
+              "level": 3,
+              "description": "取整体或部分为研究对象，综合利用平衡方程求解",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "3-4",
+          "label": "3.4 考虑摩擦的平衡问题",
+          "level": 2,
+          "description": "滑动摩擦、摩擦角和自锁现象及考虑摩擦的平衡问题",
+          "children": [
+            {
+              "id": "滑动摩擦",
+              "label": "3.4.1 滑动摩擦力",
+              "level": 3,
+              "description": "阻碍两物体相对滑动的力，最大静摩擦力Fmax=fs·FN",
+              "seek_time": 30
+            },
+            {
+              "id": "摩擦角自锁",
+              "label": "3.4.2 摩擦角和自锁",
+              "level": 3,
+              "description": "摩擦角tanφf=fs，主动力在摩擦角内时自锁",
+              "seek_time": 60
+            },
+            {
+              "id": "摩擦平衡问题",
+              "label": "3.4.3 考虑摩擦的平衡问题",
+              "level": 3,
+              "description": "在平衡方程中增加摩擦力关系式F≤fs·FN",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-5",
+          "label": "3.5 空间力对点之矩、力对轴之矩",
+          "level": 2,
+          "description": "空间力矩的基本概念（降低要求）",
+          "children": [
+            {
+              "id": "力对轴之矩",
+              "label": "3.5.1 力对轴之矩",
+              "level": 3,
+              "description": "力在垂直于轴的平面上的投影对该轴与平面交点之矩",
+              "seek_time": 30
+            },
+            {
+              "id": "力矩关系",
+              "label": "3.5.2 力对点之矩与对轴之矩的关系",
+              "level": 3,
+              "description": "力对点之矩在某轴上的投影等于力对该轴之矩",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "3-6",
+          "label": "3.6 空间一般力系的简化",
+          "level": 2,
+          "description": "空间力系向一点简化的基本概念（降低要求）",
+          "children": [
+            {
+              "id": "空间力系简化",
+              "label": "3.6.1 空间力系向一点简化",
+              "level": 3,
+              "description": "简化为主矢和主矩矢",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "3-7",
+          "label": "3.7 空间一般力系的平衡",
+          "level": 2,
+          "description": "空间力系平衡方程的基本应用（降低要求）",
+          "children": [
+            {
+              "id": "空间平衡方程",
+              "label": "3.7.1 空间力系平衡方程",
+              "level": 3,
+              "description": "六个平衡方程：ΣFx=0, ΣFy=0, ΣFz=0, ΣMx=0, ΣMy=0, ΣMz=0",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "3-8",
+          "label": "3.8 重心",
+          "level": 2,
+          "description": "物体重心的概念及确定方法",
+          "children": [
+            {
+              "id": "重心坐标公式",
+              "label": "3.8.1 重心坐标公式",
+              "level": 3,
+              "description": "xC=Σ(Gi·xi)/ΣGi，yC=Σ(Gi·yi)/ΣGi，zC=Σ(Gi·zi)/ΣGi",
+              "seek_time": 30
+            },
+            {
+              "id": "均质物体重心",
+              "label": "3.8.2 均质物体重心",
+              "level": 3,
+              "description": "均质物体的重心与形心重合",
+              "seek_time": 60
+            },
+            {
+              "id": "组合法求重心",
+              "label": "3.8.3 组合法求重心",
+              "level": 3,
+              "description": "将复杂形状分割为简单形状，用组合法或负面积法求重心",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap4",
+      "label": "第4章 点的运动和刚体的基本运动",
+      "level": 1,
+      "description": "研究点的运动学和刚体的平动与定轴转动",
+      "children": [
+        {
+          "id": "4-1",
+          "label": "4.1 点的运动",
+          "level": 2,
+          "description": "用矢量法、直角坐标法和自然法研究点的运动",
+          "children": [
+            {
+              "id": "矢量法",
+              "label": "4.1.1 矢量法",
+              "level": 3,
+              "description": "r=r(t)，v=dr/dt，a=dv/dt",
+              "seek_time": 30
+            },
+            {
+              "id": "直角坐标法",
+              "label": "4.1.2 直角坐标法",
+              "level": 3,
+              "description": "x=x(t), y=y(t), z=z(t)；vx=dx/dt, ax=d²x/dt²",
+              "seek_time": 60
+            },
+            {
+              "id": "自然法",
+              "label": "4.1.3 自然法",
+              "level": 3,
+              "description": "用弧坐标描述运动，引入自然轴系",
+              "seek_time": 90
+            },
+            {
+              "id": "切向法向加速度",
+              "label": "4.1.4 切向与法向加速度",
+              "level": 3,
+              "description": "aτ=dv/dt反映速度大小变化，an=v²/ρ反映速度方向变化",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "4-2",
+          "label": "4.2 刚体的平动",
+          "level": 2,
+          "description": "刚体平动的定义和特征",
+          "children": [
+            {
+              "id": "平动定义",
+              "label": "4.2.1 刚体平动定义",
+              "level": 3,
+              "description": "刚体运动时任一直线始终与初始位置平行",
+              "seek_time": 30
+            },
+            {
+              "id": "平动特征",
+              "label": "4.2.2 平动刚体的运动特征",
+              "level": 3,
+              "description": "各点轨迹形状相同，同一瞬时各点速度和加速度相同",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "4-3",
+          "label": "4.3 刚体的定轴转动",
+          "level": 2,
+          "description": "刚体定轴转动的运动方程、角速度、角加速度及各点速度加速度",
+          "children": [
+            {
+              "id": "转动方程",
+              "label": "4.3.1 转动方程",
+              "level": 3,
+              "description": "φ=φ(t)，转角随时间的变化",
+              "seek_time": 30
+            },
+            {
+              "id": "角速度角加速度",
+              "label": "4.3.2 角速度与角加速度",
+              "level": 3,
+              "description": "ω=dφ/dt，α=dω/dt",
+              "seek_time": 60
+            },
+            {
+              "id": "转动刚体速度加速度",
+              "label": "4.3.3 转动刚体内各点的速度和加速度",
+              "level": 3,
+              "description": "v=ωR, aτ=αR, an=ω²R",
+              "seek_time": 90
+            },
+            {
+              "id": "传动比",
+              "label": "4.3.4 轮系的传动比",
+              "level": 3,
+              "description": "i12=ω1/ω2=z2/z1",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap5",
+      "label": "第5章 运动的合成与分解",
+      "level": 1,
+      "description": "研究点的合成运动和刚体的平面运动（降低加速度要求）",
+      "children": [
+        {
+          "id": "5-1",
+          "label": "5.1 点的合成运动的基本概念",
+          "level": 2,
+          "description": "绝对运动、相对运动和牵连运动的概念",
+          "children": [
+            {
+              "id": "绝对运动",
+              "label": "5.1.1 绝对运动",
+              "level": 3,
+              "description": "动点相对于定参考系的运动",
+              "seek_time": 30
+            },
+            {
+              "id": "相对运动",
+              "label": "5.1.2 相对运动",
+              "level": 3,
+              "description": "动点相对于动参考系的运动",
+              "seek_time": 60
+            },
+            {
+              "id": "牵连运动",
+              "label": "5.1.3 牵连运动",
+              "level": 3,
+              "description": "动参考系相对于定参考系的运动",
+              "seek_time": 90
+            },
+            {
+              "id": "牵连速度",
+              "label": "5.1.4 牵连点与牵连速度",
+              "level": 3,
+              "description": "某瞬时动参考系上与动点重合的点为牵连点",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "5-2",
+          "label": "5.2 点的速度合成定理",
+          "level": 2,
+          "description": "动点绝对速度、相对速度和牵连速度之间的关系",
+          "children": [
+            {
+              "id": "速度合成定理",
+              "label": "5.2.1 速度合成定理",
+              "level": 3,
+              "description": "va=ve+vr，绝对速度等于牵连速度与相对速度的矢量和",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "5-3",
+          "label": "5.3 点的加速度合成定理",
+          "level": 2,
+          "description": "加速度合成定理（降低要求，以平移牵连为主）",
+          "children": [
+            {
+              "id": "加速度合成平移",
+              "label": "5.3.1 加速度合成定理（平移牵连）",
+              "level": 3,
+              "description": "aa=ae+ar，牵连运动为平移时的加速度合成",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "5-4",
+          "label": "5.4 刚体平面运动的基本概念",
+          "level": 2,
+          "description": "刚体平面运动的定义和运动分解",
+          "children": [
+            {
+              "id": "平面运动定义",
+              "label": "5.4.1 平面运动定义",
+              "level": 3,
+              "description": "刚体运动时任一点到某固定平面的距离保持不变",
+              "seek_time": 30
+            },
+            {
+              "id": "平面运动分解",
+              "label": "5.4.2 平面运动分解",
+              "level": 3,
+              "description": "平面运动可分解为随基点的平移和绕基点的转动",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "5-5",
+          "label": "5.5 平面图形上各点的速度",
+          "level": 2,
+          "description": "用基点法和瞬心法求平面图形内各点速度",
+          "children": [
+            {
+              "id": "基点法",
+              "label": "5.5.1 基点法求速度",
+              "level": 3,
+              "description": "vB=vA+vBA，B点速度等于基点速度与绕基点转动速度的矢量和",
+              "seek_time": 30
+            },
+            {
+              "id": "速度投影定理",
+              "label": "5.5.2 速度投影定理",
+              "level": 3,
+              "description": "同一平面图形上任意两点的速度在连线上的投影相等",
+              "seek_time": 60
+            },
+            {
+              "id": "瞬心法",
+              "label": "5.5.3 瞬心法求速度",
+              "level": 3,
+              "description": "利用速度瞬心（速度为零的点）求各点速度",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap6",
+      "label": "第6章 动力学基本方程",
+      "level": 1,
+      "description": "根据动力学基本定律得出质点动力学基本方程，运用微积分方法求解质点动力学问题（自学内容）",
+      "children": [
+        {
+          "id": "6-1",
+          "label": "6.1 动力学基本定律",
+          "level": 2,
+          "description": "牛顿三定律及惯性参考系的概念",
+          "children": [
+            {
+              "id": "惯性定律",
+              "label": "6.1.1 牛顿第一定律（惯性定律）",
+              "level": 3,
+              "description": "不受力作用的质点保持静止或匀速直线运动",
+              "seek_time": 30
+            },
+            {
+              "id": "牛顿第二定律",
+              "label": "6.1.2 牛顿第二定律",
+              "level": 3,
+              "description": "ma=F，质点质量与加速度的乘积等于作用力",
+              "seek_time": 60
+            },
+            {
+              "id": "牛顿第三定律",
+              "label": "6.1.3 牛顿第三定律",
+              "level": 3,
+              "description": "作用力与反作用力等值、反向、共线",
+              "seek_time": 90
+            },
+            {
+              "id": "惯性参考系",
+              "label": "6.1.4 惯性参考系",
+              "level": 3,
+              "description": "适用于牛顿定律的参考系，通常取地面或匀速直线运动的物体",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "6-2",
+          "label": "6.2 质点运动微分方程",
+          "level": 2,
+          "description": "建立质点运动微分方程及其求解方法",
+          "children": [
+            {
+              "id": "质点运动微分方程矢量",
+              "label": "6.2.1 质点运动微分方程",
+              "level": 3,
+              "description": "m·d²r/dt²=ΣF，矢量形式的质点运动微分方程",
+              "seek_time": 30
+            },
+            {
+              "id": "直角坐标运动微分方程",
+              "label": "6.2.2 直角坐标形式的运动微分方程",
+              "level": 3,
+              "description": "m·d²x/dt²=ΣFx, m·d²y/dt²=ΣFy, m·d²z/dt²=ΣFz",
+              "seek_time": 60
+            },
+            {
+              "id": "自然形式运动微分方程",
+              "label": "6.2.3 自然形式的运动微分方程",
+              "level": 3,
+              "description": "m·aτ=ΣFτ, m·an=ΣFn",
+              "seek_time": 90
+            },
+            {
+              "id": "动力学两类问题",
+              "label": "6.2.4 质点动力学两类基本问题",
+              "level": 3,
+              "description": "第一类：已知运动求力；第二类：已知力求运动",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap7",
+      "label": "第7章 动力学普遍定理",
+      "level": 1,
+      "description": "研究动量定理、动量矩定理和动能定理及其应用（自学内容）",
+      "children": [
+        {
+          "id": "7-1",
+          "label": "7.1 动量定理和质心运动定理",
+          "level": 2,
+          "description": "动量与冲量的概念，动量定理及质心运动定理",
+          "children": [
+            {
+              "id": "动量概念",
+              "label": "7.1.1 动量",
+              "level": 3,
+              "description": "p=mv，质点质量与速度的乘积，是矢量",
+              "seek_time": 30
+            },
+            {
+              "id": "冲量概念",
+              "label": "7.1.2 冲量",
+              "level": 3,
+              "description": "I=∫F dt，力对时间的累积效应",
+              "seek_time": 60
+            },
+            {
+              "id": "动量定理",
+              "label": "7.1.3 动量定理",
+              "level": 3,
+              "description": "dp/dt=ΣFe，动量对时间的导数等于外力系的主矢",
+              "seek_time": 90
+            },
+            {
+              "id": "动量守恒",
+              "label": "7.1.4 动量守恒定律",
+              "level": 3,
+              "description": "当外力系主矢为零时，质点系动量守恒",
+              "seek_time": 120
+            },
+            {
+              "id": "质心运动定理",
+              "label": "7.1.5 质心运动定理",
+              "level": 3,
+              "description": "M·aC=ΣFe，质点系质量与质心加速度的乘积等于外力系主矢",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "7-2",
+          "label": "7.2 动量矩定理和刚体定轴转动微分方程",
+          "level": 2,
+          "description": "动量矩的概念、动量矩定理及刚体定轴转动微分方程",
+          "children": [
+            {
+              "id": "动量矩概念",
+              "label": "7.2.1 质点和质点系的动量矩",
+              "level": 3,
+              "description": "MO(mv)=r×mv，动量对点之矩为矢径与动量的矢积",
+              "seek_time": 30
+            },
+            {
+              "id": "动量矩定理",
+              "label": "7.2.2 动量矩定理",
+              "level": 3,
+              "description": "dLO/dt=ΣMO(Fi)，动量矩对时间的导数等于外力对同点之矩的矢量和",
+              "seek_time": 60
+            },
+            {
+              "id": "动量矩守恒",
+              "label": "7.2.3 动量矩守恒定律",
+              "level": 3,
+              "description": "当外力对某点之矩的矢量和为零时，质点系对该点的动量矩守恒",
+              "seek_time": 90
+            },
+            {
+              "id": "转动微分方程",
+              "label": "7.2.4 刚体定轴转动微分方程",
+              "level": 3,
+              "description": "Jz·α=ΣMz(F)，转动惯量与角加速度的乘积等于外力对轴之矩",
+              "seek_time": 120
+            },
+            {
+              "id": "转动惯量",
+              "label": "7.2.5 转动惯量与平行轴定理",
+              "level": 3,
+              "description": "Jz=Σmi·ri²，平行轴定理Jz=JzC+md²",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "7-3",
+          "label": "7.3 动能定理",
+          "level": 2,
+          "description": "功与能的角度研究动力学问题",
+          "children": [
+            {
+              "id": "力的功",
+              "label": "7.3.1 力的功",
+              "level": 3,
+              "description": "W=∫F·dr，包括常力、重力、弹性力的功",
+              "seek_time": 30
+            },
+            {
+              "id": "动能",
+              "label": "7.3.2 质点和质点系的动能",
+              "level": 3,
+              "description": "平动T=MvC²/2，定轴转动T=Jzω²/2，平面运动T=MvC²/2+JCω²/2",
+              "seek_time": 60
+            },
+            {
+              "id": "动能定理",
+              "label": "7.3.3 动能定理",
+              "level": 3,
+              "description": "T2-T1=ΣWe，动能的改变等于所有外力和内力做功之和",
+              "seek_time": 90
+            },
+            {
+              "id": "机械能守恒",
+              "label": "7.3.4 机械能守恒定律",
+              "level": 3,
+              "description": "T+V=常数，在有势力作用下机械能守恒",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap8",
+      "label": "第8章 杆件的轴向拉伸与压缩",
+      "level": 1,
+      "description": "研究轴向拉压杆的内力、应力、强度和变形",
+      "children": [
+        {
+          "id": "8-1",
+          "label": "8.1 轴力、轴力图",
+          "level": 2,
+          "description": "轴向拉压杆的内力计算和轴力图绘制",
+          "children": [
+            {
+              "id": "轴力计算",
+              "label": "8.1.1 轴力计算",
+              "level": 3,
+              "description": "用截面法求轴力，拉为正压为负",
+              "seek_time": 30
+            },
+            {
+              "id": "轴力图",
+              "label": "8.1.2 轴力图",
+              "level": 3,
+              "description": "表示杆件各截面轴力大小变化的图形",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-2",
+          "label": "8.2 轴向拉伸与压缩时杆件的应力",
+          "level": 2,
+          "description": "横截面和斜截面上的应力计算",
+          "children": [
+            {
+              "id": "正应力公式",
+              "label": "8.2.1 横截面正应力",
+              "level": 3,
+              "description": "σ=N/A，横截面上正应力均匀分布",
+              "seek_time": 30
+            },
+            {
+              "id": "斜截面应力",
+              "label": "8.2.2 斜截面应力",
+              "level": 3,
+              "description": "σα=σcos²α，τα=σsinαcosα/2",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-3",
+          "label": "8.3 材料拉伸与压缩时的力学性质",
+          "level": 2,
+          "description": "材料在拉压试验中的力学性能",
+          "children": [
+            {
+              "id": "应力应变曲线",
+              "label": "8.3.1 低碳钢拉伸应力应变曲线",
+              "level": 3,
+              "description": "弹性、屈服、强化、颈缩四个阶段",
+              "seek_time": 30
+            },
+            {
+              "id": "力学性能指标",
+              "label": "8.3.2 主要力学性能指标",
+              "level": 3,
+              "description": "比例极限σp、屈服极限σs、强度极限σb、弹性模量E、延伸率δ",
+              "seek_time": 60
+            },
+            {
+              "id": "胡克定律",
+              "label": "8.3.3 胡克定律",
+              "level": 3,
+              "description": "σ=Eε，应力与应变成正比",
+              "seek_time": 90
+            },
+            {
+              "id": "冷作硬化",
+              "label": "8.3.4 冷作硬化",
+              "level": 3,
+              "description": "材料预拉超过屈服点后卸载，比例极限提高、塑性降低",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "8-4",
+          "label": "8.4 轴向拉压杆的强度计算",
+          "level": 2,
+          "description": "强度条件及强度计算的三类问题",
+          "children": [
+            {
+              "id": "强度条件",
+              "label": "8.4.1 强度条件",
+              "level": 3,
+              "description": "σmax=Nmax/A≤[σ]",
+              "seek_time": 30
+            },
+            {
+              "id": "强度计算",
+              "label": "8.4.2 强度计算三类问题",
+              "level": 3,
+              "description": "校核强度、设计截面、确定许可载荷",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-5",
+          "label": "8.5 轴向拉压杆的变形",
+          "level": 2,
+          "description": "轴向变形计算（不含超静定问题）",
+          "children": [
+            {
+              "id": "轴向变形公式",
+              "label": "8.5.1 轴向变形公式",
+              "level": 3,
+              "description": "Δl=Nl/(EA)，EA为抗拉刚度",
+              "seek_time": 30
+            },
+            {
+              "id": "泊松比",
+              "label": "8.5.2 泊松比",
+              "level": 3,
+              "description": "横向应变与轴向应变之比的负值：μ=|ε'|/ε",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-6",
+          "label": "8.6 连接件的强度计算",
+          "level": 2,
+          "description": "剪切和挤压的实用计算",
+          "children": [
+            {
+              "id": "剪切强度",
+              "label": "8.6.1 剪切强度计算",
+              "level": 3,
+              "description": "τ=FQ/A≤[τ]",
+              "seek_time": 30
+            },
+            {
+              "id": "挤压强度",
+              "label": "8.6.2 挤压强度计算",
+              "level": 3,
+              "description": "σbs=F/Abs≤[σbs]",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-7",
+          "label": "8.7 应力集中的概念",
+          "level": 2,
+          "description": "应力集中现象及概念",
+          "children": [
+            {
+              "id": "应力集中",
+              "label": "8.7.1 应力集中",
+              "level": 3,
+              "description": "截面突变处局部应力急剧增大的现象",
+              "seek_time": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap9",
+      "label": "第9章 圆轴扭转",
+      "level": 1,
+      "description": "研究圆轴扭转的内力、应力、强度和变形",
+      "children": [
+        {
+          "id": "9-1",
+          "label": "9.1 外力偶矩和扭矩",
+          "level": 2,
+          "description": "外力偶矩的计算和扭矩图",
+          "children": [
+            {
+              "id": "外力偶矩",
+              "label": "9.1.1 外力偶矩计算",
+              "level": 3,
+              "description": "Me=9550P/n（功率kW，转速r/min）",
+              "seek_time": 30
+            },
+            {
+              "id": "扭矩扭矩图",
+              "label": "9.1.2 扭矩与扭矩图",
+              "level": 3,
+              "description": "用截面法求扭矩，扭矩图表示各截面扭矩变化",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "9-2",
+          "label": "9.2 材料扭转时的力学性质",
+          "level": 2,
+          "description": "材料扭转破坏形式",
+          "children": [
+            {
+              "id": "扭转破坏",
+              "label": "9.2.1 扭转破坏形式",
+              "level": 3,
+              "description": "塑性材料沿横截面剪断，脆性材料沿45°螺旋面断裂",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "9-3",
+          "label": "9.3 圆轴扭转的应力与强度条件",
+          "level": 2,
+          "description": "圆轴扭转切应力公式及强度条件",
+          "children": [
+            {
+              "id": "切应力公式",
+              "label": "9.3.1 圆轴扭转切应力公式",
+              "level": 3,
+              "description": "τ=Tρ/Ip，最大切应力τmax=T/Wp",
+              "seek_time": 30
+            },
+            {
+              "id": "极惯性矩",
+              "label": "9.3.2 极惯性矩与抗扭截面系数",
+              "level": 3,
+              "description": "圆截面Ip=πD⁴/32，Wp=πD³/16；圆环截面需减去内径",
+              "seek_time": 60
+            },
+            {
+              "id": "扭转强度条件",
+              "label": "9.3.3 扭转强度条件",
+              "level": 3,
+              "description": "τmax=Tmax/Wp≤[τ]",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "9-4",
+          "label": "9.4 圆轴扭转的变形与刚度条件",
+          "level": 2,
+          "description": "扭转角计算及刚度条件",
+          "children": [
+            {
+              "id": "扭转角",
+              "label": "9.4.1 扭转角公式",
+              "level": 3,
+              "description": "φ=Tl/(GIp)，GIp为抗扭刚度",
+              "seek_time": 30
+            },
+            {
+              "id": "刚度条件",
+              "label": "9.4.2 扭转刚度条件",
+              "level": 3,
+              "description": "θ=T/(GIp)≤[θ]（rad/m）",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "9-5",
+          "label": "9.5 圆轴扭转时的破坏分析",
+          "level": 2,
+          "description": "圆轴扭转破坏的原因分析",
+          "children": [
+            {
+              "id": "扭转破坏分析",
+              "label": "9.5.1 破坏原因分析",
+              "level": 3,
+              "description": "塑性材料因最大切应力破坏，脆性材料因最大拉应力破坏",
+              "seek_time": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap10",
+      "label": "第10章 梁的弯曲",
+      "level": 1,
+      "description": "研究梁的内力、应力、强度和变形",
+      "children": [
+        {
+          "id": "10-1",
+          "label": "10.1 梁的内力",
+          "level": 2,
+          "description": "剪力和弯矩的计算及剪力图弯矩图",
+          "children": [
+            {
+              "id": "剪力弯矩",
+              "label": "10.1.1 剪力与弯矩",
+              "level": 3,
+              "description": "用截面法求剪力FQ和弯矩M，规定正负号",
+              "seek_time": 30
+            },
+            {
+              "id": "剪力图弯矩图",
+              "label": "10.1.2 剪力图与弯矩图",
+              "level": 3,
+              "description": "用微分关系和积分关系绘制剪力图和弯矩图",
+              "seek_time": 60
+            },
+            {
+              "id": "载荷剪力弯矩关系",
+              "label": "10.1.3 载荷、剪力与弯矩的微分关系",
+              "level": 3,
+              "description": "dFQ/dx=q，dM/dx=FQ，d²M/dx²=q",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "10-2",
+          "label": "10.2 梁的正应力",
+          "level": 2,
+          "description": "纯弯曲时梁横截面上的正应力",
+          "children": [
+            {
+              "id": "正应力公式",
+              "label": "10.2.1 弯曲正应力公式",
+              "level": 3,
+              "description": "σ=My/Iz，最大正应力σmax=Mmax/Wz",
+              "seek_time": 30
+            },
+            {
+              "id": "惯性矩",
+              "label": "10.2.2 惯性矩与抗弯截面系数",
+              "level": 3,
+              "description": "矩形Iz=bh³/12，圆形Iz=πD⁴/64；Wz=Iz/ymax",
+              "seek_time": 60
+            },
+            {
+              "id": "中性层中性轴",
+              "label": "10.2.3 中性层与中性轴",
+              "level": 3,
+              "description": "梁弯曲时既不伸长也不缩短的层为中性层，中性层与横截面的交线为中性轴",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "10-3",
+          "label": "10.3 梁的切应力",
+          "level": 2,
+          "description": "梁横截面上的切应力",
+          "children": [
+            {
+              "id": "切应力公式",
+              "label": "10.3.1 弯曲切应力公式",
+              "level": 3,
+              "description": "τ=FQ·Sz/(Iz·b)，矩形截面最大切应力τmax=1.5FQ/A",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "10-4",
+          "label": "10.4 梁的强度条件",
+          "level": 2,
+          "description": "弯曲正应力和切应力强度条件",
+          "children": [
+            {
+              "id": "正应力强度",
+              "label": "10.4.1 正应力强度条件",
+              "level": 3,
+              "description": "σmax=Mmax/Wz≤[σ]",
+              "seek_time": 30
+            },
+            {
+              "id": "切应力强度",
+              "label": "10.4.2 切应力强度条件",
+              "level": 3,
+              "description": "τmax≤[τ]，通常细长梁只需校核正应力强度",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "10-5",
+          "label": "10.5 梁的变形",
+          "level": 2,
+          "description": "梁的挠度和转角计算（用积分法和叠加法，不含能量法）",
+          "children": [
+            {
+              "id": "挠度转角",
+              "label": "10.5.1 挠度与转角",
+              "level": 3,
+              "description": "挠度w为梁轴线的竖向位移，转角θ为截面转动的角度",
+              "seek_time": 30
+            },
+            {
+              "id": "挠曲线微分方程",
+              "label": "10.5.2 挠曲线近似微分方程",
+              "level": 3,
+              "description": "EIw''=M(x)",
+              "seek_time": 60
+            },
+            {
+              "id": "积分法",
+              "label": "10.5.3 积分法求变形",
+              "level": 3,
+              "description": "对挠曲线微分方程积分，由边界条件确定常数",
+              "seek_time": 90
+            },
+            {
+              "id": "叠加法",
+              "label": "10.5.4 叠加法求变形",
+              "level": 3,
+              "description": "利用叠加原理和变形表求复杂载荷下的变形",
+              "seek_time": 120
+            },
+            {
+              "id": "刚度条件",
+              "label": "10.5.5 梁的刚度条件",
+              "level": 3,
+              "description": "wmax≤[w]，θmax≤[θ]",
+              "seek_time": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap11",
+      "label": "第11章 强度理论和组合变形",
+      "level": 1,
+      "description": "应力状态分析、强度理论及组合变形的强度计算",
+      "children": [
+        {
+          "id": "11-1",
+          "label": "11.1 应力状态简介",
+          "level": 2,
+          "description": "应力状态的概念",
+          "children": [
+            {
+              "id": "应力状态概念",
+              "label": "11.1.1 应力状态概念",
+              "level": 3,
+              "description": "通过一点的所有截面上应力的集合",
+              "seek_time": 30
+            },
+            {
+              "id": "主应力",
+              "label": "11.1.2 主应力与主平面",
+              "level": 3,
+              "description": "切应力为零的截面为主平面，其上正应力为主应力",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "11-2",
+          "label": "11.2 平面应力状态分析与空间应力状态",
+          "level": 2,
+          "description": "平面应力状态的解析法和图解法",
+          "children": [
+            {
+              "id": "解析法",
+              "label": "11.2.1 平面应力状态解析法",
+              "level": 3,
+              "description": "斜截面应力公式和主应力计算",
+              "seek_time": 30
+            },
+            {
+              "id": "应力圆",
+              "label": "11.2.2 应力圆（莫尔圆）",
+              "level": 3,
+              "description": "用图解法表示应力状态，圆上每点对应一个截面的应力",
+              "seek_time": 60
+            },
+            {
+              "id": "最大切应力",
+              "label": "11.2.3 最大切应力",
+              "level": 3,
+              "description": "τmax=(σ1-σ3)/2",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "11-3",
+          "label": "11.3 广义胡克定律",
+          "level": 2,
+          "description": "复杂应力状态下的应力应变关系",
+          "children": [
+            {
+              "id": "广义胡克定律",
+              "label": "11.3.1 广义胡克定律",
+              "level": 3,
+              "description": "εx=(1/E)[σx-μ(σy+σz)]，三向应力状态的应力应变关系",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "11-4",
+          "label": "11.4 强度理论",
+          "level": 2,
+          "description": "四个经典强度理论",
+          "children": [
+            {
+              "id": "第一强度理论",
+              "label": "11.4.1 第一强度理论（最大拉应力）",
+              "level": 3,
+              "description": "σ1≤[σ]，适用于脆性材料",
+              "seek_time": 30
+            },
+            {
+              "id": "第二强度理论",
+              "label": "11.4.2 第二强度理论（最大拉应变）",
+              "level": 3,
+              "description": "σ1-μ(σ2+σ3)≤[σ]",
+              "seek_time": 60
+            },
+            {
+              "id": "第三强度理论",
+              "label": "11.4.3 第三强度理论（最大切应力）",
+              "level": 3,
+              "description": "σ1-σ3≤[σ]，适用于塑性材料",
+              "seek_time": 90
+            },
+            {
+              "id": "第四强度理论",
+              "label": "11.4.4 第四强度理论（形状改变比能）",
+              "level": 3,
+              "description": "√[(σ1-σ2)²+(σ2-σ3)²+(σ3-σ1)²]/2≤[σ]",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "11-5",
+          "label": "11.5 组合变形时的强度计算",
+          "level": 2,
+          "description": "拉弯组合、弯扭组合变形的强度计算",
+          "children": [
+            {
+              "id": "拉弯组合",
+              "label": "11.5.1 拉伸（压缩）与弯曲组合",
+              "level": 3,
+              "description": "σ=σN+σM=N/A±M/Wz",
+              "seek_time": 30
+            },
+            {
+              "id": "弯扭组合",
+              "label": "11.5.2 弯曲与扭转组合",
+              "level": 3,
+              "description": "按第三或第四强度理论校核：σr3=√(σ²+4τ²)≤[σ]",
+              "seek_time": 60
+            },
+            {
+              "id": "偏心拉压",
+              "label": "11.5.3 偏心拉伸（压缩）",
+              "level": 3,
+              "description": "截面核心的概念，偏心载荷引起拉弯组合变形",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap12",
+      "label": "第12章 压杆稳定",
+      "level": 1,
+      "description": "研究压杆的稳定性问题",
+      "children": [
+        {
+          "id": "12-1",
+          "label": "12.1 压杆稳定的基本概念",
+          "level": 2,
+          "description": "稳定平衡与不稳定平衡的概念",
+          "children": [
+            {
+              "id": "稳定概念",
+              "label": "12.1.1 压杆稳定概念",
+              "level": 3,
+              "description": "细长压杆在轴向压力作用下可能突然失去原有直线平衡形态",
+              "seek_time": 30
+            },
+            {
+              "id": "临界力概念",
+              "label": "12.1.2 临界力",
+              "level": 3,
+              "description": "压杆从稳定平衡过渡到不稳定平衡的临界压力值",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "12-2",
+          "label": "12.2 细长压杆临界载荷的欧拉公式",
+          "level": 2,
+          "description": "不同杆端约束条件下欧拉公式的应用",
+          "children": [
+            {
+              "id": "欧拉公式",
+              "label": "12.2.1 欧拉公式",
+              "level": 3,
+              "description": "Fcr=π²EI/(μl)²，μ为长度因数",
+              "seek_time": 30
+            },
+            {
+              "id": "长度因数",
+              "label": "12.2.2 杆端约束与长度因数",
+              "level": 3,
+              "description": "两端铰支μ=1，一端固定一端自由μ=2，两端固定μ=0.5",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "12-3",
+          "label": "12.3 临界应力、临界应力总图",
+          "level": 2,
+          "description": "临界应力、柔度及临界应力总图",
+          "children": [
+            {
+              "id": "临界应力",
+              "label": "12.3.1 临界应力",
+              "level": 3,
+              "description": "σcr=π²E/λ²",
+              "seek_time": 30
+            },
+            {
+              "id": "柔度",
+              "label": "12.3.2 柔度（长细比）",
+              "level": 3,
+              "description": "λ=μl/i，i为截面回转半径",
+              "seek_time": 60
+            },
+            {
+              "id": "临界应力总图",
+              "label": "12.3.3 临界应力总图",
+              "level": 3,
+              "description": "大柔度杆用欧拉公式，中柔度杆用直线公式，小柔度杆为强度问题",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "12-4",
+          "label": "12.4 压杆稳定条件",
+          "level": 2,
+          "description": "压杆稳定性计算",
+          "children": [
+            {
+              "id": "稳定条件",
+              "label": "12.4.1 压杆稳定条件",
+              "level": 3,
+              "description": "F≤Fcr/nst或σ≤[σ]st=φ[σ]",
+              "seek_time": 30
+            },
+            {
+              "id": "稳定计算",
+              "label": "12.4.2 压杆稳定计算",
+              "level": 3,
+              "description": "稳定校核、设计截面、确定许可载荷",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

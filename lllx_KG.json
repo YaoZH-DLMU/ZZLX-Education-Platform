@@ -1,0 +1,1802 @@
+{
+  "id": "理论力学",
+  "label": "理论力学",
+  "level": 0,
+  "description": "研究物体机械运动一般规律的学科，包括静力学、运动学和动力学三大部分",
+  "children": [
+    {
+      "id": "chap1",
+      "label": "第一章 静力学公理和物体的受力分析",
+      "level": 1,
+      "description": "阐述静力学五条公理及两条推理，介绍工程中常见约束类型及约束力分析，物体的受力分析",
+      "children": [
+        {
+          "id": "1-1",
+          "label": "1-1 静力学公理",
+          "level": 2,
+          "description": "介绍静力学的五条公理及两条推理，是研究静力学问题的基础",
+          "children": [
+            {
+              "id": "1-1-kp1",
+              "label": "力的平行四边形法则",
+              "level": 3,
+              "description": "作用在物体上同一点的两个力可合成为一个合力，合力由平行四边形对角线确定",
+              "seek_time": 30
+            },
+            {
+              "id": "1-1-kp2",
+              "label": "二力平衡条件",
+              "level": 3,
+              "description": "作用在刚体上的两个力使刚体平衡的充要条件是等值、反向、共线",
+              "seek_time": 60
+            },
+            {
+              "id": "1-1-kp3",
+              "label": "加减平衡力系原理",
+              "level": 3,
+              "description": "在原力系上加上或减去任意平衡力系，与原力系对刚体作用效果等效",
+              "seek_time": 90
+            },
+            {
+              "id": "1-1-kp4",
+              "label": "力的可传性",
+              "level": 3,
+              "description": "作用于刚体上的力可沿其作用线移到刚体内任意一点而不改变对刚体的作用",
+              "seek_time": 120
+            },
+            {
+              "id": "1-1-kp5",
+              "label": "三力平衡汇交定理",
+              "level": 3,
+              "description": "刚体在三力作用下平衡，若两力作用线交于一点，则第三力必通过该点且三力共面",
+              "seek_time": 150
+            },
+            {
+              "id": "1-1-kp6",
+              "label": "作用和反作用定律",
+              "level": 3,
+              "description": "作用力和反作用力同时存在，等值、反向、共线，分别作用在两个相互作用的物体上",
+              "seek_time": 180
+            },
+            {
+              "id": "1-1-kp7",
+              "label": "刚化原理",
+              "level": 3,
+              "description": "变形体在某力系作用下平衡，若将其刚化为刚体，平衡状态保持不变",
+              "seek_time": 210
+            }
+          ]
+        },
+        {
+          "id": "1-2",
+          "label": "1-2 约束和约束力",
+          "level": 2,
+          "description": "介绍自由体与非自由体的概念，工程中常见约束类型及约束力方向的确定方法",
+          "children": [
+            {
+              "id": "1-2-kp1",
+              "label": "约束与约束力概念",
+              "level": 3,
+              "description": "对非自由体某些位移起限制作用的周围物体称为约束，约束对物体的作用力称为约束力",
+              "seek_time": 30
+            },
+            {
+              "id": "1-2-kp2",
+              "label": "光滑接触面约束",
+              "level": 3,
+              "description": "约束力沿接触表面公法线指向被约束物体，称为法向约束力",
+              "seek_time": 60
+            },
+            {
+              "id": "1-2-kp3",
+              "label": "柔索约束",
+              "level": 3,
+              "description": "绳索、链条等只能承受拉力，约束力沿柔索背离物体",
+              "seek_time": 90
+            },
+            {
+              "id": "1-2-kp4",
+              "label": "光滑铰链约束",
+              "level": 3,
+              "description": "包括向心轴承、圆柱铰链和固定铰链支座，约束力用两个正交分力表示",
+              "seek_time": 120
+            },
+            {
+              "id": "1-2-kp5",
+              "label": "滚动支座",
+              "level": 3,
+              "description": "约束力垂直于支承面且通过铰链中心",
+              "seek_time": 150
+            },
+            {
+              "id": "1-2-kp6",
+              "label": "球铰链",
+              "level": 3,
+              "description": "约束力为通过球心的空间法向力，用三个正交分力表示",
+              "seek_time": 180
+            },
+            {
+              "id": "1-2-kp7",
+              "label": "止推轴承",
+              "level": 3,
+              "description": "限制径向和轴向位移，约束力有三个正交分量",
+              "seek_time": 210
+            }
+          ]
+        },
+        {
+          "id": "1-3",
+          "label": "1-3 物体的受力分析和受力图",
+          "level": 2,
+          "description": "介绍受力分析的方法和步骤，绘制受力图",
+          "children": [
+            {
+              "id": "1-3-kp1",
+              "label": "受力分析步骤",
+              "level": 3,
+              "description": "选取研究对象、解除约束、画主动力和约束力",
+              "seek_time": 30
+            },
+            {
+              "id": "1-3-kp2",
+              "label": "受力图绘制",
+              "level": 3,
+              "description": "在分离体上画出所有主动力和约束力的图",
+              "seek_time": 60
+            },
+            {
+              "id": "1-3-kp3",
+              "label": "二力构件",
+              "level": 3,
+              "description": "只在两个力作用下平衡的构件，两力等值、反向、共线",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap2",
+      "label": "第二章 平面力系",
+      "level": 1,
+      "description": "研究平面汇交力系、平面力偶系、平面任意力系的合成、简化与平衡，建立平衡条件和平衡方程",
+      "children": [
+        {
+          "id": "2-1",
+          "label": "2-1 平面汇交力系",
+          "level": 2,
+          "description": "用几何法与解析法讨论平面汇交力系的合成与平衡问题",
+          "children": [
+            {
+              "id": "2-1-kp1",
+              "label": "力多边形法则",
+              "level": 3,
+              "description": "平面汇交力系合力的大小与方向等于各分力的矢量和，合力作用线通过汇交点",
+              "seek_time": 30
+            },
+            {
+              "id": "2-1-kp2",
+              "label": "合力投影定理",
+              "level": 3,
+              "description": "合力在任一轴上的投影等于各分力在同一轴上投影的代数和",
+              "seek_time": 60
+            },
+            {
+              "id": "2-1-kp3",
+              "label": "平面汇交力系平衡的几何条件",
+              "level": 3,
+              "description": "力多边形自行封闭",
+              "seek_time": 90
+            },
+            {
+              "id": "2-1-kp4",
+              "label": "平面汇交力系平衡的解析条件",
+              "level": 3,
+              "description": "各力在两个坐标轴上投影的代数和分别为零：ΣFx=0, ΣFy=0",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "2-2",
+          "label": "2-2 平面力对点之矩·平面力偶",
+          "level": 2,
+          "description": "介绍平面力对点之矩的概念和计算，力偶与力偶矩的概念",
+          "children": [
+            {
+              "id": "2-2-kp1",
+              "label": "力对点之矩",
+              "level": 3,
+              "description": "力对点之矩等于力的大小与力臂的乘积，正负号表示转向",
+              "seek_time": 30
+            },
+            {
+              "id": "2-2-kp2",
+              "label": "合力矩定理",
+              "level": 3,
+              "description": "合力对任一点之矩等于各分力对同一点之矩的代数和",
+              "seek_time": 60
+            },
+            {
+              "id": "2-2-kp3",
+              "label": "力偶与力偶矩",
+              "level": 3,
+              "description": "两个等值、反向、不共线的平行力组成的力系称为力偶，力偶矩为力与力偶臂的乘积",
+              "seek_time": 90
+            },
+            {
+              "id": "2-2-kp4",
+              "label": "同平面内力偶的等效定理",
+              "level": 3,
+              "description": "同平面内力偶矩相等的力偶等效",
+              "seek_time": 120
+            },
+            {
+              "id": "2-2-kp5",
+              "label": "平面力偶系的合成与平衡",
+              "level": 3,
+              "description": "合力偶矩等于各分力偶矩的代数和，平衡条件为ΣM=0",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "2-3",
+          "label": "2-3 平面任意力系的简化",
+          "level": 2,
+          "description": "研究力线平移定理及平面任意力系向一点简化的结果",
+          "children": [
+            {
+              "id": "2-3-kp1",
+              "label": "力线平移定理",
+              "level": 3,
+              "description": "作用在刚体上的力可平移到任一点，但需附加一个力偶",
+              "seek_time": 30
+            },
+            {
+              "id": "2-3-kp2",
+              "label": "平面任意力系向一点简化",
+              "level": 3,
+              "description": "简化为一个主矢和一个主矩，主矢等于各力的矢量和，主矩等于各力对简化点之矩的代数和",
+              "seek_time": 60
+            },
+            {
+              "id": "2-3-kp3",
+              "label": "简化结果分析",
+              "level": 3,
+              "description": "简化结果可能为合力、合力偶或平衡，取决于主矢和主矩是否为零",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "2-4",
+          "label": "2-4 平面任意力系的平衡条件和平衡方程",
+          "level": 2,
+          "description": "建立平面任意力系的平衡条件及各种形式的平衡方程",
+          "children": [
+            {
+              "id": "2-4-kp1",
+              "label": "平面任意力系平衡条件",
+              "level": 3,
+              "description": "力系主矢和主矩都为零",
+              "seek_time": 30
+            },
+            {
+              "id": "2-4-kp2",
+              "label": "一矩式平衡方程",
+              "level": 3,
+              "description": "ΣFx=0, ΣFy=0, ΣMO(F)=0",
+              "seek_time": 60
+            },
+            {
+              "id": "2-4-kp3",
+              "label": "二矩式平衡方程",
+              "level": 3,
+              "description": "ΣMA(F)=0, ΣMB(F)=0, ΣFx=0，A、B连线不垂直于x轴",
+              "seek_time": 90
+            },
+            {
+              "id": "2-4-kp4",
+              "label": "三矩式平衡方程",
+              "level": 3,
+              "description": "ΣMA(F)=0, ΣMB(F)=0, ΣMC(F)=0，A、B、C三点不共线",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "2-5",
+          "label": "2-5 物体系的平衡·静定和超静定问题",
+          "level": 2,
+          "description": "研究物体系的平衡问题，区分静定与超静定问题",
+          "children": [
+            {
+              "id": "2-5-kp1",
+              "label": "静定与超静定概念",
+              "level": 3,
+              "description": "未知量数目等于独立平衡方程数目为静定，大于则为超静定",
+              "seek_time": 30
+            },
+            {
+              "id": "2-5-kp2",
+              "label": "物体系平衡问题求解",
+              "level": 3,
+              "description": "取整体或部分为研究对象，综合利用平衡方程求解",
+              "seek_time": 60
+            },
+            {
+              "id": "2-5-kp3",
+              "label": "超静定次数",
+              "level": 3,
+              "description": "未知量数目减去独立平衡方程数目即为超静定次数",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "2-6",
+          "label": "2-6 平面简单桁架的内力计算",
+          "level": 2,
+          "description": "介绍平面简单桁架的概念及内力计算的节点法和截面法",
+          "children": [
+            {
+              "id": "2-6-kp1",
+              "label": "桁架的基本假设",
+              "level": 3,
+              "description": "杆件为直杆，节点为铰接，载荷作用在节点上",
+              "seek_time": 30
+            },
+            {
+              "id": "2-6-kp2",
+              "label": "节点法",
+              "level": 3,
+              "description": "逐个取节点为研究对象，用汇交力系平衡方程求各杆内力",
+              "seek_time": 60
+            },
+            {
+              "id": "2-6-kp3",
+              "label": "截面法",
+              "level": 3,
+              "description": "用截面截取部分桁架，用平面任意力系平衡方程求被截杆件内力",
+              "seek_time": 90
+            },
+            {
+              "id": "2-6-kp4",
+              "label": "零杆判断",
+              "level": 3,
+              "description": "不受力作用的杆件，可通过节点平衡条件直接判断",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap3",
+      "label": "第三章 空间力系",
+      "level": 1,
+      "description": "研究空间汇交力系、空间力偶系、空间任意力系的合成、简化与平衡，及物体的重心",
+      "children": [
+        {
+          "id": "3-1",
+          "label": "3-1 空间汇交力系",
+          "level": 2,
+          "description": "研究空间汇交力系的合成与平衡",
+          "children": [
+            {
+              "id": "3-1-kp1",
+              "label": "力在空间直角坐标轴上的投影",
+              "level": 3,
+              "description": "直接投影法和二次投影法求力在坐标轴上的投影",
+              "seek_time": 30
+            },
+            {
+              "id": "3-1-kp2",
+              "label": "空间汇交力系合成的解析法",
+              "level": 3,
+              "description": "合力等于各分力的矢量和，可由各分力投影求合力投影",
+              "seek_time": 60
+            },
+            {
+              "id": "3-1-kp3",
+              "label": "空间汇交力系平衡方程",
+              "level": 3,
+              "description": "ΣFx=0, ΣFy=0, ΣFz=0",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-2",
+          "label": "3-2 力对点的矩和力对轴的矩",
+          "level": 2,
+          "description": "介绍力对点的矩的矢量表示和力对轴的矩的概念及关系",
+          "children": [
+            {
+              "id": "3-2-kp1",
+              "label": "力对点之矩的矢量表示",
+              "level": 3,
+              "description": "力对点之矩等于矢径与力的矢积：MO(F)=r×F",
+              "seek_time": 30
+            },
+            {
+              "id": "3-2-kp2",
+              "label": "力对轴之矩",
+              "level": 3,
+              "description": "力在垂直于轴的平面上的投影对该轴与平面交点之矩",
+              "seek_time": 60
+            },
+            {
+              "id": "3-2-kp3",
+              "label": "力对点之矩与对轴之矩的关系",
+              "level": 3,
+              "description": "力对点之矩在通过该点的任一轴上的投影等于力对该轴之矩",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-3",
+          "label": "3-3 空间力偶",
+          "level": 2,
+          "description": "介绍空间力偶的矢量表示及空间力偶系的合成与平衡",
+          "children": [
+            {
+              "id": "3-3-kp1",
+              "label": "力偶矩的矢量表示",
+              "level": 3,
+              "description": "力偶矩用矢量表示，垂直于力偶作用面，指向由右手定则确定",
+              "seek_time": 30
+            },
+            {
+              "id": "3-3-kp2",
+              "label": "空间力偶等效定理",
+              "level": 3,
+              "description": "力偶矩矢相等的力偶等效",
+              "seek_time": 60
+            },
+            {
+              "id": "3-3-kp3",
+              "label": "空间力偶系的合成与平衡",
+              "level": 3,
+              "description": "合力偶矩矢等于各分力偶矩矢的矢量和，平衡条件为ΣM=0",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-4",
+          "label": "3-4 空间任意力系的简化",
+          "level": 2,
+          "description": "研究空间任意力系向一点简化的结果",
+          "children": [
+            {
+              "id": "3-4-kp1",
+              "label": "空间力系向一点简化",
+              "level": 3,
+              "description": "简化为一个主矢和一个主矩矢，主矢等于各力矢量和，主矩矢等于各力对简化点之矩矢量和",
+              "seek_time": 30
+            },
+            {
+              "id": "3-4-kp2",
+              "label": "空间力系简化结果分析",
+              "level": 3,
+              "description": "简化结果可能为合力、合力偶、力螺旋或平衡",
+              "seek_time": 60
+            },
+            {
+              "id": "3-4-kp3",
+              "label": "力螺旋",
+              "level": 3,
+              "description": "主矢与主矩矢不垂直时，简化为一个力和一个力偶，力与力偶矩矢方向相同",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-5",
+          "label": "3-5 空间任意力系的平衡方程",
+          "level": 2,
+          "description": "建立空间任意力系的平衡条件及平衡方程",
+          "children": [
+            {
+              "id": "3-5-kp1",
+              "label": "空间任意力系平衡方程",
+              "level": 3,
+              "description": "ΣFx=0, ΣFy=0, ΣFz=0, ΣMx(F)=0, ΣMy(F)=0, ΣMz(F)=0",
+              "seek_time": 30
+            },
+            {
+              "id": "3-5-kp2",
+              "label": "空间平行力系平衡方程",
+              "level": 3,
+              "description": "三个独立平衡方程：ΣFz=0, ΣMx(F)=0, ΣMy(F)=0",
+              "seek_time": 60
+            },
+            {
+              "id": "3-5-kp3",
+              "label": "空间约束类型",
+              "level": 3,
+              "description": "包括球铰链、止推轴承、固定端等空间约束的约束力分析",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "3-6",
+          "label": "3-6 物体的重心",
+          "level": 2,
+          "description": "研究物体重心的概念及确定方法",
+          "children": [
+            {
+              "id": "3-6-kp1",
+              "label": "重心坐标公式",
+              "level": 3,
+              "description": "xC=Σ(Gi·xi)/ΣGi，yC=Σ(Gi·yi)/ΣGi，zC=Σ(Gi·zi)/ΣGi",
+              "seek_time": 30
+            },
+            {
+              "id": "3-6-kp2",
+              "label": "均质物体重心",
+              "level": 3,
+              "description": "均质物体的重心与形心重合",
+              "seek_time": 60
+            },
+            {
+              "id": "3-6-kp3",
+              "label": "组合法求重心",
+              "level": 3,
+              "description": "将复杂形状物体分割为简单形状，用组合法或负面积法求重心",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap4",
+      "label": "第四章 摩擦",
+      "level": 1,
+      "description": "研究滑动摩擦、摩擦角和自锁现象、考虑摩擦时的平衡问题及滚动摩阻",
+      "children": [
+        {
+          "id": "4-1",
+          "label": "4-1 滑动摩擦",
+          "level": 2,
+          "description": "介绍滑动摩擦力的分类及库仑摩擦定律",
+          "children": [
+            {
+              "id": "4-1-kp1",
+              "label": "静滑动摩擦力",
+              "level": 3,
+              "description": "阻碍两物体相对滑动趋势的力，大小在0到最大静摩擦力之间",
+              "seek_time": 30
+            },
+            {
+              "id": "4-1-kp2",
+              "label": "库仑摩擦定律",
+              "level": 3,
+              "description": "最大静摩擦力大小等于静摩擦因数与法向约束力的乘积：Fmax=fs·FN",
+              "seek_time": 60
+            },
+            {
+              "id": "4-1-kp3",
+              "label": "动滑动摩擦力",
+              "level": 3,
+              "description": "动摩擦力大小等于动摩擦因数与法向约束力的乘积：Fd=fd·FN",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "4-2",
+          "label": "4-2 摩擦角和自锁现象",
+          "level": 2,
+          "description": "介绍摩擦角的概念及自锁条件",
+          "children": [
+            {
+              "id": "4-2-kp1",
+              "label": "摩擦角",
+              "level": 3,
+              "description": "全约束力与法线间的最大夹角φf，tanφf=fs",
+              "seek_time": 30
+            },
+            {
+              "id": "4-2-kp2",
+              "label": "自锁现象",
+              "level": 3,
+              "description": "当主动力作用线在摩擦角之内时，不论主动力多大物体都保持平衡",
+              "seek_time": 60
+            },
+            {
+              "id": "4-2-kp3",
+              "label": "摩擦锥",
+              "level": 3,
+              "description": "全约束力作用线不超过以摩擦角为半顶角的圆锥",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "4-3",
+          "label": "4-3 考虑摩擦时物体的平衡问题",
+          "level": 2,
+          "description": "研究考虑摩擦力时的平衡问题求解方法",
+          "children": [
+            {
+              "id": "4-3-kp1",
+              "label": "考虑摩擦的平衡问题求解",
+              "level": 3,
+              "description": "在平衡方程中增加摩擦力关系式F≤fs·FN",
+              "seek_time": 30
+            },
+            {
+              "id": "4-3-kp2",
+              "label": "临界平衡状态分析",
+              "level": 3,
+              "description": "取临界状态F=Fmax=fs·FN求解平衡范围",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "4-4",
+          "label": "4-4 滚动摩阻的概念",
+          "level": 2,
+          "description": "介绍滚动摩阻的概念及滚动摩阻定律",
+          "children": [
+            {
+              "id": "4-4-kp1",
+              "label": "滚动摩阻力偶",
+              "level": 3,
+              "description": "阻碍物体滚动的力偶，最大值等于滚动摩阻系数与法向约束力的乘积",
+              "seek_time": 30
+            },
+            {
+              "id": "4-4-kp2",
+              "label": "滚动摩阻定律",
+              "level": 3,
+              "description": "最大滚动摩阻力偶矩Mmax=δ·FN，δ为滚动摩阻系数",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap5",
+      "label": "第五章 点的运动学",
+      "level": 1,
+      "description": "研究点相对参考系的几何位置随时间变化的规律，包括运动方程、轨迹、速度和加速度",
+      "children": [
+        {
+          "id": "5-1",
+          "label": "5-1 矢量法",
+          "level": 2,
+          "description": "用矢量表示点的运动方程、速度和加速度",
+          "children": [
+            {
+              "id": "5-1-kp1",
+              "label": "矢量表示的点的运动方程",
+              "level": 3,
+              "description": "r=r(t)，矢径随时间变化的函数",
+              "seek_time": 30
+            },
+            {
+              "id": "5-1-kp2",
+              "label": "点的速度矢量",
+              "level": 3,
+              "description": "v=dr/dt，速度沿轨迹切线方向",
+              "seek_time": 60
+            },
+            {
+              "id": "5-1-kp3",
+              "label": "点的加速度矢量",
+              "level": 3,
+              "description": "a=dv/dt=d²r/dt²",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "5-2",
+          "label": "5-2 直角坐标法",
+          "level": 2,
+          "description": "用直角坐标表示点的运动方程、速度和加速度",
+          "children": [
+            {
+              "id": "5-2-kp1",
+              "label": "直角坐标运动方程",
+              "level": 3,
+              "description": "x=x(t), y=y(t), z=z(t)",
+              "seek_time": 30
+            },
+            {
+              "id": "5-2-kp2",
+              "label": "速度的直角坐标表示",
+              "level": 3,
+              "description": "vx=dx/dt, vy=dy/dt, vz=dz/dt",
+              "seek_time": 60
+            },
+            {
+              "id": "5-2-kp3",
+              "label": "加速度的直角坐标表示",
+              "level": 3,
+              "description": "ax=d²x/dt², ay=d²y/dt², az=d²z/dt²",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "5-3",
+          "label": "5-3 自然法",
+          "level": 2,
+          "description": "用自然坐标（弧坐标）表示点的运动，引入自然轴系",
+          "children": [
+            {
+              "id": "5-3-kp1",
+              "label": "弧坐标表示的运动方程",
+              "level": 3,
+              "description": "s=s(t)，以轨迹为参考确定点的位置",
+              "seek_time": 30
+            },
+            {
+              "id": "5-3-kp2",
+              "label": "自然轴系",
+              "level": 3,
+              "description": "由切线、主法线和副法线组成的正交轴系",
+              "seek_time": 60
+            },
+            {
+              "id": "5-3-kp3",
+              "label": "切向加速度",
+              "level": 3,
+              "description": "aτ=dv/dt=d²s/dt²，反映速度大小的变化",
+              "seek_time": 90
+            },
+            {
+              "id": "5-3-kp4",
+              "label": "法向加速度",
+              "level": 3,
+              "description": "an=v²/ρ，反映速度方向的变化",
+              "seek_time": 120
+            },
+            {
+              "id": "5-3-kp5",
+              "label": "全加速度",
+              "level": 3,
+              "description": "a=√(aτ²+an²)，方向由tanθ=an/aτ确定",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "5-4",
+          "label": "5-4 点的速度和加速度在柱坐标和极坐标中的投影",
+          "level": 2,
+          "description": "用柱坐标和极坐标表示点的速度和加速度",
+          "children": [
+            {
+              "id": "5-4-kp1",
+              "label": "极坐标运动方程",
+              "level": 3,
+              "description": "r=r(t), θ=θ(t)",
+              "seek_time": 30
+            },
+            {
+              "id": "5-4-kp2",
+              "label": "极坐标中的速度",
+              "level": 3,
+              "description": "vr=dr/dt, vθ=r·dθ/dt",
+              "seek_time": 60
+            },
+            {
+              "id": "5-4-kp3",
+              "label": "极坐标中的加速度",
+              "level": 3,
+              "description": "ar=d²r/dt²-r(dθ/dt)², aθ=r·d²θ/dt²+2(dr/dt)(dθ/dt)",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap6",
+      "label": "第六章 刚体的简单运动",
+      "level": 1,
+      "description": "研究刚体的平行移动和绕定轴转动，以及轮系传动比和矢量表示法",
+      "children": [
+        {
+          "id": "6-1",
+          "label": "6-1 刚体的平行移动",
+          "level": 2,
+          "description": "介绍刚体平动的定义和特征",
+          "children": [
+            {
+              "id": "6-1-kp1",
+              "label": "刚体平动定义",
+              "level": 3,
+              "description": "刚体运动时，其上任一直线始终与初始位置平行",
+              "seek_time": 30
+            },
+            {
+              "id": "6-1-kp2",
+              "label": "平动刚体的运动特征",
+              "level": 3,
+              "description": "平动刚体上各点轨迹形状相同，同一瞬时各点速度和加速度相同",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "6-2",
+          "label": "6-2 刚体绕定轴的转动",
+          "level": 2,
+          "description": "研究刚体定轴转动的运动方程、角速度和角加速度",
+          "children": [
+            {
+              "id": "6-2-kp1",
+              "label": "转动方程",
+              "level": 3,
+              "description": "φ=φ(t)，转角随时间的变化",
+              "seek_time": 30
+            },
+            {
+              "id": "6-2-kp2",
+              "label": "角速度",
+              "level": 3,
+              "description": "ω=dφ/dt，转角对时间的变化率",
+              "seek_time": 60
+            },
+            {
+              "id": "6-2-kp3",
+              "label": "角加速度",
+              "level": 3,
+              "description": "α=dω/dt=d²φ/dt²",
+              "seek_time": 90
+            },
+            {
+              "id": "6-2-kp4",
+              "label": "转动刚体内各点的速度和加速度",
+              "level": 3,
+              "description": "v=ωR, aτ=αR, an=ω²R",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "6-3",
+          "label": "6-3 轮系的传动比",
+          "level": 2,
+          "description": "研究齿轮传动和带传动的传动比计算",
+          "children": [
+            {
+              "id": "6-3-kp1",
+              "label": "齿轮传动比",
+              "level": 3,
+              "description": "i12=ω1/ω2=z2/z1，传动比等于从动轮齿数与主动轮齿数之比",
+              "seek_time": 30
+            },
+            {
+              "id": "6-3-kp2",
+              "label": "带传动比",
+              "level": 3,
+              "description": "i12=ω1/ω2=r2/r1，传动比等于从动轮半径与主动轮半径之比",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "6-4",
+          "label": "6-4 以矢量表示角速度和角加速度",
+          "level": 2,
+          "description": "用矢量表示角速度和角加速度，以矢积表示点的速度和加速度",
+          "children": [
+            {
+              "id": "6-4-kp1",
+              "label": "角速度矢量",
+              "level": 3,
+              "description": "ω矢量沿转轴，指向由右手定则确定，大小等于角速度",
+              "seek_time": 30
+            },
+            {
+              "id": "6-4-kp2",
+              "label": "角加速度矢量",
+              "level": 3,
+              "description": "α=dω/dt",
+              "seek_time": 60
+            },
+            {
+              "id": "6-4-kp3",
+              "label": "速度的矢积表示",
+              "level": 3,
+              "description": "v=ω×r",
+              "seek_time": 90
+            },
+            {
+              "id": "6-4-kp4",
+              "label": "加速度的矢积表示",
+              "level": 3,
+              "description": "a=α×r+ω×(ω×r)",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap7",
+      "label": "第七章 点的合成运动",
+      "level": 1,
+      "description": "研究同一点在不同参考系中运动之间的关系，建立速度和加速度合成定理",
+      "children": [
+        {
+          "id": "7-1",
+          "label": "7-1 相对运动·牵连运动·绝对运动",
+          "level": 2,
+          "description": "建立三种运动的概念及其相互关系",
+          "children": [
+            {
+              "id": "7-1-kp1",
+              "label": "绝对运动",
+              "level": 3,
+              "description": "动点相对于定参考系的运动",
+              "seek_time": 30
+            },
+            {
+              "id": "7-1-kp2",
+              "label": "相对运动",
+              "level": 3,
+              "description": "动点相对于动参考系的运动",
+              "seek_time": 60
+            },
+            {
+              "id": "7-1-kp3",
+              "label": "牵连运动",
+              "level": 3,
+              "description": "动参考系相对于定参考系的运动",
+              "seek_time": 90
+            },
+            {
+              "id": "7-1-kp4",
+              "label": "牵连点与牵连速度",
+              "level": 3,
+              "description": "某瞬时动参考系上与动点重合的点为牵连点，其速度为牵连速度",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "7-2",
+          "label": "7-2 点的速度合成定理",
+          "level": 2,
+          "description": "建立动点绝对速度、相对速度和牵连速度之间的关系",
+          "children": [
+            {
+              "id": "7-2-kp1",
+              "label": "速度合成定理",
+              "level": 3,
+              "description": "va=ve+vr，绝对速度等于牵连速度与相对速度的矢量和",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "7-3",
+          "label": "7-3 牵连运动是平移时点的加速度合成定理",
+          "level": 2,
+          "description": "建立牵连运动为平移时的加速度合成定理",
+          "children": [
+            {
+              "id": "7-3-kp1",
+              "label": "加速度合成定理（平移牵连）",
+              "level": 3,
+              "description": "aa=ae+ar，绝对加速度等于牵连加速度与相对加速度的矢量和",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "7-4",
+          "label": "7-4 牵连运动是定轴转动时点的加速度合成定理·科氏加速度",
+          "level": 2,
+          "description": "建立牵连运动为定轴转动时的加速度合成定理，引入科氏加速度",
+          "children": [
+            {
+              "id": "7-4-kp1",
+              "label": "加速度合成定理（转动牵连）",
+              "level": 3,
+              "description": "aa=ae+ar+ac，包含科氏加速度",
+              "seek_time": 30
+            },
+            {
+              "id": "7-4-kp2",
+              "label": "科氏加速度",
+              "level": 3,
+              "description": "ac=2ω×vr，大小为2ωvr sinθ，方向由右手定则确定",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap8",
+      "label": "第八章 刚体的平面运动",
+      "level": 1,
+      "description": "研究刚体平面运动的分解，用基点法和瞬心法求速度，用基点法求加速度",
+      "children": [
+        {
+          "id": "8-1",
+          "label": "8-1 刚体平面运动的概述和运动分解",
+          "level": 2,
+          "description": "介绍刚体平面运动的定义，将平面运动分解为平移和转动",
+          "children": [
+            {
+              "id": "8-1-kp1",
+              "label": "平面运动定义",
+              "level": 3,
+              "description": "刚体运动时，其上任一点到某固定平面的距离保持不变",
+              "seek_time": 30
+            },
+            {
+              "id": "8-1-kp2",
+              "label": "平面运动分解",
+              "level": 3,
+              "description": "平面运动可分解为随基点的平移和绕基点的转动",
+              "seek_time": 60
+            },
+            {
+              "id": "8-1-kp3",
+              "label": "平面运动方程",
+              "level": 3,
+              "description": "xA=xA(t), yA=yA(t), φ=φ(t)",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "8-2",
+          "label": "8-2 求平面图形内各点速度的基点法",
+          "level": 2,
+          "description": "用基点法求平面图形内各点的速度",
+          "children": [
+            {
+              "id": "8-2-kp1",
+              "label": "基点法速度合成",
+              "level": 3,
+              "description": "vB=vA+vBA，B点速度等于基点速度与绕基点转动速度的矢量和",
+              "seek_time": 30
+            },
+            {
+              "id": "8-2-kp2",
+              "label": "速度投影定理",
+              "level": 3,
+              "description": "同一平面图形上任意两点的速度在这两点连线上的投影相等",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "8-3",
+          "label": "8-3 求平面图形内各点速度的瞬心法",
+          "level": 2,
+          "description": "用速度瞬心法求平面图形内各点的速度",
+          "children": [
+            {
+              "id": "8-3-kp1",
+              "label": "速度瞬心",
+              "level": 3,
+              "description": "某瞬时平面图形上速度为零的点",
+              "seek_time": 30
+            },
+            {
+              "id": "8-3-kp2",
+              "label": "瞬心法求速度",
+              "level": 3,
+              "description": "平面图形内任一点速度等于绕瞬心转动的速度",
+              "seek_time": 60
+            },
+            {
+              "id": "8-3-kp3",
+              "label": "瞬心位置的确定",
+              "level": 3,
+              "description": "由已知速度方向或纯滚动条件确定瞬心位置",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "8-4",
+          "label": "8-4 用基点法求平面图形内各点的加速度",
+          "level": 2,
+          "description": "用基点法求平面图形内各点的加速度",
+          "children": [
+            {
+              "id": "8-4-kp1",
+              "label": "基点法加速度合成",
+              "level": 3,
+              "description": "aB=aA+aBAn+aBAτ，包括法向和切向相对加速度",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "8-5",
+          "label": "8-5 运动学综合应用举例",
+          "level": 2,
+          "description": "综合应用点的合成运动和刚体平面运动的理论解决实际问题",
+          "children": [
+            {
+              "id": "8-5-kp1",
+              "label": "运动学综合分析",
+              "level": 3,
+              "description": "综合运用合成运动和平面运动的方法分析复杂机构的运动",
+              "seek_time": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap9",
+      "label": "第九章 质点动力学的基本方程",
+      "level": 1,
+      "description": "根据动力学基本定律得出质点动力学基本方程，运用微积分方法求解质点动力学问题",
+      "children": [
+        {
+          "id": "9-1",
+          "label": "9-1 动力学的基本定律",
+          "level": 2,
+          "description": "介绍牛顿三定律及惯性参考系的概念",
+          "children": [
+            {
+              "id": "9-1-kp1",
+              "label": "牛顿第一定律（惯性定律）",
+              "level": 3,
+              "description": "不受力作用的质点保持静止或做匀速直线运动",
+              "seek_time": 30
+            },
+            {
+              "id": "9-1-kp2",
+              "label": "牛顿第二定律",
+              "level": 3,
+              "description": "ma=F，质点质量与加速度的乘积等于作用力",
+              "seek_time": 60
+            },
+            {
+              "id": "9-1-kp3",
+              "label": "牛顿第三定律",
+              "level": 3,
+              "description": "作用力与反作用力等值、反向、共线",
+              "seek_time": 90
+            },
+            {
+              "id": "9-1-kp4",
+              "label": "惯性参考系",
+              "level": 3,
+              "description": "适用于牛顿定律的参考系，通常取地面或匀速直线运动的物体",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "9-2",
+          "label": "9-2 质点的运动微分方程",
+          "level": 2,
+          "description": "建立质点运动微分方程及其求解方法",
+          "children": [
+            {
+              "id": "9-2-kp1",
+              "label": "质点运动微分方程",
+              "level": 3,
+              "description": "m·d²r/dt²=ΣF，矢量形式的质点运动微分方程",
+              "seek_time": 30
+            },
+            {
+              "id": "9-2-kp2",
+              "label": "直角坐标形式的运动微分方程",
+              "level": 3,
+              "description": "m·d²x/dt²=ΣFx, m·d²y/dt²=ΣFy, m·d²z/dt²=ΣFz",
+              "seek_time": 60
+            },
+            {
+              "id": "9-2-kp3",
+              "label": "自然形式的运动微分方程",
+              "level": 3,
+              "description": "m·aτ=ΣFτ, m·an=ΣFn",
+              "seek_time": 90
+            },
+            {
+              "id": "9-2-kp4",
+              "label": "质点动力学两类基本问题",
+              "level": 3,
+              "description": "第一类：已知运动求力；第二类：已知力求运动",
+              "seek_time": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap10",
+      "label": "第十章 动量定理",
+      "level": 1,
+      "description": "研究动量与冲量的概念，建立动量定理和质心运动定理",
+      "children": [
+        {
+          "id": "10-1",
+          "label": "10-1 动量与冲量",
+          "level": 2,
+          "description": "介绍动量和冲量的概念及计算",
+          "children": [
+            {
+              "id": "10-1-kp1",
+              "label": "动量",
+              "level": 3,
+              "description": "p=mv，质点质量与速度的乘积，是矢量",
+              "seek_time": 30
+            },
+            {
+              "id": "10-1-kp2",
+              "label": "质点系的动量",
+              "level": 3,
+              "description": "p=Σmi·vi=M·vC，等于质点系总质量与质心速度的乘积",
+              "seek_time": 60
+            },
+            {
+              "id": "10-1-kp3",
+              "label": "冲量",
+              "level": 3,
+              "description": "I=∫F dt，力对时间的累积效应",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "10-2",
+          "label": "10-2 动量定理",
+          "level": 2,
+          "description": "建立质点和质点系的动量定理",
+          "children": [
+            {
+              "id": "10-2-kp1",
+              "label": "质点动量定理",
+              "level": 3,
+              "description": "d(mv)/dt=F 或 mv2-mv1=∫F dt",
+              "seek_time": 30
+            },
+            {
+              "id": "10-2-kp2",
+              "label": "质点系动量定理",
+              "level": 3,
+              "description": "dp/dt=ΣFe，动量对时间的导数等于外力系的主矢",
+              "seek_time": 60
+            },
+            {
+              "id": "10-2-kp3",
+              "label": "动量守恒定律",
+              "level": 3,
+              "description": "当外力系主矢为零时，质点系动量守恒",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "10-3",
+          "label": "10-3 质心运动定理",
+          "level": 2,
+          "description": "建立质心运动定理及其应用",
+          "children": [
+            {
+              "id": "10-3-kp1",
+              "label": "质心运动定理",
+              "level": 3,
+              "description": "M·aC=ΣFe，质点系质量与质心加速度的乘积等于外力系主矢",
+              "seek_time": 30
+            },
+            {
+              "id": "10-3-kp2",
+              "label": "质心运动守恒",
+              "level": 3,
+              "description": "当外力系主矢为零时，质心速度不变；若初始静止则质心位置不变",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap11",
+      "label": "第十一章 动量矩定理",
+      "level": 1,
+      "description": "研究动量矩的概念，建立动量矩定理、刚体定轴转动微分方程及相对于质心的动量矩定理",
+      "children": [
+        {
+          "id": "11-1",
+          "label": "11-1 质点和质点系的动量矩",
+          "level": 2,
+          "description": "介绍动量矩的概念及计算",
+          "children": [
+            {
+              "id": "11-1-kp1",
+              "label": "质点对点的动量矩",
+              "level": 3,
+              "description": "MO(mv)=r×mv，动量对点之矩为矢径与动量的矢积",
+              "seek_time": 30
+            },
+            {
+              "id": "11-1-kp2",
+              "label": "质点对轴的动量矩",
+              "level": 3,
+              "description": "动量对轴之矩等于动量在垂直于轴的平面上的投影对轴与平面交点之矩",
+              "seek_time": 60
+            },
+            {
+              "id": "11-1-kp3",
+              "label": "质点系的动量矩",
+              "level": 3,
+              "description": "LO=Σri×mi·vi，各质点动量矩的矢量和",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "11-2",
+          "label": "11-2 动量矩定理",
+          "level": 2,
+          "description": "建立质点和质点系的动量矩定理",
+          "children": [
+            {
+              "id": "11-2-kp1",
+              "label": "质点动量矩定理",
+              "level": 3,
+              "description": "dLO(mv)/dt=MO(F)，动量矩对时间的导数等于力对同点之矩",
+              "seek_time": 30
+            },
+            {
+              "id": "11-2-kp2",
+              "label": "质点系动量矩定理",
+              "level": 3,
+              "description": "dLO/dt=ΣMO(Fi)，动量矩对时间的导数等于外力对同点之矩的矢量和",
+              "seek_time": 60
+            },
+            {
+              "id": "11-2-kp3",
+              "label": "动量矩守恒定律",
+              "level": 3,
+              "description": "当外力对某点之矩的矢量和为零时，质点系对该点的动量矩守恒",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "11-3",
+          "label": "11-3 刚体绕定轴的转动微分方程",
+          "level": 2,
+          "description": "建立刚体定轴转动的动力学方程",
+          "children": [
+            {
+              "id": "11-3-kp1",
+              "label": "刚体定轴转动微分方程",
+              "level": 3,
+              "description": "Jz·α=ΣMz(F)，转动惯量与角加速度的乘积等于外力对轴之矩",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "11-4",
+          "label": "11-4 刚体对轴的转动惯量",
+          "level": 2,
+          "description": "介绍转动惯量的概念、计算方法及平行轴定理",
+          "children": [
+            {
+              "id": "11-4-kp1",
+              "label": "转动惯量定义",
+              "level": 3,
+              "description": "Jz=Σmi·ri²，刚体各质点质量与到轴距离平方的乘积之和",
+              "seek_time": 30
+            },
+            {
+              "id": "11-4-kp2",
+              "label": "平行轴定理",
+              "level": 3,
+              "description": "Jz=JzC+md²，对任意轴的转动惯量等于对过质心平行轴的转动惯量加md²",
+              "seek_time": 60
+            },
+            {
+              "id": "11-4-kp3",
+              "label": "回转半径",
+              "level": 3,
+              "description": "ρ=√(Jz/m)，转动惯量与质量的比值的平方根",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "11-5",
+          "label": "11-5 质点系相对于质心的动量矩定理",
+          "level": 2,
+          "description": "建立相对于质心的动量矩定理及刚体平面运动微分方程",
+          "children": [
+            {
+              "id": "11-5-kp1",
+              "label": "相对于质心的动量矩定理",
+              "level": 3,
+              "description": "dLC/dt=ΣMC(F)，对质心的动量矩对时间的导数等于外力对质心之矩的矢量和",
+              "seek_time": 30
+            },
+            {
+              "id": "11-5-kp2",
+              "label": "刚体平面运动微分方程",
+              "level": 3,
+              "description": "M·aCx=ΣFx, M·aCy=ΣFy, JC·α=ΣMC(F)",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap12",
+      "label": "第十二章 动能定理",
+      "level": 1,
+      "description": "从功与能的角度研究动力学问题，建立动能定理和机械能守恒定律",
+      "children": [
+        {
+          "id": "12-1",
+          "label": "12-1 力的功",
+          "level": 2,
+          "description": "介绍功的概念及各种力的功的计算",
+          "children": [
+            {
+              "id": "12-1-kp1",
+              "label": "功的定义",
+              "level": 3,
+              "description": "W=F·cosθ·s，常力在直线位移上的功",
+              "seek_time": 30
+            },
+            {
+              "id": "12-1-kp2",
+              "label": "变力的功",
+              "level": 3,
+              "description": "W=∫F·dr，力沿路径的线积分",
+              "seek_time": 60
+            },
+            {
+              "id": "12-1-kp3",
+              "label": "重力的功",
+              "level": 3,
+              "description": "W=mgh，等于重力与高度差的乘积",
+              "seek_time": 90
+            },
+            {
+              "id": "12-1-kp4",
+              "label": "弹性力的功",
+              "level": 3,
+              "description": "W=k(δ1²-δ2²)/2，弹簧刚度系数与初末变形平方差乘积的一半",
+              "seek_time": 120
+            },
+            {
+              "id": "12-1-kp5",
+              "label": "定轴转动刚体上力的功",
+              "level": 3,
+              "description": "W=∫Mz·dφ",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "12-2",
+          "label": "12-2 质点和质点系的动能",
+          "level": 2,
+          "description": "介绍动能的概念及各种运动刚体的动能计算",
+          "children": [
+            {
+              "id": "12-2-kp1",
+              "label": "质点的动能",
+              "level": 3,
+              "description": "T=mv²/2",
+              "seek_time": 30
+            },
+            {
+              "id": "12-2-kp2",
+              "label": "质点系的动能",
+              "level": 3,
+              "description": "T=Σ(mi·vi²/2)",
+              "seek_time": 60
+            },
+            {
+              "id": "12-2-kp3",
+              "label": "平动刚体的动能",
+              "level": 3,
+              "description": "T=MvC²/2",
+              "seek_time": 90
+            },
+            {
+              "id": "12-2-kp4",
+              "label": "定轴转动刚体的动能",
+              "level": 3,
+              "description": "T=Jzω²/2",
+              "seek_time": 120
+            },
+            {
+              "id": "12-2-kp5",
+              "label": "平面运动刚体的动能",
+              "level": 3,
+              "description": "T=MvC²/2+JCω²/2",
+              "seek_time": 150
+            }
+          ]
+        },
+        {
+          "id": "12-3",
+          "label": "12-3 动能定理",
+          "level": 2,
+          "description": "建立质点和质点系的动能定理",
+          "children": [
+            {
+              "id": "12-3-kp1",
+              "label": "质点动能定理",
+              "level": 3,
+              "description": "dT/dt=F·v 或 T2-T1=W",
+              "seek_time": 30
+            },
+            {
+              "id": "12-3-kp2",
+              "label": "质点系动能定理",
+              "level": 3,
+              "description": "T2-T1=ΣWe，动能的改变等于所有外力和内力做功之和",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "12-4",
+          "label": "12-4 功率·功率方程·机械效率",
+          "level": 2,
+          "description": "介绍功率、功率方程和机械效率的概念",
+          "children": [
+            {
+              "id": "12-4-kp1",
+              "label": "功率",
+              "level": 3,
+              "description": "P=F·v 或 P=M·ω",
+              "seek_time": 30
+            },
+            {
+              "id": "12-4-kp2",
+              "label": "功率方程",
+              "level": 3,
+              "description": "dT/dt=ΣPe，动能对时间的导数等于所有功率之和",
+              "seek_time": 60
+            },
+            {
+              "id": "12-4-kp3",
+              "label": "机械效率",
+              "level": 3,
+              "description": "η=有用功率/输入功率",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "12-5",
+          "label": "12-5 势力场·势能·机械能守恒定律",
+          "level": 2,
+          "description": "介绍势力场、势能的概念及机械能守恒定律",
+          "children": [
+            {
+              "id": "12-5-kp1",
+              "label": "势力场",
+              "level": 3,
+              "description": "力场中力做的功只与起点和终点位置有关而与路径无关",
+              "seek_time": 30
+            },
+            {
+              "id": "12-5-kp2",
+              "label": "势能",
+              "level": 3,
+              "description": "V=∫F·dr（从当前位置到零势能位置）",
+              "seek_time": 60
+            },
+            {
+              "id": "12-5-kp3",
+              "label": "机械能守恒定律",
+              "level": 3,
+              "description": "T+V=常数，在有势力作用下机械能守恒",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "12-6",
+          "label": "12-6 普遍定理的综合应用举例",
+          "level": 2,
+          "description": "综合应用动量定理、动量矩定理和动能定理求解复杂动力学问题",
+          "children": [
+            {
+              "id": "12-6-kp1",
+              "label": "普遍定理综合应用",
+              "level": 3,
+              "description": "根据问题特点选择合适的动力学普遍定理求解",
+              "seek_time": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap13",
+      "label": "第十三章 达朗贝尔原理",
+      "level": 1,
+      "description": "引入惯性力概念，建立达朗贝尔原理，用静力学方法求解动力学问题",
+      "children": [
+        {
+          "id": "13-1",
+          "label": "13-1 惯性力·质点的达朗贝尔原理",
+          "level": 2,
+          "description": "引入惯性力概念，建立质点的达朗贝尔原理",
+          "children": [
+            {
+              "id": "13-1-kp1",
+              "label": "惯性力",
+              "level": 3,
+              "description": "F1=-ma，大小等于质量与加速度的乘积，方向与加速度相反",
+              "seek_time": 30
+            },
+            {
+              "id": "13-1-kp2",
+              "label": "质点的达朗贝尔原理",
+              "level": 3,
+              "description": "F+FN+F1=0，主动力、约束力和惯性力在形式上组成平衡力系",
+              "seek_time": 60
+            }
+          ]
+        },
+        {
+          "id": "13-2",
+          "label": "13-2 质点系的达朗贝尔原理",
+          "level": 2,
+          "description": "将达朗贝尔原理推广到质点系",
+          "children": [
+            {
+              "id": "13-2-kp1",
+              "label": "质点系的达朗贝尔原理",
+              "level": 3,
+              "description": "质点系的外力与惯性力在形式上组成平衡力系",
+              "seek_time": 30
+            }
+          ]
+        },
+        {
+          "id": "13-3",
+          "label": "13-3 刚体惯性力系的简化",
+          "level": 2,
+          "description": "对刚体惯性力系进行简化，得到不同运动形式下的简化结果",
+          "children": [
+            {
+              "id": "13-3-kp1",
+              "label": "平动刚体惯性力系的简化",
+              "level": 3,
+              "description": "简化为作用于质心的一个力F1=-MaC",
+              "seek_time": 30
+            },
+            {
+              "id": "13-3-kp2",
+              "label": "定轴转动刚体惯性力系的简化",
+              "level": 3,
+              "description": "简化为惯性力主矢和惯性力主矩，作用于转轴",
+              "seek_time": 60
+            },
+            {
+              "id": "13-3-kp3",
+              "label": "平面运动刚体惯性力系的简化",
+              "level": 3,
+              "description": "简化为作用于质心的惯性力和惯性力偶矩",
+              "seek_time": 90
+            }
+          ]
+        },
+        {
+          "id": "13-4",
+          "label": "13-4 绕定轴转动刚体的轴承动约束力",
+          "level": 2,
+          "description": "研究定轴转动刚体轴承的动约束力及消除动约束力的条件",
+          "children": [
+            {
+              "id": "13-4-kp1",
+              "label": "动约束力与静约束力",
+              "level": 3,
+              "description": "动约束力由惯性力引起，附加在静约束力之上",
+              "seek_time": 30
+            },
+            {
+              "id": "13-4-kp2",
+              "label": "消除动约束力的条件",
+              "level": 3,
+              "description": "转轴为中心惯性主轴，刚体质量对称",
+              "seek_time": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chap14",
+      "label": "第十四章 虚位移原理",
+      "level": 1,
+      "description": "应用功的概念分析系统的平衡问题，是研究静力学平衡问题的另一途径",
+      "children": [
+        {
+          "id": "14-1",
+          "label": "14-1 约束·虚位移·虚功",
+          "level": 2,
+          "description": "介绍约束分类、虚位移和虚功的概念",
+          "children": [
+            {
+              "id": "14-1-kp1",
+              "label": "约束分类",
+              "level": 3,
+              "description": "几何约束与运动约束、定常约束与非定常约束、完整约束与非完整约束",
+              "seek_time": 30
+            },
+            {
+              "id": "14-1-kp2",
+              "label": "虚位移",
+              "level": 3,
+              "description": "质点或质点系在某瞬时为约束所许可的无限小位移",
+              "seek_time": 60
+            },
+            {
+              "id": "14-1-kp3",
+              "label": "虚功",
+              "level": 3,
+              "description": "力在虚位移上所做的功",
+              "seek_time": 90
+            },
+            {
+              "id": "14-1-kp4",
+              "label": "理想约束",
+              "level": 3,
+              "description": "约束力在任意虚位移上所作虚功之和为零的约束",
+              "seek_time": 120
+            }
+          ]
+        },
+        {
+          "id": "14-2",
+          "label": "14-2 虚位移原理",
+          "level": 2,
+          "description": "建立虚位移原理及其应用",
+          "children": [
+            {
+              "id": "14-2-kp1",
+              "label": "虚位移原理",
+              "level": 3,
+              "description": "具有理想约束的质点系在某位置平衡的充要条件是所有主动力在该位置的任何虚位移上所作虚功之和为零",
+              "seek_time": 30
+            },
+            {
+              "id": "14-2-kp2",
+              "label": "虚位移原理的解析表达",
+              "level": 3,
+              "description": "ΣFi·δri=0 或 Σ(Fxi·δxi+Fyi·δyi+Fzi·δzi)=0",
+              "seek_time": 60
+            },
+            {
+              "id": "14-2-kp3",
+              "label": "用虚位移原理求解平衡问题",
+              "level": 3,
+              "description": "可用于求约束力、系统平衡位置等，需建立虚位移间的关系",
+              "seek_time": 90
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

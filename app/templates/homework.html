@@ -1,0 +1,418 @@
+{% extends "base.html" %}  <!-- 继承基础模板 -->
+
+{% block extra_css %}
+<style>
+/* ── AI 总结（homework 页）── */
+.video-card { position: relative; }
+
+/* 标题行：题目 + 右侧按钮组 */
+.title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 0.5rem;
+}
+.title-row .title {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+}
+.title-row .title .title-short { display: none; }   /* PC 默认全称 */
+@media (max-width: 768px) {                          /* 手机端用缩写 */
+    .title-row .title .title-full { display: none; }
+    .title-row .title .title-short { display: inline; }
+}
+.title-row .title.not-transcribed { color: #666; }
+.title-row .title.transcribed { color: #3a5a7a; }
+.title-row .title .ai-stamp {
+    display: inline-block; margin-left: 6px; padding: 1px 6px;
+    font-size: 11px; font-weight: 600; color: #fff; background: #27ae60;
+    border-radius: 8px; vertical-align: middle; white-space: nowrap;
+}
+/* 右侧按钮组：AI总结在上、删除在下，均靠右 */
+.title-row-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* AI总结触发按钮：随标题行流内排列，靠右对齐 */
+.ai-summary-btn {
+    flex-shrink: 0;
+    width: 75px !important;   /* 覆盖全局 button{width:100%}，固定窄宽给标题腾位 */
+    text-align: center;
+    background: linear-gradient(135deg, #4a6fa5, #6a9fd8);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 3px 2px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(74,111,165,0.35);
+    transition: opacity .2s;
+    white-space: nowrap;
+}
+.ai-summary-btn:hover { opacity: .82; }
+
+/* 教师删除按钮 */
+.delete-video-btn {
+    flex-shrink: 0;
+    width: auto !important;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 3px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+    white-space: nowrap;
+}
+.delete-video-btn:hover { opacity: .8; }
+
+/* 作者行：姓名 + 教师删除按钮同行 */
+.author-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+}
+
+/* 弹层：仅覆盖卡片下半部分，与卡片底角匹配 */
+.ai-summary-popup {
+    position: absolute;
+    top: 50%; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.97);
+    border-radius: 0 0 8px 8px;
+    border-top: 1.5px solid #4a6fa5;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-summary-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 20px 8px 12px;  /* right:20px 距右边界留 20px 间距 */
+    border-bottom: 1px solid #e0e8f4;
+    font-weight: 700;
+    color: #4a6fa5;
+    font-size: 14px;
+    flex-shrink: 0;
+    gap: 8px;
+}
+.ai-summary-header > span { flex: 1; white-space: nowrap; }
+.ai-summary-close {
+    width: 30px !important;  /* 覆盖全局 button{width:100%} */
+    height: 20px;
+    background: #e8eef7;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+}
+.ai-summary-close:hover { background: #fde; color: #c0392b; }
+.ai-summary-body {
+    padding: 8px 12px 10px;
+    color: #333;
+    font-size: 12.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ── 横屏全屏高度适配 ── */
+video:fullscreen {
+    object-fit: contain !important;
+    background: #000 !important;
+}
+video:-webkit-full-screen {
+    object-fit: contain !important;
+    background: #000 !important;
+}
+@media (max-width: 768px) and (orientation: landscape) {
+    .video-preview video {
+        object-fit: contain;
+        background: #000;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}  <!-- 内容块开始 -->
+<div class="homework-page">  <!-- 作业页面主容器 -->
+    <!-- 上传按钮容器：固定在页面右上角 -->
+    <div class="upload-button-container">
+        <a href="{{ url_for('main.upload_video') }}" class="upload-button">  <!-- 上传视频链接 -->
+            <i class="fas fa-upload"></i> 上传作业视频
+        </a>
+    </div>
+
+    <!-- 精品视频区：展示评分最高的三个视频 -->
+    <section class="featured-videos">
+        <h2>精品视频</h2>
+        <div class="featured-videos-container">  <!-- 精品视频容器 -->
+            {% if featured_videos %}  <!-- 判断是否有精品视频 -->
+                {% for video in featured_videos %}  <!-- 遍历精品视频 -->
+                <div class="featured-video-card">  <!-- 精品视频卡片 -->
+                    <div class="rank-badge {{ ['gold', 'silver', 'bronze'][loop.index0] }}">  <!-- 排名徽章：金银铜 -->
+                        {{ ['&#x1F947;', '&#x1F948;', '&#x1F949;'][loop.index0] | safe }}
+                    </div>
+                    <div class="video-preview">  <!-- 视频预览区域 -->
+                        <video src="{{ video.url }}" preload="none" {% if video.thumbnail %}poster="{{ video.thumbnail }}"{% endif %} controls controlsList="nodownload" oncontextmenu="return false"
+                               playsinline webkit-playsinline
+                               data-video-id="{{ video.id }}" style="object-fit:cover;width:100%;height:100%;"></video>  <!-- 视频播放器 -->
+                    </div>
+                    <div class="video-info">  <!-- 视频信息区域 -->
+                        <div class="title {{ 'transcribed' if video.has_transcript else 'not-transcribed' }}" title="{{ video.title }}">
+                            <span class="title-full">{{ video.title }}</span>
+                        </div>
+                        <div class="video-stats">  <!-- 视频统计信息 -->
+                            <span class="author" data-user-id="{{ video.author.id }}"
+                                  style="cursor:pointer;">{{ video.author.username }}</span>  <!-- 作者名称 -->
+                            <span class="rating">评分: {{ "%.1f"|format(video.average_rating) }}</span>  <!-- 平均评分 -->
+                            <span class="favorites">收藏: {{ video.favorites_count }}</span>  <!-- 收藏数量 -->
+                            <span class="comments">讨论: {{ video.comments_count }}</span>  <!-- 评论数量 -->
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-videos">暂无精品视频</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- 章节分类区 -->
+    <section class="all-videos">
+        <h2>按章节浏览</h2>
+        <div class="chapter-grid">
+            {% for stat in chapter_stats %}
+            <a href="{{ url_for('main.homework_chapter', ch=stat.chapter) }}"
+               class="chapter-card {% if stat.video_count == 0 %}chapter-empty{% endif %}">
+                <div class="chapter-num">第{{ stat.cn }}章</div>
+                <div class="chapter-count">{{ stat.video_count }} 个视频</div>
+                {% if stat.champion and stat.best_rating > 0 %}
+                <div class="chapter-champion">
+                    👑 {{ stat.champion.author.username }}
+                    <span class="champion-rating">{{ "%.1f"|format(stat.best_rating) }}</span>
+                </div>
+                {% else %}
+                <div class="chapter-champion chapter-no-champion">暂无评分</div>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<style>
+/* 章节卡片网格 */
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 8px 0 24px;
+}
+.chapter-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 12px 18px;
+    background: linear-gradient(135deg, #eaf3fb 0%, #ddeef9 100%);
+    border: 2px solid #b8d9f0;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #1a4a72;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    min-height: 110px;
+    box-shadow: 0 2px 8px rgba(74,111,165,0.10);
+}
+.chapter-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(74,111,165,0.22);
+    border-color: #4a8fd0;
+}
+.chapter-empty {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: #888;
+}
+.chapter-num {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.chapter-count {
+    font-size: 14px;
+    color: #3a6ea0;
+    margin-bottom: 8px;
+}
+.chapter-card.chapter-empty .chapter-count { color: #aaa; }
+.chapter-champion {
+    font-size: 13px;
+    color: #b07800;
+    font-weight: 600;
+}
+.chapter-champion .champion-rating {
+    background: #ffe082;
+    border-radius: 8px;
+    padding: 1px 7px;
+    margin-left: 4px;
+    font-size: 12px;
+    color: #7a5000;
+}
+.chapter-no-champion { color: #bbb; font-weight: 400; font-size: 13px; }
+@media (max-width: 600px) {
+    .chapter-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .chapter-num { font-size: 18px; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/homework.js') }}"></script>
+<script>
+/* ── AI 总结 ── */
+async function showAiSummary(videoId, btn) {
+    const popup = document.getElementById('ai-popup-' + videoId);
+    const body  = document.getElementById('ai-body-'  + videoId);
+    if (popup.style.display !== 'none') {
+        popup.style.display = 'none';
+        return;
+    }
+    popup.style.display = 'block';
+    body.textContent = '⏳ AI 正在总结评论，请稍候…';
+    btn.disabled = true;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}/summary`);
+        const data = await res.json();
+        body.textContent = data.summary || '暂无有效评论可总结。';
+    } catch (e) {
+        body.textContent = 'AI 总结请求失败，请稍后重试。';
+    } finally {
+        btn.disabled = false;
+    }
+}
+function closeAiSummary(videoId) {
+    document.getElementById('ai-popup-' + videoId).style.display = 'none';
+}
+
+async function deleteVideo(videoId) {
+    if (!confirm('确认删除该视频？此操作不可撤销。')) return;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (res.ok) {
+            // 刷新页面，让服务端重新计算前三名精品视频
+            window.location.reload();
+        } else {
+            alert(data.message || '删除失败');
+        }
+    } catch (e) {
+        alert('请求失败，请重试。');
+    }
+}
+
+/* 通知跳转：定位到指定视频卡片 */
+(function() {
+    const params = new URLSearchParams(location.search);
+    const vid = params.get('video_id');
+    if (!vid) return;
+    const card = document.getElementById('video-' + vid);
+    if (!card) return;
+    setTimeout(function() {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.style.transition = 'box-shadow 0.4s, outline 0.4s';
+        card.style.outline = '6px solid #0056b3';
+        card.style.boxShadow = '0 0 0 10px rgba(0,86,179,0.18)';
+        setTimeout(function() {
+            card.style.outline = '';
+            card.style.boxShadow = '';
+        }, 5000);
+    }, 300);
+})();
+
+document.querySelectorAll('video[data-video-id]').forEach(v => {
+    v.addEventListener('play', function onFirstPlay() {
+        v.removeEventListener('play', onFirstPlay);
+        fetch(SCRIPT_ROOT + '/api/videos/' + v.dataset.videoId + '/view', {method: 'POST'}).catch(() => {});
+    });
+});
+
+/* 横屏全屏：Android Chrome fullscreenchange 回调，强制 object-fit: contain */
+(function () {
+    function onFSChange() {
+        var el = document.fullscreenElement || document.webkitFullscreenElement;
+        if (el && el.tagName === 'VIDEO') {
+            el.style.setProperty('object-fit', 'contain', 'important');
+            el.style.background = '#000';
+        }
+    }
+    document.addEventListener('fullscreenchange', onFSChange);
+    document.addEventListener('webkitfullscreenchange', onFSChange);
+})();
+
+/* ── 视频观看区间追踪（1x 速率实际观看片段，用于检查点校验）── */
+(function initWatchTracker() {
+    const videos = document.querySelectorAll('video[data-video-id]');
+    if (!videos.length) return;
+    function mergeSorted(arr) {
+        arr.sort((x, y) => x[0] - y[0]);
+        const out = [];
+        for (const [s, e] of arr) {
+            if (!out.length || s > out[out.length - 1][1]) out.push([s, e]);
+            else out[out.length - 1][1] = Math.max(out[out.length - 1][1], e);
+        }
+        return out;
+    }
+    videos.forEach(v => {
+        const vid = v.dataset.videoId;
+        let watched = [], segStart = null, lastPos = null, lastReport = 0;
+        function closeSeg(end) {
+            if (segStart !== null && end !== null && end > segStart) { watched.push([segStart, end]); watched = mergeSorted(watched); }
+            segStart = null;
+        }
+        function report(useBeacon) {
+            closeSeg(lastPos);
+            if (!watched.length) return;
+            const body = JSON.stringify({ intervals: watched });
+            try {
+                if (useBeacon && navigator.sendBeacon) navigator.sendBeacon(SCRIPT_ROOT + `/api/videos/${vid}/watch`, new Blob([body], {type:'application/json'}));
+                else fetch(SCRIPT_ROOT + `/api/videos/${vid}/watch`, {method:'POST', headers:{'Content-Type':'application/json'}, body, keepalive:true});
+            } catch(e) {}
+        }
+        v.addEventListener('play', () => { if (v.playbackRate <= 1) { segStart = v.currentTime; lastPos = v.currentTime; } });
+        v.addEventListener('pause', () => { closeSeg(lastPos); report(false); });
+        v.addEventListener('ended', () => { closeSeg(lastPos); report(false); });
+        v.addEventListener('ratechange', () => { if (v.playbackRate > 1) closeSeg(lastPos); });
+        v.addEventListener('timeupdate', () => {
+            if (v.paused || v.seeking || v.playbackRate > 1) return;
+            const t = v.currentTime;
+            if (segStart === null) segStart = t;
+            else if (lastPos !== null && Math.abs(t - lastPos) > 1.5) { closeSeg(lastPos); segStart = t; }
+            lastPos = t;
+            if (t - lastReport > 30) { lastReport = t; report(false); }
+        });
+        window.addEventListener('pagehide', () => report(true));
+    });
+})();
+</script>
+{% endblock %}

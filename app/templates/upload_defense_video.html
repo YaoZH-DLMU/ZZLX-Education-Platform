@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <!-- 引入共享导航栏样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='shared/nav.css') }}">
+    <!-- 引入上传页面样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload_video.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <div class="upload-box">
+        <h2>上传答辩视频</h2>
+        <form id="uploadForm" action="{{ url_for('api.upload_defense_video') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>案例类型：</label>
+                <select name="case_type" required>
+                    <option value="">请选择案例类型</option>
+                    <option value="crane">双臂立卷夹钳</option>
+                    <option value="dumper">全机械式翻车机</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>小组：</label>
+                <select name="group_number" required>
+                    <option value="">请选择小组</option>
+                    {% for i in range(1, 15) %}
+                    <option value="{{ i }}">第{{ i }}组</option>
+                    {% endfor %}
+                    <option value="15">教师总结</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>答辩次序：</label>
+                <select name="defense_order" required>
+                    <option value="">请选择答辩次序</option>
+                    {% for i in range(1, 9) %}
+                    <option value="{{ i }}">第{{ i }}次答辩</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>选择视频文件：</label>
+                <input type="file" name="video" accept="video/*" required>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="submit-btn">上传视频</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.upload-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group select,
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+}
+</style>
+
+<script>
+document.getElementById('uploadForm').onsubmit = function(e) {
+    e.preventDefault();
+    fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{{ url_for('main.cooperation') }}";
+        } else {
+            alert('上传失败：' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('上传失败，请稍后重试');
+    });
+};
+</script>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/defense.js') }}"></script>
+{% endblock %} 

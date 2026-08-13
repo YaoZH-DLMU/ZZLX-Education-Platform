@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>课堂签到</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, #0d1b3e 0%, #1a2f5a 50%, #0d1b3e 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 16px 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    overflow-y: auto;
+}
+
+/* 竖屏小屏：居中显示 */
+@media (min-height: 600px) {
+    body { align-items: center; }
+}
+
+.card {
+    background: rgba(255,255,255,0.96);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 28px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+.logo-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0056b3;
+    letter-spacing: 1px;
+}
+
+.question-box {
+    background: #f0f6ff;
+    border-left: 4px solid #0056b3;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-bottom: 26px;
+}
+.question-label {
+    font-size: 11px;
+    color: #0056b3;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.question-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.4;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #dde2ec;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #222;
+    font-family: inherit;
+    margin-bottom: 16px;
+    background: #fafbff;
+}
+.input-field:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 3px rgba(0,86,179,0.12);
+    background: #fff;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 4px;
+}
+.submit-btn:hover { background: #003d82; }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled {
+    background: #b0bec5;
+    cursor: not-allowed;
+}
+
+/* 成功 / 错误提示 */
+.result-box {
+    display: none;
+    text-align: center;
+    padding: 20px 0 10px;
+}
+.result-icon { font-size: 56px; margin-bottom: 12px; }
+.result-title { font-size: 20px; font-weight: 700; color: #222; margin-bottom: 6px; }
+.result-sub   { font-size: 14px; color: #888; }
+
+.error-msg {
+    display: none;
+    font-size: 13px;
+    color: #c0392b;
+    background: #fef0f0;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+
+/* 关闭状态 */
+.closed-banner {
+    text-align: center;
+    padding: 10px 0 6px;
+}
+.closed-icon { font-size: 48px; margin-bottom: 10px; }
+.closed-title { font-size: 18px; font-weight: 700; color: #444; margin-bottom: 6px; }
+.closed-sub   { font-size: 13px; color: #aaa; }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo-row">
+        <span class="logo-text">✦ 致知力行 · 课堂签到</span>
+    </div>
+
+    <!-- 问题展示 -->
+    <div class="question-box">
+        <div class="question-label">📋 本次问题</div>
+        <div class="question-text" id="questionText">{{ sess.question }}</div>
+    </div>
+
+    {% if not sess.is_active %}
+    <!-- 已关闭状态 -->
+    <div class="closed-banner">
+        <div class="closed-icon">🔒</div>
+        <div class="closed-title">签到已关闭</div>
+        <div class="closed-sub">本次签到已结束，感谢参与</div>
+    </div>
+    {% else %}
+    <!-- 提交表单 -->
+    <div id="formArea">
+        <div class="error-msg" id="errorMsg"></div>
+
+        <label for="studentId">学号</label>
+        <input class="input-field" type="text" id="studentId"
+               placeholder="请输入你的学号" inputmode="numeric"
+               autocomplete="username" maxlength="20">
+
+        <label for="answerInput">你的回答</label>
+        <input class="input-field" type="text" id="answerInput"
+               placeholder="一个词或一句话（最多30字）" maxlength="30">
+
+        <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">提 交</button>
+    </div>
+
+    <!-- 成功提示 -->
+    <div class="result-box" id="successBox">
+        <div class="result-icon">🎉</div>
+        <div class="result-title">提交成功！</div>
+        <div class="result-sub">你的回答已记录，感谢参与</div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+const TOKEN = "{{ sess.token }}";
+const SCRIPT_ROOT = {{ request.script_root | tojson }};
+
+/* ── 设备指纹（Canvas + 屏幕参数 + UA + pixelRatio 双哈希）────
+   目的：检测同一台设备以不同学号重复签到（替签）
+   不阻止提交，仅供教师复查；不收集任何敏感信息
+   v2：加入完整UA（含设备型号/Build号）和像素比，升级为64-bit双哈希
+      减少同型号手机因指纹碰撞导致的假阳性
+   ────────────────────────────────────────────────── */
+function getDeviceFp() {
+    try {
+        // Canvas 指纹：利用字体渲染差异区分设备
+        const c = document.createElement('canvas');
+        c.width = 240; c.height = 60;
+        const ctx = c.getContext('2d');
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, 240, 60);
+        ctx.fillStyle = '#0056b3';
+        ctx.font = '18px Arial, sans-serif';
+        ctx.fillText('ZZLX-fp-\u81f4\u77e5', 10, 30);
+        ctx.fillStyle = 'rgba(200,100,50,0.7)';
+        ctx.font = '14px Georgia, serif';
+        ctx.fillText('0123456789', 10, 50);
+        const canvasData = c.toDataURL().slice(-80);  // 取末80字符
+
+        // 设备环境参数（含完整UA，区分不同型号/固件）
+        const parts = [
+            canvasData,
+            screen.width + 'x' + screen.height,
+            screen.colorDepth,
+            navigator.language || '',
+            new Date().getTimezoneOffset(),
+            navigator.hardwareConcurrency || 0,
+            (navigator.deviceMemory || 0),
+            (window.devicePixelRatio || 1),
+            navigator.userAgent,
+        ].join('|');
+
+        // 双轮 djb2 → 16字符 64-bit 指纹（减少哈希碰撞）
+        let h1 = 5381, h2 = 52711;
+        for (let i = 0; i < parts.length; i++) {
+            const cc = parts.charCodeAt(i);
+            h1 = (Math.imul(h1, 33) ^ cc) >>> 0;
+            h2 = (Math.imul(h2, 31) ^ cc) >>> 0;
+        }
+        return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
+    } catch(e) { return ''; }
+}
+
+async function submitAnswer() {
+    const sid = document.getElementById('studentId').value.trim();
+    const ans = document.getElementById('answerInput').value.trim();
+    const errEl = document.getElementById('errorMsg');
+    errEl.style.display = 'none';
+
+    if (!sid) { showError('请填写学号'); return; }
+    if (!ans) { showError('回答内容不能为空'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+
+    try {
+        const res  = await fetch(SCRIPT_ROOT + '/api/sign/' + TOKEN + '/respond', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: sid, answer: ans, device_fp: getDeviceFp() }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            document.getElementById('formArea').style.display  = 'none';
+            document.getElementById('successBox').style.display = 'block';
+        } else {
+            showError(data.error || '提交失败，请重试');
+            btn.disabled = false;
+            btn.textContent = '提 交';
+        }
+    } catch(e) {
+        showError('网络异常，请检查连接后重试');
+        btn.disabled = false;
+        btn.textContent = '提 交';
+    }
+}
+
+function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+
+// Enter 键提交
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('formArea')?.style.display !== 'none') {
+        submitAnswer();
+    }
+});
+</script>
+</body>
+</html>

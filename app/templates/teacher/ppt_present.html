@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ sess.title }} · 演示</title>
+<style>
+/* ── CSS 变量双主题 ──────────────────────────────────────────── */
+:root, [data-theme="dark"] {
+    --bg:          #0a0e1a;
+    --bar-bg:      rgba(255,255,255,0.04);
+    --bar-border:  rgba(255,255,255,0.08);
+    --body-color:  #f0f4ff;
+    --slide-bg:    #000;
+    --url-color:   #4fc3f7;
+    --count-color: #4fc3f7;
+    --label-color: #888;
+    --ov-bg:       rgba(8,12,28,0.90);
+    --ov-title:    #e0e8ff;
+    --ov-text:     #ccc;
+    --ov-border:   rgba(255,255,255,0.12);
+    --bar-fill-a:  #4fc3f7;
+    --bar-fill-b:  #69f0ae;
+    --bar-fill-c:  #ffcc02;
+    --bar-track:   rgba(255,255,255,0.1);
+    --back-bg:     rgba(255,255,255,0.08);
+    --back-color:  #ccc;
+    --back-border: rgba(255,255,255,0.12);
+    --back-hover:  rgba(255,255,255,0.16);
+    --hint-color:  rgba(255,255,255,0.2);
+    --nav-bg:      rgba(255,255,255,0.1);
+    --nav-hover:   rgba(255,255,255,0.18);
+    --ib-bg:       rgba(255,255,255,0.1);
+    --ib-hover:    rgba(255,255,255,0.2);
+    --ib-active:   #0056b3;
+    --ib-stop:     #c0392b;
+    --toggle-bg:   rgba(255,255,255,0.10);
+    --toggle-color:#e0e0e0;
+    --toggle-border:rgba(255,255,255,0.15);
+    --empty-color: rgba(255,255,255,0.15);
+}
+[data-theme="light"] {
+    --bg:          #f0f2f8;
+    --bar-bg:      rgba(255,255,255,0.92);
+    --bar-border:  #dde2ec;
+    --body-color:  #222;
+    --slide-bg:    #e0e0e0;
+    --url-color:   #0056b3;
+    --count-color: #0056b3;
+    --label-color: #888;
+    --ov-bg:       rgba(255,255,255,0.94);
+    --ov-title:    #111;
+    --ov-text:     #444;
+    --ov-border:   rgba(0,0,0,0.1);
+    --bar-fill-a:  #1565c0;
+    --bar-fill-b:  #2e7d32;
+    --bar-fill-c:  #e65100;
+    --bar-track:   #e0e0e0;
+    --back-bg:     #ececec;
+    --back-color:  #444;
+    --back-border: #ccc;
+    --back-hover:  #e0e0e0;
+    --hint-color:  rgba(0,0,0,0.2);
+    --nav-bg:      #e8edf5;
+    --nav-hover:   #d4daf0;
+    --ib-bg:       #e8edf5;
+    --ib-hover:    #d4daf0;
+    --ib-active:   #0056b3;
+    --ib-stop:     #c0392b;
+    --toggle-bg:   #e2e8f4;
+    --toggle-color:#333;
+    --toggle-border:#bbb;
+    --empty-color: rgba(0,0,0,0.18);
+}
+
+/* ── 基础布局 ────────────────────────────────────────────────── */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    background: var(--bg);
+    color: var(--body-color);
+    font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.35s, color 0.35s;
+}
+
+/* ── 幻灯片区域 ─────────────────────────────────────────────── */
+.slide-outer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 5px 5px 0;
+}
+.slide-box {
+    width: min(100%, calc((100vh - 72px) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    background: var(--slide-bg);
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    transition: background 0.35s;
+}
+#slideImg {
+    width: 100%; height: 100%;
+    object-fit: contain; display: none;
+}
+#slideVid {
+    width: 100%; height: 100%;
+    object-fit: contain; display: none;
+    background: #000;
+}
+#slideHtml {
+    width: 100%; height: 100%;
+    border: none; display: none;
+    background: #fff;
+}
+.empty-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--empty-color);
+    font-size: 20px;
+    gap: 12px;
+    transition: color 0.35s;
+}
+.empty-screen .es-icon { font-size: 64px; }
+
+/* ── 弹幕层 ──────────────────────────────────────────────────── */
+.danmaku-layer {
+    position: absolute; inset: 0;
+    overflow: hidden; pointer-events: none;
+    z-index: 5;
+}
+@keyframes danmaku-fly {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-100% - 101vw)); }
+}
+.danmaku-item {
+    position: absolute;
+    left: 102%;
+    white-space: nowrap;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.55);
+    animation: danmaku-fly linear forwards;
+    pointer-events: none;
+}
+[data-theme="light"] .danmaku-item {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+    -webkit-text-stroke: 0.4px rgba(255,255,255,0.9);
+}
+
+/* ── 语音录入弹窗 ─────────────────────────────────────────── */
+.voice-modal-wrap {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center;
+}
+.voice-modal-wrap.open { display: flex; }
+.voice-modal {
+    background: #1a1f35;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 36px 40px 32px;
+    width: 560px; max-width: 90vw;
+    color: #e0e8ff;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+    position: relative;
+}
+[data-theme="light"] .voice-modal {
+    background: #fff; color: #222;
+    border-color: #ccc;
+}
+.vm-title {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 16px; letter-spacing: 0.5px;
+}
+.vm-transcript {
+    min-height: 72px; max-height: 120px; overflow-y: auto;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 15px; line-height: 1.6; color: #ccc;
+    margin-bottom: 16px; word-break: break-all;
+}
+[data-theme="light"] .vm-transcript { background: #f5f7fa; color: #444; border-color: #ddd; }
+.vm-timer {
+    font-size: 32px; font-weight: 800; color: #4fc3f7;
+    text-align: center; margin-bottom: 8px;
+    transition: color 0.3s;
+}
+.vm-timer.warning { color: #ffcc02; }
+.vm-timer.critical { color: #ef5350; }
+.vm-hint { font-size: 12px; color: #888; text-align: center; margin-bottom: 20px; }
+.vm-pulse {
+    display: inline-block; width: 14px; height: 14px;
+    border-radius: 50%; background: #e53935; margin-right: 8px;
+    animation: pulse 0.8s ease-in-out infinite alternate;
+    vertical-align: middle;
+}
+@keyframes pulse { from{opacity:1;transform:scale(1);} to{opacity:0.4;transform:scale(0.7);} }
+.vm-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.vm-btn {
+    padding: 10px 24px; border-radius: 10px; font-size: 15px;
+    font-weight: 700; cursor: pointer; border: 1px solid;
+    transition: background 0.2s;
+}
+.vm-btn-confirm { background: #0056b3; color: #fff; border-color: #0056b3; }
+.vm-btn-confirm:hover { background: #003d82; }
+.vm-btn-retry   { background: rgba(255,255,255,0.1); color: #ccc; border-color: rgba(255,255,255,0.2); }
+.vm-btn-retry:hover { background: rgba(255,255,255,0.18); }
+.vm-btn-cancel  { background: rgba(200,50,50,0.2); color: #ef9a9a; border-color: rgba(200,50,50,0.4); }
+.vm-btn-cancel:hover { background: rgba(200,50,50,0.35); }
+[data-theme="light"] .vm-btn-retry   { background: #eee; color: #444; border-color: #bbb; }
+[data-theme="light"] .vm-btn-cancel  { background: #fdecea; color: #c62828; border-color: #e57373; }
+.vm-preview-q {
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 14px;
+    background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;
+}
+[data-theme="light"] .vm-preview-q { background: #f0f4ff; color: #111; }
+.vm-preview-opts { margin-bottom: 18px; }
+.vm-preview-opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 15px;
+}
+[data-theme="light"] .vm-preview-opt { border-color: #eee; }
+.vm-opt-letter { font-size: 18px; font-weight: 800; min-width: 28px; color: #4fc3f7; }
+[data-theme="light"] .vm-opt-letter { color: #0056b3; }
+.vm-preview-opt input {
+    flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; padding: 6px 10px; color: #e0e8ff; font-size: 14px;
+}
+[data-theme="light"] .vm-preview-opt input { background: #fff; border-color: #ccc; color: #333; }
+.vm-vote-labels { margin-bottom: 18px; }
+.vm-vote-label-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.vm-vote-label-row label { min-width: 60px; font-size: 14px; }
+.vm-vote-label-row input {
+    flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; padding: 6px 10px; color: #e0e8ff; font-size: 14px;
+}
+
+.vm-auto-timer {
+    font-size: 13px; text-align: center;
+    color: rgba(255,255,255,0.55); margin-bottom: 10px; letter-spacing: 0.5px;
+}
+[data-theme="light"] .vm-auto-timer { color: rgba(0,0,0,0.45); }
+
+/* ── 互动结果悬浮卡 ─────────────────────────────────────────── */
+.interact-overlay {
+    position: absolute;
+    top: 4%;  right: 2%;
+    width: 60%;            /* 2× (was 30%) */
+    max-height: 90%;
+    background: var(--ov-bg);
+    border: 1px solid var(--ov-border);
+    border-radius: 16px;
+    padding: 28px 26px 24px;  /* 2× (was 16px 14px 14px) */
+    overflow-y: auto;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    transition: background 0.35s, border-color 0.35s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+.ov-title {
+    font-size: 26px;        /* 2× (was 14px) */
+    font-weight: 700;
+    color: var(--ov-title);
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    transition: color 0.35s;
+}
+.ov-total {
+    font-size: 20px;        /* 2× (was 11px) */
+    color: var(--label-color);
+    margin-top: 16px;
+    text-align: right;
+}
+
+/* 选择题 */
+.choice-row { margin-bottom: 18px; }   /* 2× */
+.choice-label-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;              /* 2× */
+    margin-bottom: 8px;     /* 2× */
+}
+.choice-letter {
+    font-size: 28px; font-weight: 800;  /* 2× */
+    color: var(--ov-title);
+    min-width: 32px;        /* 2× */
+    transition: color 0.35s;
+}
+.choice-count { font-size: 24px; color: var(--count-color); font-weight: 700; }  /* 2× */
+.choice-pct   { font-size: 20px; color: var(--label-color); margin-left: auto; } /* 2× */
+.bar-track {
+    height: 14px;           /* 2× (was 7px) */
+    background: var(--bar-track);
+    border-radius: 7px;
+    overflow: hidden;
+    transition: background 0.35s;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    transition: width 0.5s cubic-bezier(0.34,1.2,0.64,1);
+}
+.bar-fill.a { background: var(--bar-fill-a); }
+.bar-fill.b { background: var(--bar-fill-b); }
+.bar-fill.c { background: var(--bar-fill-c); }
+
+/* 投票拔河 */
+.tow-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;        /* 2× (was 13px) */
+    margin-bottom: 14px;    /* 2× */
+}
+.tow-name { color: var(--ov-text); font-weight: 700; transition: color 0.35s; }
+.tow-num  { font-size: 30px; font-weight: 800; color: var(--count-color); transition: color 0.35s; } /* 2× */
+.tow-track {
+    height: 88px;           /* 2× (was 48px), round to nice number */
+    border-radius: 44px;
+    overflow: hidden;
+    background: #888;
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+}
+.tow-left-bar {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: linear-gradient(90deg, #1565c0, #42a5f5);
+    transition: width 0.7s cubic-bezier(0.34, 1.4, 0.64, 1);
+    display: flex; align-items: center;
+    padding-left: 20px;
+}
+.tow-right-bar {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    background: linear-gradient(270deg, #b71c1c, #ef5350);
+    transition: width 0.7s cubic-bezier(0.34, 1.4, 0.64, 1);
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 20px;
+}
+.tow-center-line {
+    position: absolute;
+    left: 50%; top: -2px; bottom: -2px;
+    width: 5px;             /* 2× (was 3px) */
+    background: #fff;
+    transform: translateX(-50%);
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(255,255,255,0.6);
+}
+.tow-flag { font-size: 34px; color: #fff !important; }   /* 2× (was 18px) */
+
+/* 简答题 */
+.short-list { display: flex; flex-direction: column; gap: 8px; }  /* 2× */
+.short-item {
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;    /* 2× */
+    padding: 12px 18px;     /* 2× */
+    font-size: 22px;        /* 2× (was 12px) */
+    color: var(--ov-text);
+    border: 1px solid var(--ov-border);
+    word-break: break-all;
+    transition: background 0.35s, color 0.35s;
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+
+/* ── 底部工具栏 ─────────────────────────────────────────────── */
+.toolbar {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px 0 calc(clamp(70px, 20.5vmin, 220px) + min(20px, 3vmin) * 2 + 16px);
+    border-top: 1px solid var(--bar-border);
+    background: var(--bar-bg);
+    flex-shrink: 0;
+    transition: background 0.35s, border-color 0.35s;
+    backdrop-filter: blur(4px);
+    flex-wrap: nowrap;
+    overflow: hidden;
+    position: relative;
+    z-index: 20;
+}
+/* 二维码容器（可切换左下/左上）*/
+.qr-wrap {
+    position: fixed;
+    bottom: min(20px, 3vmin); left: min(20px, 3vmin);
+    z-index: 50;
+    /* 自适应：手机(vmin≈390px)→80px，桌面(vmin≈1080px)→221px→上限220px */
+    width: clamp(70px, 20.5vmin, 220px);
+    text-align: center;
+    transition: top 0.35s ease, bottom 0.35s ease;
+}
+.qr-wrap.top-left {
+    bottom: auto;
+    top: 20px;
+}
+.qr-wrap img {
+    width: clamp(70px, 20.5vmin, 220px); height: clamp(70px, 20.5vmin, 220px);
+    border-radius: 10px; padding: 4px; background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+    display: block;
+}
+/* 固定水印文字：位于左下角，被二维码遮挡时不可见，二维码上移后显现 */
+.qr-watermark {
+    position: fixed;
+    left: calc(min(20px, 3vmin) + clamp(6px, 1.8vmin, 20px));
+    bottom: min(20px, 3vmin);
+    z-index: 49;
+    font-size: clamp(8px, 2.2vmin, 24px);
+    font-weight: 900;
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(90deg, #007BFF, #00C6FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: clamp(1px, 0.6vmin, 6px);
+    line-height: 1.4;
+    user-select: none;
+    pointer-events: none;
+}
+/* 工具栏"请扫码互动"标签 */
+.qr-label {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    border: 1px solid var(--bar-border);
+    background: var(--ib-bg);
+    color: var(--body-color);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.tb-divider { width: 1px; height: 40px; background: var(--bar-border); flex-shrink: 0; margin: 0 4px; }
+
+.tb-nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.nav-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: var(--nav-bg); color: var(--body-color);
+    border: 1px solid var(--bar-border);
+    cursor: pointer; font-size: 14px;
+    transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover { background: var(--nav-hover); }
+.slide-counter { font-size: 13px; color: var(--body-color); min-width: 52px; text-align: center; }
+
+.tb-interact { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.ib {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--bar-border);
+    background: var(--ib-bg);
+    color: var(--body-color);
+    transition: background 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+.ib:hover { background: var(--ib-hover); }
+.ib.active { background: var(--ib-active) !important; border-color: var(--ib-active) !important; color: #fff !important; }
+.ib.stop   { background: var(--ib-stop);  border-color: var(--ib-stop);  color: #fff; display: none; }
+.ib.stop.show { display: inline-flex; }
+
+.tb-right { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink:0; }
+.theme-btn, .back-btn {
+    padding: 6px 12px;
+    border-radius: 7px; font-size: 12px;
+    cursor: pointer; text-decoration: none;
+    border: 1px solid; display: inline-flex; align-items: center; gap: 4px;
+    white-space: nowrap; transition: background 0.2s;
+}
+.theme-btn { background: var(--toggle-bg); color: var(--toggle-color); border-color: var(--toggle-border); }
+.back-btn  { background: var(--back-bg);   color: var(--back-color);   border-color: var(--back-border); }
+.back-btn:hover  { background: var(--back-hover); }
+.end-btn {
+    padding: 6px 14px;
+    border-radius: 7px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: none;
+    background: #c0392b; color: #fff;
+    display: inline-flex; align-items: center; gap: 4px;
+    white-space: nowrap; transition: background 0.2s;
+}
+.end-btn:hover { background: #922b21; }
+
+/* ── 手机端适配：QR 缩小（不影响 PC）────────────────────── */
+@media (max-width: 768px) {
+    .qr-wrap {
+        width: 70px !important;
+        bottom: 8px !important; left: 8px !important;
+    }
+    .qr-wrap img {
+        width: 70px !important; height: 70px !important;
+    }
+    .qr-watermark { display: none !important; }
+    .toolbar {
+        padding: 0 8px 0 88px !important;
+        height: 50px;
+        gap: 5px;
+    }
+    .qr-label { display: none; }
+    .tb-divider { display: none; }
+}
+
+/* ── 手机横屏 16:9 大屏模拟 ─────────────────── */
+@media (max-width: 900px) and (orientation: landscape) {
+    html, body { height: 100%; overflow: hidden; }
+    body { height: 100vh; }
+    /* 底部控制栏紧凑 */
+    .bottom-bar {
+        padding: 4px 10px;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+    .nav-btn, .ib-btn, .back-btn, .end-btn, .theme-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    /* 幻灯片撑满剩余空间 */
+    .slide-outer { padding: 2px 2px 0; }
+    /* 结果悬浮卡小型化 */
+    .interact-overlay {
+        width: 50%;
+        padding: 14px 12px;
+    }
+    .ov-title   { font-size: 14px; }
+    .ov-total   { font-size: 11px; }
+    .choice-letter { font-size: 16px; }
+    .choice-count { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 幻灯片区域 -->
+<div class="slide-outer">
+    <div class="slide-box" id="slideBox">
+        <img    id="slideImg"  src="" alt="幻灯片">
+        <video  id="slideVid"  src="" controls loop></video>
+        <iframe id="slideHtml" src="" sandbox="allow-scripts allow-same-origin"></iframe>
+        <div    class="empty-screen" id="emptyScreen">
+            <div class="es-icon">📋</div>
+            <div>请先在管理页上传幻灯片</div>
+        </div>
+        <!-- 弹幕层 -->
+        <div class="danmaku-layer" id="danmakuLayer"></div>
+        <!-- 互动结果悬浮卡 -->
+        <div class="interact-overlay" id="interactOverlay" style="display:none">
+            <!-- 选择题 -->
+            <div id="choicePanel" style="display:none">
+                <div class="ov-title" id="choiceTitle">📊 选择题</div>
+                <div id="choiceQuestion" style="font-size:22px;font-weight:700;color:var(--ov-text);margin-bottom:16px;display:none;"></div>
+                <div class="choice-row">
+                    <div class="choice-label-row">
+                        <span class="choice-letter">A</span>
+                        <span class="choice-count" id="cntA">0</span>
+                        <span id="optLabelA" style="font-size:19px;font-weight:600;color:var(--ov-text);flex:1;margin:0 8px;"></span>
+                        <span class="choice-pct"   id="pctA">0%</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill a" id="barA" style="width:0%"></div></div>
+                </div>
+                <div class="choice-row">
+                    <div class="choice-label-row">
+                        <span class="choice-letter">B</span>
+                        <span class="choice-count" id="cntB">0</span>
+                        <span id="optLabelB" style="font-size:19px;font-weight:600;color:var(--ov-text);flex:1;margin:0 8px;"></span>
+                        <span class="choice-pct"   id="pctB">0%</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill b" id="barB" style="width:0%"></div></div>
+                </div>
+                <div class="choice-row">
+                    <div class="choice-label-row">
+                        <span class="choice-letter">C</span>
+                        <span class="choice-count" id="cntC">0</span>
+                        <span id="optLabelC" style="font-size:19px;font-weight:600;color:var(--ov-text);flex:1;margin:0 8px;"></span>
+                        <span class="choice-pct"   id="pctC">0%</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill c" id="barC" style="width:0%"></div></div>
+                </div>
+                <div class="ov-total">共 <span id="choiceTotal">0</span> 人作答</div>
+            </div>
+
+            <!-- 投票 -->
+            <div id="votePanel" style="display:none">
+                <div class="ov-title">🗳️ 投票</div>
+                <div id="voteQuestion" style="font-size:22px;font-weight:700;color:var(--ov-text);margin-bottom:16px;display:none;"></div>
+                <div class="tow-labels">
+                    <div><div class="tow-name" id="voteLabel1">🔵 方案一</div><div class="tow-num" id="v1Num">0</div></div>
+                    <div style="text-align:right"><div class="tow-name" id="voteLabel2">方案二 🔴</div><div class="tow-num" id="v2Num">0</div></div>
+                </div>
+                <div class="tow-track">
+                    <div class="tow-left-bar"  id="towLeft"  style="width:50%"><span class="tow-flag">⚑</span></div>
+                    <div class="tow-right-bar" id="towRight" style="width:50%"><span class="tow-flag">⚑</span></div>
+                    <div class="tow-center-line"></div>
+                </div>
+                <div class="ov-total">共 <span id="voteTotal">0</span> 票</div>
+            </div>
+
+            <!-- 简答 -->
+            <div id="shortPanel" style="display:none">
+                <div class="ov-title">💬 简答</div>
+                <div id="shortQuestion" style="font-size:22px;font-weight:700;color:var(--ov-text);margin-bottom:12px;display:none;"></div>
+                <div class="short-list" id="shortList"></div>
+                <div class="ov-total">共 <span id="shortTotal">0</span> 条回答</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 固定水印（始终在左下角，被二维码遮挡时不可见）-->
+<div class="qr-watermark">致知力行</div>
+<!-- 二维码（可切换左下/左上）-->
+<div class="qr-wrap" id="qrWrap">
+    <img src="{{ request.script_root }}/api/ppt/{{ sess.token }}/qr.png" alt="QR">
+</div>
+
+<!-- ── 语音录入弹窗 ───────────────────────────────────── -->
+<div class="voice-modal-wrap" id="voiceModalWrap">
+  <div class="voice-modal">
+    <!-- 录音阶段 -->
+    <div id="vmStageRec">
+      <div class="vm-title"><span class="vm-pulse"></span><span id="vmTitle">正在录音…</span></div>
+      <div class="vm-transcript" id="vmTranscript">等待说话…</div>
+      <div class="vm-timer" id="vmTimerEl">30</div>
+      <div class="vm-hint" id="vmHint">说出停止词或等待倒计时结束自动处理</div>
+      <div class="vm-btns">
+        <button class="vm-btn vm-btn-confirm" onclick="stopVoiceCapture(true)">发布</button>
+        <button class="vm-btn vm-btn-cancel" onclick="cancelVoice()">取消</button>
+      </div>
+    </div>
+    <!-- 处理阶段 -->
+    <div id="vmStageProc" style="display:none">
+      <div class="vm-title">⏳ AI整理中，请稍候…</div>
+      <div class="vm-transcript" id="vmProcText" style="min-height:40px;"></div>
+    </div>
+    <!-- 预览确认阶段 -->
+    <div id="vmStagePreview" style="display:none">
+      <div class="vm-title">📋 确认题目内容</div>
+      <div class="vm-preview-q">
+        <div style="font-size:13px;color:#888;margin-bottom:6px;">题目（可修改）:</div>
+        <input id="vmPreviewQ" type="text" style="
+            width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 12px;
+            color:inherit;font-size:16px;font-weight:600;" maxlength="200">
+      </div>
+      <div id="vmPreviewOpts" class="vm-preview-opts"></div>
+      <div id="vmAutoTimerEl" class="vm-auto-timer">3 秒后自动发布</div>
+      <div class="vm-btns" style="margin-top:8px;">
+        <button class="vm-btn vm-btn-confirm" onclick="confirmVoice()">✅ 立即发布</button>
+        <button class="vm-btn vm-btn-retry"   onclick="retryVoice()">🔄 重录</button>
+        <button class="vm-btn vm-btn-cancel"  onclick="cancelVoice()">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 底部工具栏 -->
+<div class="toolbar">
+    <div class="qr-label">请扫码互动</div>
+
+    <div class="tb-divider"></div>
+
+    <div class="tb-nav">
+        <button class="nav-btn" onclick="navigate(-1)" title="上一页（←）">◀</button>
+        <span class="slide-counter" id="slideCounter">0 / 0</span>
+        <button class="nav-btn" onclick="navigate(1)"  title="下一页（→/空格）">▶</button>
+    </div>
+
+    <div class="tb-divider"></div>
+
+    <div class="tb-interact">
+        <button class="ib" id="btnChoice" onclick="startVoiceInteract('choice')">选择题</button>
+        <button class="ib" id="btnVote"   onclick="startVoiceInteract('vote')">投票</button>
+        <button class="ib" id="btnShort"  onclick="startVoiceInteract('short')">简答</button>
+        <button class="ib stop" id="btnStop" onclick="stopInteract()">■ 关闭互动</button>
+    </div>
+
+    <div class="tb-right">
+        <button class="theme-btn" id="qrPosBtn" onclick="toggleQrPos()" title="切换二维码位置">
+            <span id="qrPosLabel">左下</span>
+        </button>
+        <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">
+            <span id="themeIcon">🌙</span><span id="themeLabel">深色</span>
+        </button>
+        <a class="back-btn" href="{{ url_for('main.teacher_ppt') }}">← 管理</a>
+        <button class="end-btn" id="endBtn" onclick="endSession()">⏹ 结束</button>
+    </div>
+</div>
+
+<script>
+const TOKEN = "{{ sess.token }}";
+const SCRIPT_ROOT  = {{ request.script_root | tojson }};
+const IS_ADV_TEST  = {{ is_adv_test | tojson }};
+
+/* ── 主题 ─────────────────────────────────────────────── */
+let isDark = false;
+const DARK_COLORS  = ['#4fc3f7','#69f0ae','#ffcc02','#b39ddb','#80deea','#81d4fa','#ccff90'];
+const LIGHT_COLORS = ['#000080','#2e7d32','#8b4513','#1565c0','#6a1b9a','#00695c','#283593'];
+function randDanColor() {
+    const p = isDark ? DARK_COLORS : LIGHT_COLORS;
+    return p[Math.floor(Math.random() * p.length)];
+}
+function toggleTheme() {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.getElementById('themeIcon').textContent  = isDark ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = isDark ? '浅色' : '深色';
+}
+
+/* ── 二维码位置切换 ───────────────────────────────────── */
+let qrAtBottom = true;
+function toggleQrPos() {
+    qrAtBottom = !qrAtBottom;
+    const wrap = document.getElementById('qrWrap');
+    const lbl  = document.getElementById('qrPosLabel');
+    if (qrAtBottom) {
+        wrap.classList.remove('top-left');
+        lbl.textContent = '左下';
+    } else {
+        wrap.classList.add('top-left');
+        lbl.textContent = '左上';
+    }
+}
+
+/* ── 幻灯片翻页 ──────────────────────────────────────── */
+let currentSlide = 0, totalSlides = 0;
+
+async function navigate(delta) {
+    if (IS_ADV_TEST) {
+        // 助教本地翻页：拉取指定页展示，不写服务器，保留教师停留位置
+        const newIdx = totalSlides ? Math.max(0, Math.min(totalSlides - 1, currentSlide + delta)) : currentSlide;
+        if (newIdx === currentSlide) return;
+        currentSlide = newIdx;
+        updateCounter();
+        try {
+            const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/state?index=${currentSlide}`);
+            const d = await res.json();
+            totalSlides = d.total_slides;
+            displaySlide(d.slide);
+        } catch(e) {}
+        return;
+    }
+    const res  = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/slide`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ delta }),
+    });
+    if (res.ok) {
+        const d = await res.json();
+        currentSlide = d.current;
+        totalSlides  = d.total;
+        updateCounter();
+        await fetchAndShowSlide();
+    }
+}
+
+function updateCounter() {
+    document.getElementById('slideCounter').textContent =
+        totalSlides ? `${currentSlide + 1} / ${totalSlides}` : '0 / 0';
+}
+
+function displaySlide(slide) {
+    const img  = document.getElementById('slideImg');
+    const vid  = document.getElementById('slideVid');
+    const htm  = document.getElementById('slideHtml');
+    const emp  = document.getElementById('emptyScreen');
+    if (!slide) {
+        img.style.display = 'none'; vid.style.display = 'none';
+        htm.style.display = 'none'; emp.style.display = 'flex';
+        return;
+    }
+    emp.style.display = 'none';
+    if (slide.type === 'image') {
+        vid.style.display = 'none'; vid.pause && vid.pause(); vid.src = '';
+        htm.style.display = 'none'; htm.src = '';
+        img.src = slide.url;
+        img.style.display = 'block';
+    } else if (slide.type === 'html') {
+        img.style.display = 'none';
+        vid.style.display = 'none'; vid.pause && vid.pause(); vid.src = '';
+        htm.src = slide.url + '?_t=' + Date.now();   // 防缓存，确保最新内容
+        htm.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+        htm.style.display = 'none'; htm.src = '';
+        vid.src = slide.url; vid.style.display = 'block'; vid.play().catch(()=>{});
+    }
+}
+
+async function fetchAndShowSlide() {
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/state`);
+    const d   = await res.json();
+    totalSlides  = d.total_slides;
+    currentSlide = d.current_slide;
+    updateCounter();
+    displaySlide(d.slide);
+}
+
+/* ── 互动 ─────────────────────────────────────────────── */
+let currentInteract = null;   // {id, type}
+let pollTimer       = null;
+let seenShortCount  = 0;
+let seenReasonCount = 0;
+
+async function startInteract(type, question, options) {
+    const body = { type };
+    if (question) body.question = question;
+    if (options && options.length) body.options = options;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/interact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            alert('互动发布失败（HTTP ' + res.status + '），请检查是否已登录');
+            return;
+        }
+        const d = await res.json();
+        currentInteract = d;
+        seenShortCount  = 0;
+        seenReasonCount = 0;
+        showOverlay(type);
+        updateButtons(type);
+        updateOverlayMeta(d);
+        startPoll();
+    } catch(e) {
+        alert('互动发布异常：' + e + '\n可能是登录已过期，请刷新页面重新登录');
+    }
+}
+
+async function stopInteract() {
+    await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/interact`, { method: 'DELETE' });
+    currentInteract = null;
+    stopPoll();
+    hideOverlay();
+    updateButtons(null);
+}
+
+function showOverlay(type) {
+    document.getElementById('interactOverlay').style.display = 'block';
+    ['choice','vote','short'].forEach(t => {
+        document.getElementById(t + 'Panel').style.display = (t === type) ? 'block' : 'none';
+    });
+}
+function hideOverlay() {
+    document.getElementById('interactOverlay').style.display = 'none';
+}
+function updateButtons(activeType) {
+    ['Choice','Vote','Short'].forEach(t => {
+        document.getElementById('btn' + t).classList.toggle('active', t.toLowerCase() === activeType);
+    });
+    const stopBtn = document.getElementById('btnStop');
+    if (activeType) stopBtn.classList.add('show');
+    else            stopBtn.classList.remove('show');
+}
+
+/* ── 互动叠层标题/选项同步 ─────────────────────────────── */
+function updateOverlayMeta(ia) {
+    if (!ia) return;
+    const q    = ia.question || '';
+    const opts = ia.options  || [];
+    if (ia.type === 'choice') {
+        const qEl = document.getElementById('choiceQuestion');
+        qEl.textContent   = q;
+        qEl.style.display = q ? 'block' : 'none';
+        ['A','B','C'].forEach((l, i) => {
+            const el = document.getElementById('optLabel' + l);
+            if (el) el.textContent = opts[i] || '';
+        });
+    } else if (ia.type === 'vote') {
+        const qEl = document.getElementById('voteQuestion');
+        qEl.textContent   = q;
+        qEl.style.display = q ? 'block' : 'none';
+        if (opts.length >= 2) {
+            document.getElementById('voteLabel1').textContent = '🔵 ' + opts[0];
+            document.getElementById('voteLabel2').textContent = opts[1] + ' 🔴';
+        }
+    } else if (ia.type === 'short') {
+        const qEl = document.getElementById('shortQuestion');
+        qEl.textContent   = q;
+        qEl.style.display = q ? 'block' : 'none';
+    }
+}
+
+/* ── 轮询结果 ─────────────────────────────────────────── */
+function startPoll() { stopPoll(); pollTimer = setInterval(pollResults, 2000); pollResults(); }
+function stopPoll()  { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+
+async function pollResults() {
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/results`);
+    const d   = await res.json();
+    if (!d.interact) return;
+    const type = d.interact.type;
+    const r    = d.results;
+    // 同步题目显示（首次轮询时 ia 对象含 question/options）
+    updateOverlayMeta(d.interact);
+
+    if (type === 'choice') {
+        const t = r.total || 1;
+        ['A','B','C'].forEach(k => {
+            const c = r.counts[k] || 0;
+            const p = Math.round(c / t * 100);
+            document.getElementById('cnt' + k).textContent = c;
+            document.getElementById('pct' + k).textContent = p + '%';
+            document.getElementById('bar' + k).style.width = (r.total ? p : 0) + '%';
+        });
+        document.getElementById('choiceTotal').textContent = r.total;
+
+    } else if (type === 'vote') {
+        const v1 = r.v1 || 0, v2 = r.v2 || 0, tot = v1 + v2 || 1;
+        document.getElementById('v1Num').textContent   = v1;
+        document.getElementById('v2Num').textContent   = v2;
+        document.getElementById('voteTotal').textContent = v1 + v2;
+        const pct1 = Math.round(v1 / tot * 100);
+        const pct2 = 100 - pct1;
+        document.getElementById('towLeft').style.width  = pct1 + '%';
+        document.getElementById('towRight').style.width = pct2 + '%';
+        // 新理由 → 弹幕
+        const reasons = r.reasons || [];
+        reasons.slice(seenReasonCount).forEach(rv => {
+            const label = rv.side === '1' ? '🔵' : '🔴';
+            addDanmaku(label + ' ' + rv.text);
+        });
+        seenReasonCount = reasons.length;
+
+    } else if (type === 'short') {
+        const answers = r.answers || [];
+        document.getElementById('shortTotal').textContent = answers.length;
+        const list = document.getElementById('shortList');
+        list.innerHTML = answers.slice(0, 10).map(a =>
+            `<div class="short-item">${escHtml(a.text)}</div>`
+        ).join('');
+        // 第11条起 → 弹幕
+        answers.slice(Math.max(10, seenShortCount)).forEach(a => addDanmaku(a.text));
+        seenShortCount = answers.length;
+    }
+
+    // 如果互动已关闭，停止轮询但保留结果展示
+    if (!d.interact.is_active) stopPoll();
+}
+
+/* ── 弹幕 ─────────────────────────────────────────────── */
+function addDanmaku(text) {
+    const layer = document.getElementById('danmakuLayer');
+    const span  = document.createElement('span');
+    span.className   = 'danmaku-item';
+    span.textContent = text;
+    const topPct = 8 + Math.random() * 82;
+    const dur    = 7 + Math.random() * 5;
+    const size   = 18 + Math.floor(Math.random() * 10);
+    span.style.cssText = `top:${topPct}%;font-size:${size}px;color:${randDanColor()};animation-duration:${dur}s;`;
+    layer.appendChild(span);
+    span.addEventListener('animationend', () => span.remove());
+}
+
+/* ── 键盘快捷键 ────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter' || e.key === 'PageDown')  { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp')                                          { e.preventDefault(); navigate(-1); }
+});
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function applyStartSlideFromQuery() {
+    if (IS_ADV_TEST) return;   // 助教不写服务器，从教师停留位置开始浏览
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('start');
+    if (raw === null) return;
+    const index = Number(raw);
+    if (!Number.isInteger(index) || index < 0) return;
+    await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/slide`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index }),
+    });
+}
+
+/* ── 开始课堂日志 ──────────────────────────────── */
+async function startLog() {
+    try {
+        await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/start_log`, { method: 'POST' });
+    } catch(e) {}
+}
+
+/* ── 结束课堂：获取互动 → 复现弹窗 → 积分结算 ─── */
+async function endSession() {
+    if (!window.confirm('确定结束课堂？课堂互动记录将关闭并保存。')) return;
+    let interactions = [];
+    try {
+        const r = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/today_interactions`);
+        if (r.ok) {
+            const d = await r.json();
+            interactions = d.interactions || [];
+        }
+    } catch(e) {}
+    if (interactions.length === 0) {
+        // 无互动记录，直接结束
+        try { await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/end`, {method: 'POST'}); } catch(e) {}
+        window.location.href = SCRIPT_ROOT + '/teacher/ppt';
+        return;
+    }
+    // 有互动，打开复现弹窗
+    showReviewModal(interactions);
+}
+
+// 初始化
+(async function initPresentation() {
+    await applyStartSlideFromQuery();
+    await fetchAndShowSlide();
+    startLog();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   语音录入模块（教师端 PPT 课堂互动）
+   ─────────────────────────────────────────────────────────
+   录音方案：MediaRecorder（兼容所有浏览器，无需科学上网）
+   实时字幕：Web Speech API（可用则显示，不可用则静默录制）
+   ASR识别：停止后将音频发到 /api/voice/asr → 阿里云NLS
+   AI整理：识别文字发到 /api/voice/process → DeepSeek
+   ═══════════════════════════════════════════════════════════ */
+
+const HAS_MIC = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia &&
+                  (location.protocol === 'https:' || location.hostname === 'localhost'));
+
+// 预请求麦克风权限
+if (HAS_MIC) {
+    navigator.mediaDevices.getUserMedia({audio: true})
+        .then(s => s.getTracks().forEach(t => t.stop()))
+        .catch(() => {});
+}
+
+const VOICE_CONFIG = {
+    choice: { seconds: 40, stopWord: '请选择', hint: '说出题目和A/B/C三个选项，说"请选择"可自动停止' },
+    vote:   { seconds: 40, stopWord: '请投票', hint: '说出投票问题和蓝方/红方各自的立场，说"请投票"可自动停止' },
+    short:  { seconds: 40, stopWord: '请回答', hint: '说出简答题问题，说"请回答"可自动停止' },
+};
+
+let _vmType        = null;
+let _vmTimer       = null;
+let _vmCountdown   = 40;
+let _vmTranscript  = '';
+let _vmPreviewData = {};
+let _vmAutoTimer   = null;
+let _vmMediaRec    = null;
+let _vmStream      = null;
+let _vmMimeType    = '';
+let _vmSegChunks   = [];
+let _vmStopping    = false;
+let _vmProbeBusy   = false;
+let _vmLastAsrErr  = '';
+let _vmStopWaiter  = null;
+let _vmEmptySegs   = 0;          // 连续无语音片段计数（每片段≈1.6s，≥3次≈5s自动停止）
+let _vmSegTimer    = null;       // 分段录音的 stop 定时器（取消时需清理，否则还会触发一次 onstop）
+let _vmCancelled   = false;      // 用户点取消：阻止已在途的 stopVoiceCapture 继续走 AI 处理/自动发布
+
+async function recognizeVmBlob(blob) {
+    const mimeType = blob.type || _vmMimeType || 'audio/webm';
+    const ext = mimeType.includes('ogg') ? 'ogg' : 'webm';
+    const fd = new FormData();
+    fd.append('audio', blob, `segment.${ext}`);
+    const res = await fetch(SCRIPT_ROOT + '/api/voice/asr', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok && data.error) throw new Error(data.error);
+    if (data.error) throw new Error(data.error);
+    return (data.text || '').trim();
+}
+
+// 去除标点/空格后比较，解决停止词跨片段被标点切断导致漏检的问题
+function _normStop(s) {
+    return (s || '').replace(/[\s\u3000，。？！、,.?!…·～—\-]/g, '');
+}
+
+function updateVmTranscript(text) {
+    if (!text) return;
+    _vmTranscript = (_vmTranscript + text).slice(-500);
+    const disp = _vmTranscript.length > 100 ? '…' + _vmTranscript.slice(-100) : _vmTranscript;
+    document.getElementById('vmTranscript').textContent = disp || '（正在识别）';
+}
+
+async function handleVmSegmentStop(cfg) {
+    const blob = _vmSegChunks.length ? new Blob(_vmSegChunks, { type: _vmMimeType || 'audio/webm' }) : null;
+    _vmSegChunks = [];
+
+    if (blob && blob.size > 0) {
+        try {
+            _vmProbeBusy = true;
+            const chunkText = await recognizeVmBlob(blob);
+            _vmLastAsrErr = '';
+            if (chunkText && chunkText.trim()) {
+                _vmEmptySegs = 0;   // 有内容，重置静音计数
+                updateVmTranscript(chunkText);
+                // 归一化后检测：解决「请，选择」「请 选择」等标点/空格切断停止词的情况
+                if (_normStop(_vmTranscript).includes(cfg.stopWord)) {
+                    stopVoiceCapture(true);
+                    return;
+                }
+            } else {
+                _vmEmptySegs++;
+                if (_vmEmptySegs >= 3) {
+                    document.getElementById('vmTranscript').textContent = '（持续静音，已自动停止录音）';
+                    stopVoiceCapture(true);
+                    return;
+                }
+            }
+        } catch(e) {
+            _vmLastAsrErr = String(e);
+            _vmEmptySegs++;
+            if (_vmEmptySegs >= 3) {
+                stopVoiceCapture(true);
+                return;
+            }
+        } finally {
+            _vmProbeBusy = false;
+        }
+    } else {
+        // blob 为空也算一次静音
+        _vmEmptySegs++;
+        if (_vmEmptySegs >= 3) {
+            stopVoiceCapture(true);
+            return;
+        }
+    }
+
+    if (_vmStopping) {
+        if (_vmStopWaiter) {
+            _vmStopWaiter();
+            _vmStopWaiter = null;
+        }
+        return;
+    }
+    startVmSegmentRecorder(cfg);
+}
+
+function startVmSegmentRecorder(cfg) {
+    if (_vmStopping || !_vmStream) return;
+    _vmSegChunks = [];
+    _vmMediaRec = new MediaRecorder(_vmStream, _vmMimeType ? { mimeType: _vmMimeType } : {});
+    _vmMediaRec.ondataavailable = e => {
+        if (e.data && e.data.size > 0) _vmSegChunks.push(e.data);
+    };
+    _vmMediaRec.onstop = () => {
+        handleVmSegmentStop(cfg).catch(() => {});
+    };
+    _vmMediaRec.start();
+    _vmSegTimer = setTimeout(() => {
+        _vmSegTimer = null;
+        if (_vmMediaRec && _vmMediaRec.state !== 'inactive' && !_vmStopping) {
+            try { _vmMediaRec.stop(); } catch(e) {}
+        }
+    }, 1600);
+}
+
+/* ── 入口：替代原 startInteract 按钮 ──────────────────── */
+function startVoiceInteract(type) {
+    // 如果当前已有互动进行中，先关闭悬浮窗
+    if (currentInteract) {
+        stopPoll();
+        hideOverlay();
+        updateButtons(null);
+        currentInteract = null;
+    }
+    _vmType        = type;
+    _vmTranscript  = '';
+    _vmPreviewData = {};
+    _vmStopping    = false;
+    _vmProbeBusy   = false;
+    _vmLastAsrErr  = '';
+    _vmStopWaiter  = null;
+    _vmEmptySegs   = 0;
+    _vmSegTimer    = null;
+    _vmCancelled   = false;
+    const cfg = VOICE_CONFIG[type];
+    _vmCountdown   = cfg.seconds;
+
+    const _vmWrap = document.getElementById('voiceModalWrap');
+    _vmWrap.classList.add('open'); _vmWrap.style.display = '';   // 清除内联 display:none，交给 .open 类控制
+    showVmStage('rec');
+
+    const typeLabel = {choice:'选择题', vote:'投票', short:'简答'}[type];
+    document.getElementById('vmTitle').textContent      = `🎤 录音中・${typeLabel}`;
+    document.getElementById('vmTranscript').textContent = '等待说话…';
+    document.getElementById('vmHint').textContent       = cfg.hint;
+    const timerEl = document.getElementById('vmTimerEl');
+    timerEl.textContent = _vmCountdown;
+    timerEl.className   = 'vm-timer';
+
+    if (!HAS_MIC) {
+        // 无麦克风权限（HTTP非localhost）→ 直接进手动填写预览
+        clearInterval(_vmTimer);
+        document.getElementById('vmTranscript').textContent = '（请通过 https://example.com 访问以启用录音）';
+        document.getElementById('vmTimerEl').textContent = '--';
+        setTimeout(() => {
+            _vmPreviewData = { question: '', options: [], label1: '支持', label2: '反对' };
+            buildVmPreview();
+            showVmStage('preview');
+        }, 800);
+        return;
+    }
+
+    // 倒计时
+    _vmTimer = setInterval(() => {
+        _vmCountdown--;
+        timerEl.textContent = _vmCountdown;
+        if (_vmCountdown <= 10) timerEl.className = 'vm-timer warning';
+        if (_vmCountdown <= 5)  timerEl.className = 'vm-timer critical';
+        if (_vmCountdown <= 0)  stopVoiceCapture(true);
+    }, 1000);
+
+    // ── MediaRecorder 主录音 ──────────────────────────────
+    navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
+    .then(stream => {
+        _vmStream = stream;
+        _vmMimeType = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg']
+            .find(t => MediaRecorder.isTypeSupported(t)) || '';
+        document.getElementById('vmTranscript').textContent = '🎙️ 录音中（每约2秒识别一次，检测停止词）';
+        startVmSegmentRecorder(cfg);
+    })
+    .catch(err => {
+        clearInterval(_vmTimer);
+        document.getElementById('vmTranscript').textContent = '麦克风获取失败：' + err.message;
+        setTimeout(() => {
+            _vmPreviewData = { question: '', options: [], label1: '支持', label2: '反对' };
+            buildVmPreview();
+            showVmStage('preview');
+        }, 1500);
+    });
+}
+
+async function stopVoiceCapture(process) {
+    if (_vmStopping) return;
+    _vmStopping = true;
+    clearInterval(_vmTimer);
+
+    if (_vmMediaRec && _vmMediaRec.state !== 'inactive') {
+        await new Promise(resolve => {
+            _vmStopWaiter = resolve;
+            try { _vmMediaRec.stop(); } catch(e) { resolve(); }
+            setTimeout(resolve, 4000);
+        });
+    }
+    if (_vmStream) {
+        _vmStream.getTracks().forEach(t => t.stop());
+        _vmStream = null;
+    }
+    while (_vmProbeBusy) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    if (_vmCancelled) return;      // 录音已被用户取消，不再进入处理/预览/发布流程
+    if (!process) return;
+
+    // 去掉停止词之后的字幕文字（用于 proc 阶段显示）
+    const cfg = VOICE_CONFIG[_vmType];
+    let subtitleText = _vmTranscript;
+    const idx = subtitleText.indexOf(cfg.stopWord);
+    if (idx > 0) subtitleText = subtitleText.slice(0, idx).trim();
+
+    if (!subtitleText.trim()) {
+        _vmPreviewData = { question: subtitleText || '', options: [], label1: '支持', label2: '反对' };
+        buildVmPreview();
+        showVmStage('preview');
+        return;
+    }
+
+    showVmStage('proc');
+    document.getElementById('vmProcText').textContent = '识别内容：' + subtitleText.slice(0, 60) + (subtitleText.length > 60 ? '…' : '');
+
+    let recognizedText = subtitleText;
+    const idx2 = recognizedText.indexOf(cfg.stopWord);
+    if (idx2 > 0) recognizedText = recognizedText.slice(0, idx2).trim();
+
+    if (!recognizedText.trim()) {
+        alert('语音识别失败：' + (_vmLastAsrErr || '未识别到有效语音，请重试'));
+        _vmPreviewData = { question: '', options: [], label1: '支持', label2: '反对' };
+        buildVmPreview();
+        showVmStage('preview');
+        return;
+    }
+
+    processVoiceAI(recognizedText);
+}
+
+async function processVoiceAI(text) {
+    if (_vmCancelled) return;                       // 已取消：直接终止
+    const typeMap = { choice: 'choice', vote: 'vote', short: 'short' };
+    try {
+        const res  = await fetch(SCRIPT_ROOT + '/api/voice/process', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ text, type: typeMap[_vmType] }),
+        });
+        if (!res.ok) {
+            alert('AI处理失败（HTTP ' + res.status + '），请手动填写题目');
+            _vmPreviewData = { question: text.slice(0, 100), options: [], error: 'HTTP ' + res.status };
+        } else {
+            const data = await res.json();
+            if (_vmCancelled) return;                   // await 期间用户点了取消：丢弃结果
+            if (data.error && !data.question) {
+                alert('AI处理失败：' + data.error + '\n请手动填写题目');
+            }
+            _vmPreviewData = data;
+        }
+    } catch(e) {
+        if (_vmCancelled) return;
+        _vmPreviewData = { question: text.slice(0, 100), options: [], error: '网络错误' };
+    }
+    buildVmPreview();
+    showVmStage('preview');
+}
+
+function buildVmPreview() {
+    const d = _vmPreviewData;
+    document.getElementById('vmPreviewQ').value = d.question || '';
+
+    const optsEl = document.getElementById('vmPreviewOpts');
+    optsEl.innerHTML = '';
+
+    if (_vmType === 'choice') {
+        const opts = (d.options && d.options.length) ? d.options : ['', '', ''];
+        ['A','B','C'].forEach((letter, i) => {
+            const row = document.createElement('div');
+            row.className = 'vm-preview-opt';
+            row.innerHTML = `<span class="vm-opt-letter">${letter}</span>
+                <input type="text" id="vmOpt${letter}" value="${escHtml(opts[i] || '')}" maxlength="50" placeholder="选项${letter}内容">`;
+            optsEl.appendChild(row);
+        });
+    } else if (_vmType === 'vote') {
+        optsEl.innerHTML =
+            `<div class="vm-vote-labels">
+                <div class="vm-vote-label-row">
+                    <label>🔵 蓝方</label>
+                    <input type="text" id="vmVoteL1" value="${escHtml(d.label1||'支持')}" maxlength="20">
+                </div>
+                <div class="vm-vote-label-row">
+                    <label>🔴 红方</label>
+                    <input type="text" id="vmVoteL2" value="${escHtml(d.label2||'反对')}" maxlength="20">
+                </div>
+            </div>`;
+    }
+    // short: 只有 question，不需要额外选项
+}
+
+async function confirmVoice() {
+    if (_vmCancelled) return;                       // 已取消：绝不发布互动
+    if (_vmAutoTimer) { clearInterval(_vmAutoTimer); _vmAutoTimer = null; }
+    const question = document.getElementById('vmPreviewQ').value.trim();
+    let options = [];
+    if (_vmType === 'choice') {
+        options = [
+            document.getElementById('vmOptA').value.trim(),
+            document.getElementById('vmOptB').value.trim(),
+            document.getElementById('vmOptC').value.trim(),
+        ];
+    } else if (_vmType === 'vote') {
+        options = [
+            document.getElementById('vmVoteL1').value.trim() || '蓝方',
+            document.getElementById('vmVoteL2').value.trim() || '红方',
+        ];
+    }
+    closeVoiceModal();
+    await startInteract(_vmType, question, options);
+}
+
+function retryVoice() {
+    if (_vmAutoTimer) { clearInterval(_vmAutoTimer); _vmAutoTimer = null; }
+    closeVoiceModal();
+    startVoiceInteract(_vmType);
+}
+
+function cancelVoice() {
+    console.log('[voice] cancelVoice v2.2');
+    // 置停止标志：分段录音循环（handleVmSegmentStop）见此标志即不再启动新分段，
+    // 也不再走 AI 处理路径，确保“取消”真正生效、不会延迟自动发布互动。
+    _vmStopping = true;
+    _vmCancelled = true;           // 阻止已在途的 stopVoiceCapture 在 await 结束后继续处理/发布
+    if (_vmAutoTimer) { clearInterval(_vmAutoTimer); _vmAutoTimer = null; }
+    clearInterval(_vmTimer);
+    if (_vmSegTimer)  { clearTimeout(_vmSegTimer); _vmSegTimer = null; }
+    // 立即停 MediaRecorder：先摘掉 onstop，避免最后一片段再触发 handleVmSegmentStop
+    if (_vmMediaRec && _vmMediaRec.state !== 'inactive') {
+        try { _vmMediaRec.onstop = null; _vmMediaRec.stop(); } catch(e) {}
+    }
+    _vmMediaRec = null;
+    // 立即释放麦克风轨道，让浏览器麦克风指示灯随即熄灭（修复“要等到时间结束”）
+    if (_vmStream) {
+        _vmStream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} });
+        _vmStream = null;
+    }
+    closeVoiceModal();
+}
+
+function closeVoiceModal() {
+    const el = document.getElementById('voiceModalWrap');
+    if (el) { el.classList.remove('open'); el.style.display = 'none'; }  // 双保险：类 + 内联
+    clearInterval(_vmTimer);
+    if (_vmSegTimer) { clearTimeout(_vmSegTimer); _vmSegTimer = null; }
+    console.log('[voice] closeVoiceModal');
+}
+
+function showVmStage(stage) {
+    if (_vmCancelled) return;   // 已取消：不再切换阶段、不启动自动发布定时器
+    ['rec','proc','preview'].forEach(s => {
+        document.getElementById(`vmStage${s.charAt(0).toUpperCase()+s.slice(1)}`).style.display =
+            s === stage ? 'block' : 'none';
+    });
+    if (_vmAutoTimer) { clearInterval(_vmAutoTimer); _vmAutoTimer = null; }
+    if (stage === 'preview') {
+        let remain = 3;
+        const el = document.getElementById('vmAutoTimerEl');
+        if (el) el.textContent = `${remain} 秒后自动发布`;
+        _vmAutoTimer = setInterval(() => {
+            remain--;
+            const el2 = document.getElementById('vmAutoTimerEl');
+            if (el2) el2.textContent = remain > 0 ? `${remain} 秒后自动发布` : '正在发布…';
+            if (remain <= 0) { clearInterval(_vmAutoTimer); _vmAutoTimer = null; confirmVoice(); }
+        }, 1000);
+    }
+}
+
+// QR 尺寸已由 CSS clamp(60px, 18vmin, 220px) 自动适配，无需 JS 干预
+</script>
+
+<!-- ══════════════════════════════════════════════════════════
+     互动复现弹窗 + Confetti 动画
+     ══════════════════════════════════════════════════════════ -->
+<style>
+/* ── 互动复现弹窗 ────────────────────────────────────── */
+#reviewOverlay {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.88);
+    display: none;
+    align-items: center; justify-content: center;
+}
+#reviewOverlay.open { display: flex; }
+#confettiCanvas {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 600;
+}
+.rv-modal {
+    background: #1a1f35;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 32px 36px 28px;
+    width: min(680px, 94vw);
+    max-height: 88vh;
+    overflow-y: auto;
+    color: #e0e8ff;
+    box-shadow: 0 16px 56px rgba(0,0,0,0.7);
+    position: relative;
+}
+[data-theme="light"] .rv-modal {
+    background: #fff; color: #222;
+    border-color: #ddd;
+}
+.rv-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+}
+.rv-progress {
+    font-size: 13px; color: #888; font-weight: 600; letter-spacing: 0.5px;
+}
+.rv-type-badge {
+    font-size: 13px; padding: 3px 12px; border-radius: 12px;
+    background: rgba(79,195,247,0.2); color: #4fc3f7;
+    font-weight: 700;
+}
+[data-theme="light"] .rv-type-badge { background:#e3f2fd; color:#0056b3; }
+.rv-question {
+    font-size: 20px; font-weight: 700; color: #e0e8ff;
+    margin-bottom: 18px; line-height: 1.4;
+}
+[data-theme="light"] .rv-question { color: #111; }
+
+/* 选择题复现 */
+.rv-choice-row { margin-bottom: 14px; }
+.rv-choice-lbl {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+}
+.rv-letter {
+    font-size: 22px; font-weight: 800; min-width: 26px;
+}
+.rv-letter.rv-a { color: #4fc3f7; }
+.rv-letter.rv-b { color: #69f0ae; }
+.rv-letter.rv-c { color: #ffcc02; }
+[data-theme="light"] .rv-letter.rv-a { color: #1565c0; }
+[data-theme="light"] .rv-letter.rv-b { color: #2e7d32; }
+[data-theme="light"] .rv-letter.rv-c { color: #e65100; }
+.rv-opt-text { flex: 1; font-size: 16px; color: #ccc; }
+[data-theme="light"] .rv-opt-text { color: #555; }
+.rv-count { font-size: 18px; font-weight: 700; color: #4fc3f7; min-width: 28px; text-align: right; }
+[data-theme="light"] .rv-count { color: #0056b3; }
+.rv-pct { font-size: 14px; color: #888; min-width: 38px; text-align: right; }
+.rv-bar-track {
+    height: 10px; background: rgba(255,255,255,0.1);
+    border-radius: 5px; overflow: hidden;
+}
+[data-theme="light"] .rv-bar-track { background: #e0e0e0; }
+.rv-bar-fill {
+    height: 100%; border-radius: 5px;
+    transition: width 0.5s ease;
+}
+.rv-fill-a { background: #4fc3f7; }
+.rv-fill-b { background: #69f0ae; }
+.rv-fill-c { background: #ffcc02; }
+[data-theme="light"] .rv-fill-a { background: #1565c0; }
+[data-theme="light"] .rv-fill-b { background: #2e7d32; }
+[data-theme="light"] .rv-fill-c { background: #e65100; }
+
+/* 投票复现 */
+.rv-vote-labels {
+    display: flex; justify-content: space-between;
+    font-size: 18px; margin-bottom: 12px;
+}
+.rv-vote-name { font-weight: 700; color: #e0e8ff; }
+[data-theme="light"] .rv-vote-name { color: #222; }
+.rv-vote-num { font-size: 26px; font-weight: 800; color: #4fc3f7; }
+[data-theme="light"] .rv-vote-num { color: #0056b3; }
+.rv-tow-track {
+    height: 60px; border-radius: 30px; overflow: hidden;
+    background: #555; position: relative;
+}
+.rv-tow-left {
+    position: absolute; top:0; left:0; bottom:0;
+    background: linear-gradient(90deg, #1565c0, #42a5f5);
+    transition: width 0.6s ease;
+}
+.rv-tow-right {
+    position: absolute; top:0; right:0; bottom:0;
+    background: linear-gradient(270deg, #b71c1c, #ef5350);
+    transition: width 0.6s ease;
+}
+.rv-tow-center {
+    position: absolute; left: 50%; top:-2px; bottom:-2px;
+    width: 4px; background: #fff;
+    transform: translateX(-50%); z-index:2;
+}
+
+/* 简答复现 */
+.rv-short-hint {
+    font-size: 13px; color: #888; margin-bottom: 10px;
+}
+.rv-short-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 300px; overflow-y: auto;
+    padding-right: 4px;
+}
+.rv-short-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 16px; cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.rv-short-item:hover { background: rgba(255,255,255,0.12); }
+.rv-short-item.rv-short-selected {
+    background: rgba(79,195,247,0.15);
+    border-color: #4fc3f7;
+}
+[data-theme="light"] .rv-short-item {
+    background: #f5f7fa; border-color: #ddd; color: #333;
+}
+[data-theme="light"] .rv-short-item:hover { background: #e8edf5; }
+[data-theme="light"] .rv-short-item.rv-short-selected {
+    background: #e3f2fd; border-color: #1565c0;
+}
+.rv-short-check {
+    min-width: 20px; font-size: 16px; font-weight: 700;
+    color: #4fc3f7;
+}
+[data-theme="light"] .rv-short-check { color: #0056b3; }
+.rv-short-text { flex: 1; line-height: 1.4; word-break: break-all; }
+
+/* 通用 */
+.rv-total {
+    font-size: 13px; color: #888; text-align: right;
+    margin-top: 12px;
+}
+
+/* 答案选择栏 */
+.rv-ans-bar {
+    margin-top: 20px; padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+[data-theme="light"] .rv-ans-bar { border-color: #eee; }
+.rv-ans-label {
+    font-size: 14px; color: #aaa; margin-bottom: 10px;
+    font-weight: 600;
+}
+[data-theme="light"] .rv-ans-label { color: #666; }
+.rv-ans-btns {
+    display: flex; gap: 10px; flex-wrap: wrap;
+}
+.rv-ans-btn {
+    padding: 10px 22px; border-radius: 10px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08); color: #e0e8ff;
+    transition: all 0.2s;
+}
+.rv-ans-btn:hover { background: rgba(255,255,255,0.16); }
+.rv-ans-btn.rv-ans-selected {
+    background: #0056b3; border-color: #4fc3f7; color: #fff;
+}
+[data-theme="light"] .rv-ans-btn {
+    background: #eef2ff; border-color: #bbb; color: #333;
+}
+[data-theme="light"] .rv-ans-btn.rv-ans-selected {
+    background: #0056b3; border-color: #0056b3; color: #fff;
+}
+
+/* 底部操作区 */
+.rv-footer {
+    display: flex; gap: 12px; justify-content: flex-end;
+    margin-top: 24px; padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+[data-theme="light"] .rv-footer { border-color: #eee; }
+.rv-btn-confirm {
+    padding: 11px 28px; border-radius: 10px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer; border: none;
+    background: #0056b3; color: #fff;
+    transition: background 0.2s;
+}
+.rv-btn-confirm:hover { background: #003d82; }
+.rv-btn-skip {
+    padding: 11px 22px; border-radius: 10px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06); color: #aaa;
+    transition: background 0.2s;
+}
+.rv-btn-skip:hover { background: rgba(255,255,255,0.12); }
+[data-theme="light"] .rv-btn-skip {
+    border-color: #bbb; background: #eee; color: #555;
+}
+</style>
+
+<!-- 互动复现弹窗 -->
+<div id="reviewOverlay">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="rv-modal">
+        <div class="rv-header">
+            <div class="rv-progress" id="rvProgress">互动 1/1</div>
+            <div class="rv-type-badge" id="rvTypeBadge"></div>
+        </div>
+        <div id="rvStatsArea"></div>
+        <div class="rv-ans-bar" id="rvAnsBar"></div>
+        <div class="rv-footer">
+            <button class="rv-btn-skip" onclick="reviewSkip()">跳过</button>
+            <button class="rv-btn-confirm" id="rvConfirmBtn" onclick="reviewConfirm()">✓ 确认</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 高级测试账号隐藏互动控件和结束按钮
+if (IS_ADV_TEST) {
+    ['btnChoice','btnVote','btnShort','btnStop','endBtn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+
+/* ── Confetti 彩色纸片动画 ───────────────────────────── */
+function startConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bdf','#6bffe5','#ff9f43'];
+    const particles = Array.from({length: 160}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * 0.4 - canvas.height * 0.4,
+        r: Math.random() * 7 + 3,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        vx: (Math.random() - 0.5) * 4,
+        vy: Math.random() * 5 + 2,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.25,
+        shape: Math.random() > 0.4 ? 'rect' : 'circle',
+    }));
+    let startTs = null;
+    const DURATION = 2200;
+    function draw(ts) {
+        if (!startTs) startTs = ts;
+        const elapsed = ts - startTs;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const alpha = Math.max(0, 1 - elapsed / DURATION);
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += 0.12;
+            if (p.y > canvas.height + 30) { p.y = -20; p.x = Math.random() * canvas.width; p.vy = Math.random() * 4 + 2; }
+            ctx.save();
+            ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+            ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
+            if (p.shape === 'rect') ctx.fillRect(-p.r, -p.r * 0.4, p.r * 2, p.r * 0.8);
+            else { ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill(); }
+            ctx.restore();
+        });
+        if (elapsed < DURATION) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    requestAnimationFrame(draw);
+}
+
+/* ── 互动复现逻辑 ────────────────────────────────────── */
+let _rvInteractions = [];
+let _rvIndex = 0;
+let _rvAnswers = {};   // {ia_id: value}
+
+function showReviewModal(interactions) {
+    _rvInteractions = interactions;
+    _rvIndex = 0;
+    _rvAnswers = {};
+    document.getElementById('reviewOverlay').classList.add('open');
+    _renderReviewStep();
+}
+
+const RV_TYPE_LABELS = {choice: '📊 选择题', vote: '🗳️ 投票', short: '💬 简答'};
+
+function _renderReviewStep() {
+    const ia   = _rvInteractions[_rvIndex];
+    const tot  = _rvInteractions.length;
+    document.getElementById('rvProgress').textContent   = `互动 ${_rvIndex + 1} / ${tot}`;
+    document.getElementById('rvTypeBadge').textContent  = RV_TYPE_LABELS[ia.type] || ia.type;
+
+    const statsEl = document.getElementById('rvStatsArea');
+    const ansEl   = document.getElementById('rvAnsBar');
+    const opts    = ia.options || [];
+
+    if (ia.type === 'choice') {
+        const {counts, total: n} = ia.results;
+        const cur = _rvAnswers[ia.id];
+        const bars = ['A','B','C'].map(l => {
+            const cnt = counts[l] || 0;
+            const pct = n ? Math.round(cnt / n * 100) : 0;
+            return `<div class="rv-choice-row">
+                <div class="rv-choice-lbl">
+                    <span class="rv-letter rv-${l.toLowerCase()}">${l}</span>
+                    <span class="rv-opt-text">${opts[l.charCodeAt(0)-65] || ''}</span>
+                    <span class="rv-count">${cnt}</span>
+                    <span class="rv-pct">${pct}%</span>
+                </div>
+                <div class="rv-bar-track"><div class="rv-bar-fill rv-fill-${l.toLowerCase()}" style="width:${pct}%"></div></div>
+            </div>`;
+        }).join('');
+        statsEl.innerHTML = `<div class="rv-question">${ia.question || '选择题'}</div>${bars}<div class="rv-total">共 ${n} 人作答</div>`;
+        ansEl.innerHTML = `<div class="rv-ans-label">📌 请选择正确答案：</div>
+            <div class="rv-ans-btns">
+                ${ ['A','B','C'].map(l => `<button class="rv-ans-btn${cur===l?' rv-ans-selected':''}" onclick="reviewSelectChoice('${l}')">${l}</button>`).join('') }
+            </div>`;
+
+    } else if (ia.type === 'vote') {
+        const {v1, v2, total: n} = ia.results;
+        const lp = n ? v1/n*100 : 50, rp = n ? v2/n*100 : 50;
+        const cur = _rvAnswers[ia.id];
+        statsEl.innerHTML = `<div class="rv-question">${ia.question || '投票'}</div>
+            <div class="rv-vote-labels">
+                <div><div class="rv-vote-name">${opts[0]||'方案一'}</div><div class="rv-vote-num">${v1}</div></div>
+                <div style="text-align:right"><div class="rv-vote-name">${opts[1]||'方案二'}</div><div class="rv-vote-num">${v2}</div></div>
+            </div>
+            <div class="rv-tow-track">
+                <div class="rv-tow-left" style="width:${lp}%"></div>
+                <div class="rv-tow-right" style="width:${rp}%"></div>
+                <div class="rv-tow-center"></div>
+            </div>
+            <div class="rv-total">共 ${n} 票</div>`;
+        ansEl.innerHTML = `<div class="rv-ans-label">📌 请选择获胜方：</div>
+            <div class="rv-ans-btns">
+                <button class="rv-ans-btn${cur==='1'?' rv-ans-selected':''}" onclick="reviewSelectVote('1')">🔵 ${opts[0]||'方案一'}</button>
+                <button class="rv-ans-btn${cur==='2'?' rv-ans-selected':''}" onclick="reviewSelectVote('2')">🔴 ${opts[1]||'方案二'}</button>
+            </div>`;
+
+    } else {  // short
+        const answers = (ia.results.answers || []).slice(0, 20);
+        const cur = _rvAnswers[ia.id] || {sids: [], texts: []};
+        const items = answers.map((a, i) => {
+            const sel = cur.sids.includes(a.sid);
+            const safeText = (a.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            const safeJs   = (a.text||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+            return `<div class="rv-short-item${sel?' rv-short-selected':''}" onclick="reviewToggleShort('${a.sid}','${safeJs}',this)">
+                <span class="rv-short-check">${sel?'✓':''}</span>
+                <span class="rv-short-text">${safeText}</span>
+            </div>`;
+        }).join('');
+        statsEl.innerHTML = `<div class="rv-question">${ia.question||'简答题'}</div>
+            <div class="rv-short-hint">点击选择正确回答（可多选）</div>
+            <div class="rv-short-list">${items}</div>
+            <div class="rv-total">共 ${ia.results.total} 条回答</div>`;
+        ansEl.innerHTML = `<div class="rv-ans-label">📌 点击上方回答以标记为正确</div>`;
+    }
+}
+
+function reviewSelectChoice(letter) {
+    const ia = _rvInteractions[_rvIndex];
+    _rvAnswers[ia.id] = letter;
+    _renderReviewStep();
+}
+function reviewSelectVote(v) {
+    const ia = _rvInteractions[_rvIndex];
+    _rvAnswers[ia.id] = v;
+    _renderReviewStep();
+}
+function reviewToggleShort(sid, text, el) {
+    const ia = _rvInteractions[_rvIndex];
+    if (!_rvAnswers[ia.id]) _rvAnswers[ia.id] = {sids: [], texts: []};
+    const cur = _rvAnswers[ia.id];
+    const idx = cur.sids.indexOf(sid);
+    if (idx >= 0) { cur.sids.splice(idx,1); cur.texts.splice(idx,1); }
+    else { cur.sids.push(sid); cur.texts.push(text); }
+    const sel = cur.sids.includes(sid);
+    el.classList.toggle('rv-short-selected', sel);
+    el.querySelector('.rv-short-check').textContent = sel ? '✓' : '';
+}
+function reviewConfirm() {
+    startConfetti();
+    _rvIndex++;
+    if (_rvIndex >= _rvInteractions.length) _submitEndSession();
+    else _renderReviewStep();
+}
+function reviewSkip() {
+    _rvIndex++;
+    if (_rvIndex >= _rvInteractions.length) _submitEndSession();
+    else _renderReviewStep();
+}
+async function _submitEndSession() {
+    startConfetti();
+
+    // 延迟 2 秒让彩纸充分播放，再关闭弹窗和跳转
+    setTimeout(async () => {
+        document.getElementById('reviewOverlay').classList.remove('open');
+        try {
+            await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/end`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({correct_answers: _rvAnswers})
+            });
+        } catch(e) {}
+        // 关闭弹窗后再延迟 1 秒跳转，总延迟 3 秒
+        setTimeout(() => {
+            window.location.href = SCRIPT_ROOT + '/teacher/ppt';
+        }, 500);
+    }, 2000);
+}
+</script>
+</body>
+</html>

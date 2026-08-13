@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>课堂互动</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+    background: linear-gradient(135deg, #0d1b3e 0%, #1a2f5a 60%, #0d1b3e 100%);
+    min-height: 100vh;
+    font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* ── 顶部标题栏 ─────────────────────────── */
+.top-bar {
+    padding: 14px 20px 10px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.brand {
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5);
+    letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* ── 主内容区 ───────────────────────────── */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 12px 12px;
+    overflow-y: auto;
+}
+
+/* 等待状态 */
+.wait-screen {
+    flex: 1; min-height: 60vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; color: rgba(255,255,255,0.3);
+}
+.wait-screen .wi { font-size: 64px; margin-bottom: 14px; }
+.wait-screen .wt { font-size: 16px; }
+
+/* HTML 幻灯片推送区 */
+.slide-push {
+    display: none;
+    width: 100%;
+    padding: 0 0 10px;
+}
+.slide-push-label {
+    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45);
+    text-align: center; margin-bottom: 6px; letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.slide-push-frame {
+    width: 100%;
+    /* 竖屏满屏：填满视口剩余高度，可上下滚动 */
+    height: calc(100dvh - 64px);
+    min-height: 300px;
+    border: none;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    display: block;
+}
+
+/* 已提交状态 */
+.done-screen {
+    flex: 1; min-height: 60vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+}
+.done-icon  { font-size: 64px; margin-bottom: 14px; }
+.done-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.done-sub   { font-size: 14px; color: rgba(255,255,255,0.55); }
+
+/* ── 卡片 ───────────────────────────────── */
+.card {
+    background: rgba(255,255,255,0.94);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 400px;
+    padding: 24px 20px 22px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+}
+.card-label {
+    font-size: 11px; font-weight: 700; color: #0056b3;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.card-type-badge {
+    display: inline-block;
+    padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    margin-bottom: 12px;
+}
+.badge-choice { background: #e3f2fd; color: #1565c0; }
+.badge-vote   { background: #fce4ec; color: #ad1457; }
+.badge-short  { background: #e8f5e9; color: #2e7d32; }
+
+.card-hint {
+    font-size: 15px; color: #333; font-weight: 600;
+    line-height: 1.5; margin-bottom: 18px;
+}
+
+/* 学号输入 */
+.sid-row { margin-bottom: 16px; }
+.sid-label { font-size: 11px; color: #888; font-weight: 600; margin-bottom: 5px; }
+.sid-input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid #dde2ec; border-radius: 10px;
+    font-size: 15px; outline: none; transition: border-color 0.2s;
+    font-family: inherit; background: #fafbff; color: #222;
+}
+.sid-input:focus { border-color: #0056b3; }
+
+/* ── 选择题三大按钮 ─────────────────────── */
+.choice-btns {
+    display: flex; flex-direction: column; gap: 10px; width: 100%;
+}
+.choice-btn {
+    padding: 18px;
+    border-radius: 12px;
+    border: none;
+    font-size: 22px; font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    letter-spacing: 2px;
+}
+.choice-btn:active { transform: scale(0.97); }
+.btn-a { background: linear-gradient(135deg,#1565c0,#42a5f5); color: #fff; }
+.btn-b { background: linear-gradient(135deg,#2e7d32,#66bb6a); color: #fff; }
+.btn-c { background: linear-gradient(135deg,#e65100,#ff8f00); color: #fff; }
+
+/* ── 投票两大按钮 ───────────────────────── */
+.vote-btns { display: flex; gap: 10px; width: 100%; margin-bottom: 14px; }
+.vote-btn {
+    flex: 1; padding: 20px 8px;
+    border-radius: 14px; border: none;
+    font-size: 16px; font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.14);
+}
+.vote-btn:active { transform: scale(0.97); }
+.btn-v1 { background: linear-gradient(135deg,#1565c0,#42a5f5); color: #fff; }
+.btn-v2 { background: linear-gradient(135deg,#b71c1c,#ef5350); color: #fff; }
+.vote-btn .vb-sub { font-size: 11px; font-weight: 400; opacity: 0.8; display: block; margin-top: 4px; }
+
+.reason-row { margin-bottom: 14px; }
+.reason-label { font-size: 11px; color: #888; margin-bottom: 5px; display: block; }
+.reason-input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid #dde2ec; border-radius: 10px;
+    font-size: 13px; outline: none; resize: none; height: 68px;
+    font-family: inherit; background: #fafbff; color: #222;
+    transition: border-color 0.2s;
+}
+.reason-input:focus { border-color: #0056b3; }
+.reason-char { font-size: 10px; color: #bbb; text-align: right; margin-top: 2px; }
+
+/* ── 简答输入 ───────────────────────────── */
+.short-input-wrap { width: 100%; margin-bottom: 14px; }
+.short-textarea {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid #dde2ec; border-radius: 10px;
+    font-size: 15px; outline: none; resize: none; height: 100px;
+    font-family: inherit; background: #fafbff; color: #222;
+    transition: border-color 0.2s;
+}
+.short-textarea:focus { border-color: #0056b3; }
+.short-char { font-size: 10px; color: #bbb; text-align: right; margin-top: 2px; }
+
+/* 提交按钮 */
+.submit-btn {
+    width: 100%; padding: 14px;
+    background: #0056b3; color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 1px;
+}
+.submit-btn:hover  { background: #003d82; }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { background: #b0bec5; cursor: not-allowed; }
+
+/* 错误提示 */
+.err-msg {
+    font-size: 13px; color: #c0392b;
+    background: #fef0f0; border: 1px solid #f5c6cb;
+    border-radius: 8px; padding: 9px 12px; margin-bottom: 12px;
+    display: none;
+}
+
+/* ── 弹幕层（简答提交后） ───────────────── */
+.danmaku-wrap {
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 99;
+    display: none;
+}
+.danmaku-wrap.active { display: block; }
+@keyframes danmaku-fly {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-100% - 102vw)); }
+}
+.dan-item {
+    position: absolute;
+    left: 102vw;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 18px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.55);
+    animation: danmaku-fly linear forwards;
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="brand">✦ 致知力行 · 课堂互动</div>
+</div>
+
+<div class="main-area" id="mainArea">
+    <!-- HTML 幻灯片推送区（老师展示HTML页时显示） -->
+    <div class="slide-push" id="slidePush">
+        <div class="slide-push-label">📺 当前课件页面</div>
+        <iframe class="slide-push-frame" id="slidePushFrame" src="" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    </div>
+
+    <!-- 等待 -->
+    <div class="wait-screen" id="waitScreen">
+        <div class="wi">📡</div>
+        <div class="wt">等待老师开启互动…</div>
+    </div>
+
+    <!-- 互动卡片（Choice/Vote/Short 共用外壳） -->
+    <div class="card" id="interactCard" style="display:none">
+        <div class="card-label">📋 课堂互动</div>
+        <div class="card-type-badge" id="typeBadge"></div>
+        <!-- 题目文本（AI语音输入后显示） -->
+        <div id="cardQuestion" style="
+            display:none; margin: 8px 0 12px;
+            font-size:15px; font-weight:600; color:#222;
+            background:#f0f4ff; border-radius:8px;
+            padding:10px 14px; line-height:1.5;"></div>
+        <div class="card-hint" id="cardHint"></div>
+        <div class="err-msg" id="errMsg"></div>
+
+        <!-- 学号（所有类型共用） -->
+        <div class="sid-row" id="sidRow">
+            <div class="sid-label">学号</div>
+            <input class="sid-input" type="text" id="sidInput"
+                   placeholder="请输入你的学号" inputmode="numeric" maxlength="20">
+        </div>
+
+        <!-- 选择题区域 -->
+        <div id="choiceArea" style="display:none">
+            <div class="choice-btns">
+                <button class="choice-btn btn-a" onclick="submitChoice('A')">
+                    <span class="choice-letter-lbl">A</span>
+                    <span class="choice-opt-lbl" id="choiceOptA"></span>
+                </button>
+                <button class="choice-btn btn-b" onclick="submitChoice('B')">
+                    <span class="choice-letter-lbl">B</span>
+                    <span class="choice-opt-lbl" id="choiceOptB"></span>
+                </button>
+                <button class="choice-btn btn-c" onclick="submitChoice('C')">
+                    <span class="choice-letter-lbl">C</span>
+                    <span class="choice-opt-lbl" id="choiceOptC"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 投票区域 -->
+        <div id="voteArea" style="display:none">
+            <div class="vote-btns">
+                <button class="vote-btn btn-v1" onclick="selectVote('1')">
+                    <span id="voteBtn1Label">方案一</span><span class="vb-sub">点击投票</span>
+                </button>
+                <button class="vote-btn btn-v2" onclick="selectVote('2')">
+                    <span id="voteBtn2Label">方案二</span><span class="vb-sub">点击投票</span>
+                </button>
+            </div>
+            <div class="reason-row" id="reasonRow" style="display:none">
+                <label class="reason-label">💬 补充理由（可选，最多30字）</label>
+                <textarea class="reason-input" id="reasonInput"
+                          placeholder="说说你选择这个方案的理由…" maxlength="30"
+                          oninput="countReason()"></textarea>
+                <div class="reason-char"><span id="reasonCount">0</span>/30</div>
+            </div>
+            <div id="voteSubmitRow" style="display:none">
+                <button class="submit-btn" onclick="submitVote()">确认投票</button>
+            </div>
+        </div>
+
+        <!-- 简答区域 -->
+        <div id="shortArea" style="display:none">
+            <div class="short-input-wrap">
+                <textarea class="short-textarea" id="shortInput"
+                          placeholder="在这里输入你的回答（最多100字）…"
+                          maxlength="100" oninput="countShort()"></textarea>
+                <div class="short-char"><span id="shortCount">0</span>/100</div>
+            </div>
+            <button class="submit-btn" onclick="submitShort()">提 交</button>
+        </div>
+    </div>
+
+    <!-- 已提交 -->
+    <div class="done-screen" id="doneScreen" style="display:none">
+        <div class="done-icon">🎉</div>
+        <div class="done-title" id="doneTitle">已提交！</div>
+        <div class="done-sub">感谢参与，等待老师进行下一环节</div>
+    </div>
+</div>
+
+<!-- 弹幕层（简答提交后可见其他同学回答） -->
+<div class="danmaku-wrap" id="danmakuWrap">
+</div>
+
+<script>
+const TOKEN = "{{ sess.token }}";
+const SCRIPT_ROOT = {{ request.script_root | tojson }};
+
+let lastInteractId   = null;
+let submitted        = false;
+let currentType      = null;
+let selectedVote     = null;
+let seenDanmakuCount = 0;
+let danmakuTimer     = null;
+
+/* ── HTML 互动页参与上报（签到 cookie 关联学号，+0.2/页）── */
+const _reportedHtmlSlides = new Set();
+function reportHtmlInteract(slidePath) {
+    if (!slidePath || _reportedHtmlSlides.has(slidePath)) return;
+    _reportedHtmlSlides.add(slidePath);
+    try {
+        fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/html_interact`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({slide_path: slidePath}),
+            keepalive: true,
+        }).catch(() => {});
+    } catch(e) {}
+}
+
+const COLORS = ['#4fc3f7','#ffcc02','#69f0ae','#b39ddb','#80deea','#ccff90','#81d4fa'];
+function randColor() { return COLORS[Math.floor(Math.random() * COLORS.length)]; }
+
+/* ── 状态轮询 ────────────────────────────── */
+async function poll() {
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/state`);
+        const d   = await res.json();
+
+        // HTML 幻灯片推送：有 slide 且类型为 html 时显示 iframe
+        if (d.slide && d.slide.type === 'html') {
+            showSlidePush(d.slide.url);
+        } else {
+            hideSlidePush();
+        }
+
+        if (!d.interact) {
+            // 无互动
+            if (currentType) {
+                // 互动刚关闭：如果已提交，保留已提交状态；否则回到等待
+                if (!submitted) showWait();
+            }
+            currentType = null;
+            return;
+        }
+
+        const ia = d.interact;
+        if (ia.id !== lastInteractId) {
+            // 新互动开始
+            lastInteractId   = ia.id;
+            submitted        = false;
+            selectedVote     = null;
+            seenDanmakuCount = 0;
+            stopDanmaku();
+            showInteract(ia.type, ia);
+        }
+        currentType = ia.type;
+
+        // 简答且已提交 → 轮询弹幕
+        if (submitted && ia.type === 'short') {
+            fetchShortDanmaku();
+        }
+    } catch(e) {}
+}
+
+/* ── HTML 幻灯片推送 ─────────────────────── */
+let lastSlideUrl = null;
+
+/* 向 iframe 注入移动端响应式样式，使内容适配手机宽度 */
+function injectMobileStyle(frame) {
+    try {
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        if (!doc || !doc.head) return;
+        // 补充 viewport meta（如 HTML 缺少）
+        if (!doc.querySelector('meta[name="viewport"]')) {
+            const m = doc.createElement('meta');
+            m.setAttribute('name', 'viewport');
+            m.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=2');
+            doc.head.insertBefore(m, doc.head.firstChild);
+        }
+        // 防重复注入
+        if (doc.getElementById('_zzlx_mobile')) return;
+        const s = doc.createElement('style');
+        s.id = '_zzlx_mobile';
+        s.textContent = [
+            /* 让内容撑满手机屏宽，不做整体缩放 */
+            'html,body{max-width:100vw!important;overflow-x:hidden!important;}',
+            'img,video,canvas,svg,table{max-width:100%!important;height:auto!important;}',
+            'pre,code{white-space:pre-wrap!important;word-break:break-all!important;}',
+        ].join('');
+        doc.head.appendChild(s);
+    } catch(e) {} // 跨域时静默忽略
+}
+
+function showSlidePush(url) {
+    const panel = document.getElementById('slidePush');
+    const frame = document.getElementById('slidePushFrame');
+    panel.style.display = 'block';
+    if (url !== lastSlideUrl) {
+        frame.src = url;
+        lastSlideUrl = url;
+        // iframe 加载完成后：注入样式 + 绑定点击上报 HTML 互动参与
+        const slidePath = url.split('/').pop();   // 取文件名作为 slide_path
+        frame.onload = () => {
+            injectMobileStyle(frame);
+            try {
+                const doc = frame.contentDocument;   // allow-same-origin 可访问
+                if (doc && !doc.__htmlInteractBound) {
+                    doc.__htmlInteractBound = true;
+                    doc.addEventListener('click', () => reportHtmlInteract(slidePath));
+                }
+            } catch(e) {}   // 跨域等异常静默，不影响展示
+        };
+    }
+}
+function hideSlidePush() {
+    if (lastSlideUrl !== null) {
+        document.getElementById('slidePush').style.display = 'none';
+        document.getElementById('slidePushFrame').src = '';
+        lastSlideUrl = null;
+    }
+}
+
+/* ── 界面切换 ─────────────────────────────── */
+function showWait() {
+    document.getElementById('waitScreen').style.display   = 'flex';
+    document.getElementById('interactCard').style.display = 'none';
+    document.getElementById('doneScreen').style.display   = 'none';
+    stopDanmaku();
+}
+
+function showInteract(type, ia) {
+    document.getElementById('waitScreen').style.display   = 'none';
+    document.getElementById('doneScreen').style.display   = 'none';
+    document.getElementById('interactCard').style.display = 'block';
+
+    // 类型标签
+    const badge = document.getElementById('typeBadge');
+    const hints = { choice: '请选择你的答案（A / B / C）', vote: '请投票支持其中一个方案', short: '请输入你的回答' };
+    const labels = { choice: '📊 选择题', vote: '🗳️ 投票', short: '💬 简答题' };
+    const classes = { choice: 'badge-choice', vote: 'badge-vote', short: 'badge-short' };
+    badge.textContent = labels[type] || type;
+    badge.className   = 'card-type-badge ' + (classes[type] || '');
+    document.getElementById('cardHint').textContent = hints[type] || '请回答';
+
+    // 题目文本（若有）
+    const qEl = document.getElementById('cardQuestion');
+    const question = ia && ia.question;
+    if (question) { qEl.textContent = question; qEl.style.display = 'block'; }
+    else          { qEl.style.display = 'none'; }
+
+    // 选择题选项文字
+    if (type === 'choice' && ia && ia.options && ia.options.length) {
+        ['A','B','C'].forEach((l, i) => {
+            const optEl = document.getElementById('choiceOpt' + l);
+            if (optEl) optEl.textContent = ia.options[i] ? ' · ' + ia.options[i] : '';
+        });
+    } else {
+        ['A','B','C'].forEach(l => {
+            const optEl = document.getElementById('choiceOpt' + l);
+            if (optEl) optEl.textContent = '';
+        });
+    }
+
+    // 投票按钮标签
+    if (type === 'vote' && ia && ia.options && ia.options.length >= 2) {
+        document.getElementById('voteBtn1Label').textContent = ia.options[0] || '方案一';
+        document.getElementById('voteBtn2Label').textContent = ia.options[1] || '方案二';
+    } else {
+        document.getElementById('voteBtn1Label').textContent = '方案一';
+        document.getElementById('voteBtn2Label').textContent = '方案二';
+    }
+
+    // 显示/隐藏各区域
+    document.getElementById('choiceArea').style.display = type === 'choice' ? 'block' : 'none';
+    document.getElementById('voteArea').style.display   = type === 'vote'   ? 'block' : 'none';
+    document.getElementById('shortArea').style.display  = type === 'short'  ? 'block' : 'none';
+    document.getElementById('sidRow').style.display     = 'block';
+
+    // 重置
+    document.getElementById('errMsg').style.display = 'none';
+    document.getElementById('reasonRow').style.display    = 'none';
+    document.getElementById('voteSubmitRow').style.display= 'none';
+    selectedVote = null;
+    document.getElementById('reasonInput').value  = '';
+    document.getElementById('reasonCount').textContent = '0';
+    document.getElementById('shortInput').value  = '';
+    document.getElementById('shortCount').textContent = '0';
+}
+
+function showDone(title) {
+    document.getElementById('interactCard').style.display = 'none';
+    document.getElementById('waitScreen').style.display   = 'none';
+    document.getElementById('doneScreen').style.display   = 'flex';
+    document.getElementById('doneTitle').textContent      = title || '已提交！';
+    submitted = true;
+}
+
+/* ── 通用错误提示 ─────────────────────────── */
+function showErr(msg) {
+    const el = document.getElementById('errMsg');
+    el.textContent    = msg;
+    el.style.display  = 'block';
+}
+function clearErr() { document.getElementById('errMsg').style.display = 'none'; }
+
+/* ── 获取学号 ────────────────────────────── */
+function getSid() {
+    const sid = document.getElementById('sidInput').value.trim();
+    if (!sid) { showErr('请先填写学号'); return null; }
+    localStorage.setItem('ppt_sid', sid);
+    return sid;
+}
+
+/* ── 选择题 ──────────────────────────────── */
+async function submitChoice(answer) {
+    clearErr();
+    const sid = getSid(); if (!sid) return;
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/respond`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({student_id: sid, answer}),
+    });
+    const d = await res.json();
+    if (res.ok) showDone(`✅ 已选择 ${answer}！`);
+    else showErr(d.error || '提交失败');
+}
+
+/* ── 投票 ────────────────────────────────── */
+function selectVote(side) {
+    clearErr();
+    selectedVote = side;
+    document.getElementById('reasonRow').style.display    = 'block';
+    document.getElementById('voteSubmitRow').style.display= 'block';
+    // 高亮选中按钮
+    document.querySelectorAll('.vote-btn').forEach((btn, i) => {
+        btn.style.opacity = (String(i + 1) === side) ? '1' : '0.5';
+    });
+}
+
+function countReason() {
+    const v = document.getElementById('reasonInput').value;
+    document.getElementById('reasonCount').textContent = v.length;
+}
+
+async function submitVote() {
+    clearErr();
+    if (!selectedVote) { showErr('请先点击选择方案'); return; }
+    const sid = getSid(); if (!sid) return;
+    const reason = document.getElementById('reasonInput').value.trim();
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/respond`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({student_id: sid, answer: selectedVote, reason: reason || ''}),
+    });
+    const d = await res.json();
+    if (res.ok) showDone(`✅ 已投票支持方案${selectedVote}！`);
+    else showErr(d.error || '提交失败');
+}
+
+/* ── 简答 ────────────────────────────────── */
+function countShort() {
+    const v = document.getElementById('shortInput').value;
+    document.getElementById('shortCount').textContent = v.length;
+}
+
+async function submitShort() {
+    clearErr();
+    const answer = document.getElementById('shortInput').value.trim();
+    if (!answer) { showErr('回答不能为空'); return; }
+    const sid = getSid(); if (!sid) return;
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/respond`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({student_id: sid, answer}),
+    });
+    const d = await res.json();
+    if (res.ok) {
+        showDone('✅ 回答已提交！');
+        startDanmaku();   // 开始显示其他同学的弹幕
+    }
+    else showErr(d.error || '提交失败');
+}
+
+/* ── 简答弹幕 (提交后轮询其他回答) ─────── */
+function startDanmaku() {
+    document.getElementById('danmakuWrap').classList.add('active');
+    if (!danmakuTimer) danmakuTimer = setInterval(fetchShortDanmaku, 3000);
+}
+function stopDanmaku() {
+    document.getElementById('danmakuWrap').classList.remove('active');
+    if (danmakuTimer) { clearInterval(danmakuTimer); danmakuTimer = null; }
+}
+
+async function fetchShortDanmaku() {
+    try {
+        const res  = await fetch(SCRIPT_ROOT + `/api/ppt/${TOKEN}/results`);
+        const data = await res.json();
+        if (!data.interact || data.interact.type !== 'short') return;
+        const answers = data.results?.answers || [];
+        answers.slice(seenDanmakuCount).forEach(a => spawnDan(a.text));
+        seenDanmakuCount = answers.length;
+    } catch(e) {}
+}
+
+function spawnDan(text) {
+    const wrap = document.getElementById('danmakuWrap');
+    const span = document.createElement('span');
+    span.className   = 'dan-item';
+    span.textContent = text;
+    const top = 10 + Math.random() * 78;
+    const dur = 6  + Math.random() * 5;
+    const sz  = 16 + Math.floor(Math.random() * 8);
+    span.style.cssText = `top:${top}%;font-size:${sz}px;color:${randColor()};animation-duration:${dur}s;`;
+    wrap.appendChild(span);
+    span.addEventListener('animationend', () => span.remove());
+}
+
+/* ── 启动 ────────────────────────────────── */
+// 恢复上次学号
+const savedSid = localStorage.getItem('ppt_sid');
+if (savedSid) document.getElementById('sidInput').value = savedSid;
+
+poll();
+setInterval(poll, 2500);
+</script>
+</body>
+</html>

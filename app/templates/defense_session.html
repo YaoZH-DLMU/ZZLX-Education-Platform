@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+/* ── AI 总结（与 defense 页一致）── */
+.video-item { position: relative; }
+
+.title-row {
+    display: flex; align-items: flex-start; gap: 6px; margin-bottom: 0.5rem;
+}
+.title-row .title {
+    flex: 1; min-width: 0; margin-bottom: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.title-row-btns { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.ai-summary-btn {
+    flex-shrink: 0; width: auto !important;
+    background: linear-gradient(135deg, #4a6fa5, #6a9fd8);
+    color: #fff; border: none; border-radius: 10px;
+    padding: 3px 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 1px 4px rgba(74,111,165,0.35);
+    transition: opacity .2s; white-space: nowrap;
+}
+.ai-summary-btn:hover { opacity: .82; }
+.delete-video-btn {
+    flex-shrink: 0; width: auto !important;
+    background: #e74c3c; color: #fff; border: none; border-radius: 10px;
+    padding: 3px 10px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .2s; white-space: nowrap;
+}
+.delete-video-btn:hover { opacity: .8; }
+.video-stats {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap; margin-bottom: 0.4rem;
+}
+.video-stats .delete-video-btn { margin-left: auto; }
+.ai-summary-popup {
+    position: absolute; top: 50%; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.97);
+    border-radius: 0 0 4px 4px; border-top: 1.5px solid #4a6fa5;
+    z-index: 30; display: flex; flex-direction: column; overflow: hidden;
+}
+.ai-summary-header {
+    display: flex; align-items: center; padding: 8px 20px 8px 12px;
+    border-bottom: 1px solid #e0e8f4;
+    font-weight: 700; color: #4a6fa5; font-size: 14px; flex-shrink: 0; gap: 8px;
+}
+.ai-summary-header > span { flex: 1; white-space: nowrap; }
+.ai-summary-close {
+    width: 30px !important; height: 20px; background: #e8eef7; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 13px; color: #555;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0;
+}
+.ai-summary-close:hover { background: #fde; color: #c0392b; }
+.ai-summary-body {
+    padding: 8px 12px 10px; color: #333; font-size: 12.5px;
+    line-height: 1.65; white-space: pre-wrap; overflow-y: auto; flex: 1;
+}
+
+/* 返回按钮 */
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border-radius: 10px;
+    text-decoration: none; font-size: 15px; font-weight: 600;
+    transition: background 0.15s; margin-bottom: 18px;
+}
+.back-btn-crane { background: #fff8e1; border: 1.5px solid #ffd54f; color: #7a5800; }
+.back-btn-crane:hover { background: #fff0b3; }
+.back-btn-dumper { background: #e8eaf6; border: 1.5px solid #9fa8da; color: #283593; }
+.back-btn-dumper:hover { background: #d0d5f0; }
+
+/* 页标题 */
+.session-page-title { font-size: 24px; font-weight: 800; margin: 0 0 4px; }
+.session-page-sub { font-size: 14px; color: #6a8fb0; margin-bottom: 20px; }
+.title-crane { color: #7a5800; }
+.title-dumper { color: #283593; }
+
+/* ── 评论编辑 ── */
+.comment-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+.comment-header .comment-author { flex-shrink: 0; }
+.comment-header .comment-time   { flex-shrink: 0; }
+.comment-edit-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: auto !important;
+    background: none;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    color: #999;
+    font-size: 11px;
+    padding: 1px 7px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    line-height: 1.5;
+}
+.comment-edit-btn:hover { color: #0056b3; border-color: #0056b3; background: #f0f7ff; }
+.comment-hide-btn {
+    border: 1px dashed #e08080;
+    border-radius: 11px;
+    background: #fff;
+    color: #c44;
+    font-size: 11px;
+    padding: 1px 7px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    line-height: 1.5;
+}
+.comment-hide-btn:hover { color: #a00; border-color: #f44; background: #fff0f0; }
+.comment-hide-btn.hidden-comment { color: #999; border-color: #ccc; background: #f8f8f8; }
+.comment-edit-ta {
+    width: 100%;
+    border: 1px solid #b3cce8;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    min-height: 56px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+.comment-edit-ta:focus { border-color: #0056b3; }
+.comment-save-btn {
+    width: auto !important;
+    padding: 3px 14px;
+    background: #0056b3; color: #fff;
+    border: none; border-radius: 5px;
+    font-size: 12px; cursor: pointer;
+    transition: background 0.15s;
+}
+.comment-save-btn:hover { background: #003d82; }
+.comment-cancel-btn {
+    width: auto !important;
+    padding: 3px 10px;
+    background: #f0f0f0; color: #555;
+    border: 1px solid #ddd; border-radius: 5px;
+    font-size: 12px; cursor: pointer;
+    transition: background 0.15s;
+}
+.comment-cancel-btn:hover { background: #e0e0e0; }
+.vc-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.52); z-index: 9900;
+    align-items: center; justify-content: center;
+}
+.vc-modal.open { display: flex; }
+.vc-card {
+    background: #fff; border-radius: 16px;
+    width: min(92vw, 400px); padding: 22px 22px 18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    display: flex; flex-direction: column; gap: 14px;
+}
+.vc-header { display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700; color: #1a1a2e; }
+.vc-close-btn {
+    width: 28px !important; height: 28px;
+    background: #f0f0f0; border: none; border-radius: 50%;
+    cursor: pointer; font-size: 14px; color: #555;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; padding: 0; transition: background 0.15s;
+}
+.vc-close-btn:hover { background: #fde; color: #c0392b; }
+.vc-status { font-size: 13px; color: #555; text-align: center; min-height: 18px; margin: 0; }
+.vc-mic-wrap { display: flex; justify-content: center; }
+.vc-btn-mic {
+    width: auto !important; padding: 12px 28px;
+    background: linear-gradient(135deg, #0056b3, #4fc3f7);
+    color: #fff; border: none; border-radius: 28px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,86,179,0.35);
+    transition: opacity 0.2s, transform 0.1s;
+}
+.vc-btn-mic:hover { opacity: 0.88; }
+.vc-btn-mic:active { transform: scale(0.97); }
+.vc-btn-stop {
+    width: auto !important; padding: 12px 28px;
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    color: #fff; border: none; border-radius: 28px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(192,57,43,0.35);
+    transition: opacity 0.2s; animation: vc-pulse 1.2s infinite;
+}
+@keyframes vc-pulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(192,57,43,0.35); }
+    50%       { box-shadow: 0 4px 22px rgba(192,57,43,0.65); }
+}
+.vc-result-area { display: flex; flex-direction: column; gap: 6px; }
+.vc-result-label { font-size: 12px; color: #888; }
+.vc-result-text {
+    width: 100%; border: 1px solid #b3cce8; border-radius: 8px;
+    padding: 8px 10px; font-size: 14px; font-family: inherit;
+    resize: none; outline: none; transition: border-color 0.2s; box-sizing: border-box;
+}
+.vc-result-text:focus { border-color: #0056b3; }
+.vc-footer { display: flex; gap: 10px; justify-content: flex-end; }
+.vc-btn-publish {
+    width: auto !important; padding: 8px 22px;
+    background: #0056b3; color: #fff; border: none;
+    border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s;
+}
+.vc-btn-publish:hover:not(:disabled) { background: #003d82; }
+.vc-btn-publish:disabled { background: #b0bec5; cursor: not-allowed; }
+.vc-btn-cancel {
+    width: auto !important; padding: 8px 16px;
+    background: #f0f0f0; color: #555; border: 1px solid #ddd;
+    border-radius: 8px; font-size: 14px; cursor: pointer;
+    transition: background 0.15s;
+}
+.vc-btn-cancel:hover { background: #e0e0e0; }
+</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='shared/nav.css') }}?v=20260406b">
+    <link rel="stylesheet" href="{{ url_for('static', filename='defense.css') }}?v=20260407a">
+{% endblock %}
+
+{% block content %}
+<div style="margin-top: 0; padding: 20px;">
+    <!-- 上传按钮 -->
+    <div class="upload-button-container">
+        <a href="{{ url_for('main.upload_defense_video') }}" class="upload-button">
+            <i class="fas fa-upload"></i>上传答辩视频
+        </a>
+    </div>
+
+    <!-- 返回按钮 -->
+    <a href="{{ url_for('main.cooperation') }}"
+       class="back-btn back-btn-{{ color_cls }}">← 返回答辩次数选择</a>
+
+    <h1 class="session-page-title title-{{ color_cls }}">
+        {{ case_name }} · 第 {{ session_no }} 次答辩
+    </h1>
+    <p class="session-page-sub">共 {{ videos|length }} 个视频</p>
+
+    <!-- 视频列表 -->
+    <div class="all-videos">
+        <div class="videos-grid">
+            {% if videos %}
+                {% for video in videos %}
+                <div class="video-item" id="video-{{ video.id }}" data-video-id="{{ video.id }}">
+                    <div class="video-preview">
+                        <video src="{{ video.url }}" preload="none"
+                               {% if video.thumbnail %}poster="{{ video.thumbnail }}"{% endif %}
+                               controls controlsList="nodownload" oncontextmenu="return false"></video>
+                    </div>
+                    <div class="video-info">
+                        <div class="title-row">
+                            <div class="title">
+                                {%- if video.group_no and video.class_no -%}
+                                {%- if video.group_no == 15 -%}
+                                {{ case_name[4:] }}_第{{ video.class_no }}次答辩教师总结
+                                {%- else -%}
+                                {{ case_name[4:] }}_第{{ video.group_no }}小组第{{ video.class_no }}次答辩
+                                {%- endif -%}
+                                {%- else -%}{{ video.title }}{%- endif -%}
+                            </div>
+                            <div class="title-row-btns">
+                                <button class="ai-summary-btn" onclick="showAiSummary({{ video.id }}, this)"
+                                        title="AI 生成评论总结">✨ AI总结</button>
+                            </div>
+                        </div>
+                        <div class="video-stats">
+                            <span>评分: {{ video.average_rating|round(1) }}</span>
+                            <span>收藏: {{ video.favorites|length }}</span>
+                            <span>评论: {{ video.visible_comments|length }}</span>
+                            {% if current_user.is_authenticated and current_user.is_teacher %}
+                            <button class="delete-video-btn" onclick="deleteVideo({{ video.id }})"
+                                    title="删除视频（教师权限）">🗑 删除</button>
+                            {% endif %}
+                        </div>
+                        <div class="rating-section">
+                            <input type="number" class="rating-input" min="1" max="10" placeholder="1-10"
+                                   id="rating-{{ video.id }}">
+                            <button class="rate-btn {% if video.user_rating %}rated{% endif %}"
+                                    onclick="rateVideo({{ video.id }})">
+                                {{ '已评分' if video.user_rating else '评分' }}
+                            </button>
+                            <button class="favorite-btn {% if video.is_favorited %}favorited{% endif %}"
+                                    onclick="toggleFavorite({{ video.id }})">
+                                {{ '已收藏' if video.is_favorited else '收藏' }}
+                            </button>
+                        </div>
+                        <div class="comments-section">
+                            <div class="comment-input-section">
+                                <input type="text" class="comment-input" id="comment-input-{{ video.id }}"
+                                       placeholder="发表评论（或点发布用语音输入）...">
+                                <button class="comment-btn" onclick="addComment({{ video.id }})">发布</button>
+                            </div>
+                            <div class="comments-list" id="comments-{{ video.id }}">
+                                {% for comment in video.visible_comments %}
+                                <div class="comment-item" data-comment-id="{{ comment.id }}">
+                                    <div class="comment-header">
+                                        <span class="comment-author">{{ comment.author.username }}</span>
+                                        <span class="comment-time">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                        {% if current_user.is_authenticated and current_user.id == comment.user_id %}
+                                        <button class="comment-edit-btn"
+                                                onclick="startEditComment({{ comment.id }}, {{ video.id }})">编辑</button>
+                                        {% endif %}
+                                        {% if current_user.is_authenticated and current_user.is_teacher %}
+                                        <button class="comment-hide-btn{% if comment.is_hidden %} hidden-comment{% endif %}"
+                                                onclick="toggleHideComment({{ comment.id }}, {{ video.id }})"
+                                                title="{{ '取消屏蔽' if comment.is_hidden else '屏蔽此评论' }}">{{ '🔇' if comment.is_hidden else '屏蔽' }}</button>
+                                        {% endif %}
+                                    </div>
+                                    <div class="comment-content" id="cmt-content-{{ comment.id }}"
+                                         data-original="{{ comment.content | e }}">{{ comment.content }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AI 总结弹层 -->
+                    <div class="ai-summary-popup" id="ai-popup-{{ video.id }}" style="display:none;">
+                        <div class="ai-summary-header">
+                            <span>✨ AI 评论总结</span>
+                            <button class="ai-summary-close" onclick="closeAiSummary({{ video.id }})">✕</button>
+                        </div>
+                        <div class="ai-summary-body" id="ai-body-{{ video.id }}">加载中…</div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-videos">本次答辩暂无视频，快来上传第一个吧！</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 语音评论 Modal -->
+<div id="voiceCommentModal" class="vc-modal">
+    <div class="vc-card">
+        <div class="vc-header">
+            <span>🎤 语音评论</span>
+            <button class="vc-close-btn" onclick="closeVoiceCommentModal()">&#x2715;</button>
+        </div>
+        <p class="vc-status" id="vc-status">点击下方按钮开始录音</p>
+        <div class="vc-mic-wrap">
+            <button class="vc-btn-mic" id="vc-mic-btn" onclick="toggleVcRecording()">🎤 开始录音</button>
+        </div>
+        <div class="vc-result-area" id="vc-result-area" style="display:none">
+            <label class="vc-result-label">AI 整理后（可修改）：</label>
+            <textarea class="vc-result-text" id="vc-result-text" rows="4"
+                      placeholder="AI 整理后的评论将显示在这里…"></textarea>
+        </div>
+        <div class="vc-footer">
+            <button class="vc-btn-publish" id="vc-publish-btn" onclick="publishVoiceComment()" disabled>发布</button>
+            <button class="vc-btn-cancel" onclick="closeVoiceCommentModal()">取消</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>var SCRIPT_ROOT = {{ request.script_root | tojson }};</script>
+    <script src="{{ url_for('static', filename='js/defense.js') }}"></script>
+    <script>
+    async function showAiSummary(videoId, btn) {
+        const popup = document.getElementById('ai-popup-' + videoId);
+        const body  = document.getElementById('ai-body-'  + videoId);
+        if (popup.style.display !== 'none') { popup.style.display = 'none'; return; }
+        popup.style.display = 'block';
+        body.textContent = '⏳ AI 正在总结评论，请稍候…';
+        btn.disabled = true;
+        try {
+            const res = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}/summary`);
+            const data = await res.json();
+            body.textContent = data.summary || '暂无有效评论可总结。';
+        } catch (e) {
+            body.textContent = 'AI 总结请求失败，请稍后重试。';
+        } finally { btn.disabled = false; }
+    }
+    function closeAiSummary(videoId) {
+        document.getElementById('ai-popup-' + videoId).style.display = 'none';
+    }
+    async function deleteVideo(videoId) {
+        if (!confirm('确认删除该视频？此操作不可撤销。')) return;
+        try {
+            const res = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (res.ok) {
+                const card = document.getElementById('video-' + videoId);
+                if (card) card.remove();
+            } else { alert(data.message || '删除失败'); }
+        } catch (e) { alert('请求失败，请重试。'); }
+    }
+
+    /* ══ 语音评论（翻转课堂/答辩页）══ */
+    const HAS_MIC = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia &&
+                      (location.protocol === 'https:' || location.hostname === 'localhost'));
+    let _vcVideoId = null, _vcStream = null, _vcMediaRec = null, _vcStopping = false;
+    let _vcMimeType = '', _vcSegChunks = [], _vcTranscript = '', _vcTimer = null;
+    let _hiddenVideos = [];  // 暂存被移除的 video 节点
+    const _VC_MAX_SECS = 40;
+
+    function openVoiceCommentModal(videoId) {
+        if (!HAS_MIC) { alert('语音录音需要 HTTPS 环境，请通过 https:// 访问本站'); return; }
+        // 将所有 video 从 DOM 移除，彻底销毁 SurfaceView/TextureView 原生层
+        _hiddenVideos = [];
+        document.querySelectorAll('video').forEach(v => {
+            try { document.exitFullscreen && document.exitFullscreen(); } catch(e) {}
+            try { document.webkitExitFullscreen && document.webkitExitFullscreen(); } catch(e) {}
+            try { if (typeof v.webkitSetPresentationMode === 'function') v.webkitSetPresentationMode('inline'); } catch(e) {}
+            v.pause();
+            _hiddenVideos.push({ el: v, parent: v.parentNode, next: v.nextSibling });
+            v.parentNode.removeChild(v);
+        });
+        _vcVideoId = videoId; _vcTranscript = '';
+        document.getElementById('vc-status').textContent = '点击下方按钮开始录音';
+        document.getElementById('vc-result-area').style.display = 'none';
+        document.getElementById('vc-result-text').value = '';
+        const micBtn = document.getElementById('vc-mic-btn');
+        micBtn.textContent = '🎤 开始录音'; micBtn.className = 'vc-btn-mic';
+        document.getElementById('vc-publish-btn').disabled = true;
+        document.getElementById('voiceCommentModal').classList.add('open');
+    }
+    function closeVoiceCommentModal() {
+        _stopVcRecording(false);
+        document.getElementById('voiceCommentModal').classList.remove('open');
+        // 将 video 节点复位回原来的 DOM 位置
+        _hiddenVideos.forEach(({ el, parent, next }) => {
+            parent.insertBefore(el, next);
+        });
+        _hiddenVideos = [];
+        _vcVideoId = null;
+    }
+    function toggleVcRecording() {
+        if (_vcStream) { _stopVcRecording(true); } else { _startVcRecording(); }
+    }
+    function _startVcRecording() {
+        _vcTranscript = ''; _vcStopping = false; _vcSegChunks = [];
+        let secs = 0;
+        document.getElementById('vc-status').textContent = '🔴 录音中…说完后点击停止';
+        const micBtn = document.getElementById('vc-mic-btn');
+        micBtn.textContent = '⏹️ 停止'; micBtn.className = 'vc-btn-stop';
+        _vcTimer = setInterval(() => { secs++; if (secs >= _VC_MAX_SECS) _stopVcRecording(true); }, 1000);
+        navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
+        .then(stream => {
+            _vcStream = stream;
+            _vcMimeType = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg']
+                .find(t => MediaRecorder.isTypeSupported(t)) || '';
+            _startVcSegment();
+        })
+        .catch(err => {
+            clearInterval(_vcTimer); _vcTimer = null;
+            document.getElementById('vc-status').textContent = '麦克风获取失败：' + err.message;
+            const mb = document.getElementById('vc-mic-btn');
+            mb.textContent = '🎤 开始录音'; mb.className = 'vc-btn-mic';
+        });
+    }
+    function _startVcSegment() {
+        if (_vcStopping || !_vcStream) return;
+        _vcSegChunks = [];
+        _vcMediaRec = new MediaRecorder(_vcStream, _vcMimeType ? { mimeType: _vcMimeType } : {});
+        _vcMediaRec.ondataavailable = e => { if (e.data && e.data.size > 0) _vcSegChunks.push(e.data); };
+        _vcMediaRec.onstop = _handleVcSegStop;
+        _vcMediaRec.start();
+        setTimeout(() => {
+            if (_vcMediaRec && _vcMediaRec.state !== 'inactive' && !_vcStopping)
+                try { _vcMediaRec.stop(); } catch(e) {}
+        }, 1600);
+    }
+    async function _handleVcSegStop() {
+        const blob = _vcSegChunks.length ? new Blob(_vcSegChunks, { type: _vcMimeType || 'audio/webm' }) : null;
+        _vcSegChunks = [];
+        if (blob && blob.size > 0) {
+            try {
+                const fd = new FormData(), ext = (_vcMimeType||'').includes('ogg') ? 'ogg' : 'webm';
+                fd.append('audio', blob, `seg.${ext}`);
+                const res = await fetch(SCRIPT_ROOT + '/api/voice/asr', { method: 'POST', body: fd });
+                const d = await res.json();
+                if (d.text && d.text.trim()) {
+                    _vcTranscript += d.text.trim();
+                    document.getElementById('vc-status').textContent = '识别中：' + _vcTranscript.slice(-30) + '…';
+                }
+            } catch(e) {}
+        }
+        if (!_vcStopping) _startVcSegment();
+    }
+    async function _stopVcRecording(process) {
+        if (_vcStopping) return;
+        _vcStopping = true;
+        clearInterval(_vcTimer); _vcTimer = null;
+        if (_vcMediaRec && _vcMediaRec.state !== 'inactive') {
+            try { _vcMediaRec.stop(); } catch(e) {}
+            await new Promise(r => setTimeout(r, 500));
+        }
+        if (_vcStream) { _vcStream.getTracks().forEach(t => t.stop()); _vcStream = null; }
+        const mb = document.getElementById('vc-mic-btn');
+        if (mb) { mb.textContent = '🎤 开始录音'; mb.className = 'vc-btn-mic'; }
+        if (!process) return;
+        if (!_vcTranscript.trim()) {
+            const st = document.getElementById('vc-status');
+            if (st) st.textContent = '未识别到语音，请重试';
+            return;
+        }
+        const st = document.getElementById('vc-status');
+        if (st) st.textContent = '⏳ AI 整理中，请稍候…';
+        try {
+            const res = await fetch(SCRIPT_ROOT + '/api/voice/process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: _vcTranscript, type: 'video_comment' })
+            });
+            const d = await res.json();
+            if (d.error) { if (st) st.textContent = 'AI 整理失败：' + d.error; return; }
+            if (st) st.textContent = '请确认或修改后点“发布”';
+            const ta = document.getElementById('vc-result-text');
+            if (ta) ta.value = d.question || _vcTranscript;
+            const ra = document.getElementById('vc-result-area');
+            if (ra) ra.style.display = 'flex';
+            const pb = document.getElementById('vc-publish-btn');
+            if (pb) pb.disabled = false;
+        } catch(e) { if (st) st.textContent = '网络错误，请重试'; }
+    }
+    async function publishVoiceComment() {
+        const ta = document.getElementById('vc-result-text');
+        const text = ta ? ta.value.trim() : '';
+        if (!text) { alert('评论内容不能为空'); return; }
+        if (!_vcVideoId) return;
+        const vid = _vcVideoId;
+        closeVoiceCommentModal();
+        const inputEl = document.getElementById('comment-input-' + vid);
+        await _submitComment(vid, text, inputEl);
+    }
+
+    /* ── 教师屏蔽/取消屏蔽评论 ── */
+    async function toggleHideComment(commentId, videoId) {
+        const SROOT = (typeof SCRIPT_ROOT !== 'undefined') ? SCRIPT_ROOT : '';
+        try {
+            const r = await fetch(SROOT + `/api/videos/${videoId}/comments/${commentId}/hide`, {
+                method: 'POST',
+            });
+            const d = await r.json();
+            if (!r.ok) { alert(d.message); return; }
+            location.reload();
+        } catch (e) {
+            alert('网络错误，请重试');
+        }
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<!-- 引入必要的 JavaScript 文件 -->
+<script src="{{ url_for('static', filename='js/homework.js') }}"></script>
+<script>
+async function rateVideo(videoId) {
+    const ratingInput = document.getElementById(`rating-${videoId}`);
+    const rating = parseInt(ratingInput.value);
+    
+    if (isNaN(rating) || rating < 1 || rating > 10) {
+        alert('请输入1-10之间的评分');
+        return;
+    }
+
+    try {
+        const response = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}/rate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ rating })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            const rateBtn = ratingInput.nextElementSibling;
+            rateBtn.textContent = '已评分';
+            rateBtn.classList.add('rated');
+            updateVideoStats(videoId, data);
+        }
+    } catch (error) {
+        console.error('Rating error:', error);
+    }
+}
+
+async function toggleFavorite(videoId) {
+    try {
+        const response = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}/favorite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            const favoriteBtn = document.querySelector(`#video-${videoId} .favorite-btn`);
+            favoriteBtn.textContent = data.is_favorited ? '已收藏' : '收藏';
+            favoriteBtn.classList.toggle('favorited', data.is_favorited);
+            updateVideoStats(videoId, data);
+        }
+    } catch (error) {
+        console.error('Favorite error:', error);
+    }
+}
+
+async function addComment(videoId) {
+    const input = document.getElementById(`comment-input-${videoId}`);
+    const content = input.value.trim();
+    
+    if (!content) {
+        alert('请输入评论内容');
+        return;
+    }
+
+    try {
+        const response = await fetch(SCRIPT_ROOT + `/api/videos/${videoId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            input.value = '';
+            
+            const commentsList = document.getElementById(`comments-${videoId}`);
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            commentElement.innerHTML = `
+                <span class="comment-author">${data.comment.author}</span>
+                <span class="comment-time">${data.comment.created_at}</span>
+                <div class="comment-content">${data.comment.content}</div>
+            `;
+            commentsList.insertBefore(commentElement, commentsList.firstChild);
+            
+            updateVideoStats(videoId, data);
+        }
+    } catch (error) {
+        console.error('Comment error:', error);
+    }
+}
+
+function updateVideoStats(videoId, data) {
+    const videoCard = document.getElementById(`video-${videoId}`);
+    if (!videoCard) return;
+    
+    if (data.avg_rating !== undefined) {
+        videoCard.querySelector('.rating').textContent = `评分: ${data.avg_rating.toFixed(1)}`;
+    }
+    if (data.favorites_count !== undefined) {
+        videoCard.querySelector('.favorites').textContent = `收藏: ${data.favorites_count}`;
+    }
+    if (data.comments_count !== undefined) {
+        videoCard.querySelector('.comments').textContent = `讨论: ${data.comments_count}`;
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="search-header">
+        <h1>搜索结果</h1>
+        <div class="search-info">
+            关键词: "{{ query }}" | 类型: {{ "作业视频" if type == "homework" else "翻转课堂" }}
+        </div>
+    </div>
+    
+    <div class="all-videos">
+        <div class="videos-grid">
+            {% if videos %}
+                {% for video in videos %}
+                <div class="video-card" id="video-{{ video.id }}">
+                    <div class="video-preview">
+                        <video src="{{ video.url }}" preload="none" {% if video.thumbnail %}poster="{{ video.thumbnail }}"{% endif %} controls controlsList="nodownload" oncontextmenu="return false"></video>
+                    </div>
+                    <div class="video-info">
+                        <div class="title">{{ video.title }}</div>
+                        <div class="author">作者: {{ video.author.username }}</div>
+                        <div class="video-stats">
+                            <span class="rating">评分: {{ video.average_rating|round(1) }}</span>
+                            <span class="favorites">收藏: {{ video.favorites|length }}</span>
+                            <span class="comments">评论: {{ video.visible_comments|length }}</span>
+                        </div>
+                        <div class="rating-section">
+                            <input type="number" class="rating-input" min="1" max="10" placeholder="1-10"
+                                   id="rating-{{ video.id }}">
+                            <button class="rate-btn {% if video.user_rating %}rated{% endif %}"
+                                    onclick="rateVideo({{ video.id }})">
+                                {{ '已评分' if video.user_rating else '评分' }}
+                            </button>
+                            <button class="favorite-btn {% if video.is_favorited %}favorited{% endif %}"
+                                    onclick="toggleFavorite({{ video.id }})">
+                                {{ '已收藏' if video.is_favorited else '收藏' }}
+                            </button>
+                        </div>
+                        <div class="comments-section">
+                            <div class="comment-input-section">
+                                <input type="text" class="comment-input" id="comment-input-{{ video.id }}"
+                                       placeholder="发表评论...">
+                                <button class="comment-btn" onclick="addComment({{ video.id }})">发布</button>
+                            </div>
+                            <div class="comments-list" id="comments-{{ video.id }}">
+                                {% for comment in video.visible_comments %}
+                                <div class="comment-item">
+                                    <span class="comment-author">{{ comment.author.username }}</span>
+                                    <span class="comment-time">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                    <div class="comment-content">{{ comment.content }}</div>  
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <p>未找到相关视频</p>
+                    <p>请尝试其他关键词或切换视频类型</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.search-container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 0;  /* body padding-top 已处理导航栏偏移 */
+}
+
+.search-header {
+    margin-bottom: 30px;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.search-info {
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.all-videos {
+    margin-bottom: 2rem;
+}
+
+.videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    grid-column: 1 / -1;
+}
+</style>
+{% endblock %} 

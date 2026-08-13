@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}课堂PPT回看{% endblock %}
+
+{% block extra_css %}
+<style>
+.ppt-browse { max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+.ppt-browse h1 { font-size: 24px; color: #222; margin-bottom: 6px; }
+.ppt-browse .subtitle { color: #888; font-size: 13px; margin-bottom: 30px; }
+
+.session-list { display: flex; flex-direction: column; gap: 14px; }
+.session-card {
+    background: #fff; border: 1px solid #e8e8e8; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex; align-items: center; padding: 18px 22px; gap: 16px;
+    text-decoration: none; color: inherit;
+    transition: box-shadow 0.18s, transform 0.18s;
+    cursor: pointer;
+}
+.session-card:hover {
+    box-shadow: 0 6px 18px rgba(0,86,179,0.12);
+    transform: translateY(-1px);
+}
+.session-icon { font-size: 38px; flex-shrink: 0; }
+.session-info { flex: 1; min-width: 0; }
+.session-title { font-size: 16px; font-weight: 700; color: #222; }
+.session-meta { font-size: 12px; color: #999; margin-top: 4px; }
+.session-arrow { font-size: 20px; color: #bbb; flex-shrink: 0; }
+
+.empty-tip {
+    text-align: center; color: #bbb; font-size: 15px; padding: 80px 0;
+}
+.loading-tip {
+    text-align: center; color: #aaa; font-size: 14px; padding: 60px 0;
+}
+
+.group-header {
+    font-size: 13px; font-weight: 700; color: #666;
+    margin: 24px 0 10px; padding-bottom: 6px;
+    border-bottom: 2px solid #e8e8e8; letter-spacing: 0.5px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ppt-browse">
+    <h1>📽 课堂PPT回看</h1>
+    <p class="subtitle">老师已分享的课件，点击即可翻看幻灯片</p>
+
+    <div id="sessionList" class="session-list">
+        <div class="loading-tip">加载中…</div>
+    </div>
+</div>
+
+<script>
+const ROOT = {{ request.script_root | tojson }};
+
+async function loadSessions() {
+    const res = await fetch(ROOT + '/api/ppt/shared_sessions');
+    if (!res.ok) {
+        document.getElementById('sessionList').innerHTML =
+            '<div class="empty-tip">加载失败，请刷新重试</div>';
+        return;
+    }
+    const sessions = await res.json();
+    const el = document.getElementById('sessionList');
+    if (!sessions.length) {
+        el.innerHTML = '<div class="empty-tip">老师暂未分享任何课件 🌙</div>';
+        return;
+    }
+
+    // 按 group_label 分组
+    const groups = {};
+    for (const s of sessions) {
+        const g = s.group_label || '默认';
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(s);
+    }
+
+    const multiGroup = Object.keys(groups).length > 1;
+    let html = '';
+    for (const [gname, list] of Object.entries(groups)) {
+        if (multiGroup) {
+            html += `<div class="group-header">📂 ${escHtml(gname)}</div>`;
+        }
+        for (const s of list) {
+            html += renderCard(s);
+        }
+    }
+    el.innerHTML = html;
+}
+
+function renderCard(s) {
+    return `
+    <a class="session-card" href="${ROOT}/student/ppt/${s.token}/view">
+        <div class="session-icon">🖼</div>
+        <div class="session-info">
+            <div class="session-title">${escHtml(s.title)}</div>
+            <div class="session-meta">共 ${s.slide_count} 张幻灯片 &nbsp;·&nbsp; ${s.created_at}</div>
+        </div>
+        <div class="session-arrow">›</div>
+    </a>`;
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+loadSessions();
+</script>
+{% endblock %}

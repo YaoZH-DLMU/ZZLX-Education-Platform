@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}星级条件配置{% endblock %}
+
+{% block extra_css %}
+<style>
+.star-cfg-page {
+    max-width: 680px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+}
+.star-cfg-page h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 6px;
+}
+.star-cfg-page .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 28px;
+}
+.cfg-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    padding: 26px 28px;
+    margin-bottom: 20px;
+}
+.cfg-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0056b3;
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cfg-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+.cfg-row label {
+    flex: 1;
+    font-size: 14px;
+    color: #444;
+}
+.cfg-row input[type="number"], .cfg-row input[type="text"] {
+    width: 120px;
+    padding: 7px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+}
+.cfg-row input:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+}
+.cfg-row .unit { font-size: 12px; color: #aaa; }
+
+.fixed-card {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 20px 28px;
+    margin-bottom: 20px;
+    border: 1px solid #e8e8e8;
+}
+.fixed-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #666;
+    margin: 0 0 12px;
+}
+.fixed-item {
+    font-size: 13px;
+    color: #888;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+.fixed-item:last-child { border-bottom: none; }
+.fixed-item .star-num { color: #ffd700; font-weight: 700; min-width: 40px; }
+
+.save-btn {
+    width: 100%;
+    padding: 13px;
+    background: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.save-btn:hover { background: #003d80; }
+
+{% with messages = get_flashed_messages() %}{% if messages %}
+.flash-ok { background: #e8f8ee; color: #1a8c42; border-radius: 8px; padding: 10px 16px; font-size: 14px; margin-bottom: 16px; }
+{% endif %}{% endwith %}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="star-cfg-page">
+    <h2>⭐ 星级解锁条件配置</h2>
+    <p class="subtitle">第1-3星条件固定不变；第4、5星阈值可由教师调整。修改立即对全体学生生效。</p>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-ok">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- 固定条件（只读展示） -->
+    <div class="fixed-card">
+        <h3>固定条件（不可修改）</h3>
+        <div class="fixed-item"><span class="star-num">★ 第1星</span><span>已上传视频 + 已评分 + 已评论 + 已收藏 + 已发帖 + 已回帖（每项至少1次）</span></div>
+        <div class="fixed-item"><span class="star-num">★★ 第2星</span><span>第1星已点亮，且累计评分次数 ≥ 10</span></div>
+        <div class="fixed-item"><span class="star-num">★★★ 第3星</span><span>第2星已点亮，且论坛回复次数 ≥ 10</span></div>
+    </div>
+
+    <!-- 可配置条件 -->
+    <form method="POST">
+        <div class="cfg-card">
+            <h3>★★★★ 第4星阈值</h3>
+            <div class="cfg-row">
+                <label>所发视频总观看次数 ≥</label>
+                <input type="number" name="s4_min_views" value="{{ cfg.s4_min_views }}" min="0" max="9999">
+                <span class="unit">次</span>
+            </div>
+            <div class="cfg-row">
+                <label>所发视频总被收藏次数 ≥</label>
+                <input type="number" name="s4_min_favorites" value="{{ cfg.s4_min_favorites }}" min="0" max="9999">
+                <span class="unit">次</span>
+            </div>
+        </div>
+
+        <div class="cfg-card">
+            <h3>★★★★★ 第5星阈值</h3>
+            <div class="cfg-row">
+                <label>发布视频数量 ≥</label>
+                <input type="number" name="s5_min_videos" value="{{ cfg.s5_min_videos }}" min="1" max="99">
+                <span class="unit">个</span>
+            </div>
+            <div class="cfg-row">
+                <label>所有视频被评分均值 ≥</label>
+                <input type="number" name="s5_min_avg_rating" value="{{ cfg.s5_min_avg_rating }}"
+                       min="0" max="10" step="0.1">
+                <span class="unit">分（0-10）</span>
+            </div>
+            <div class="cfg-row">
+                <label>累计有效论坛回复 ≥</label>
+                <input type="number" name="s5_min_replies" value="{{ cfg.s5_min_replies }}" min="0" max="9999">
+                <span class="unit">条</span>
+            </div>
+        </div>
+
+        <button type="submit" class="save-btn">💾 保存配置</button>
+    </form>
+</div>
+{% endblock %}

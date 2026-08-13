@@ -1,0 +1,78 @@
+.upload-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.upload-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-container h2 {
+    margin-bottom: 2rem;
+    color: #333;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.subject-options {
+    display: flex;
+    gap: 2rem;
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.submit-btn, .cancel-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    flex: 1;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    flex: 1;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+} 

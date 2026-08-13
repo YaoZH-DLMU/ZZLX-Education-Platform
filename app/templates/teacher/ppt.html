@@ -1,0 +1,1066 @@
+{% extends "base.html" %}
+{% block title %}课堂PPT管理{% endblock %}
+
+{% block extra_css %}
+<style>
+.ppt-page { max-width: 960px; margin: 0 auto 60px; padding: 0 20px; }
+.ppt-page h1 { font-size: 24px; color: #222; margin-bottom: 6px; }
+.ppt-page .subtitle { color: #888; font-size: 13px; margin-bottom: 30px; }
+
+/* 创建表单 */
+.create-card {
+    background: #fff; border: 1px solid #e8e8e8; border-radius: 12px;
+    padding: 22px 28px; margin-bottom: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.create-card h2 { font-size: 15px; color: #333; margin-bottom: 12px; }
+.create-row { display: flex; gap: 10px; align-items: center; }
+.create-row input {
+    flex: 1; padding: 9px 14px; border: 1px solid #ccc; border-radius: 8px;
+    font-size: 14px; outline: none; transition: border-color 0.2s; font-family: inherit;
+}
+.create-row input:focus { border-color: #0056b3; }
+.btn-primary {
+    padding: 9px 24px; background: #0056b3; color: #fff; border: none;
+    border-radius: 8px; font-size: 14px; cursor: pointer; white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn-primary:hover { background: #003d82; }
+
+/* 课件列表 */
+.session-list { display: flex; flex-direction: column; gap: 18px; }
+.session-card {
+    background: #fff; border: 1px solid #e8e8e8; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;
+}
+.session-head {
+    padding: 18px 22px; display: flex; align-items: center; gap: 14px;
+}
+.session-title { font-size: 16px; font-weight: 700; color: #222; }
+.session-meta { font-size: 12px; color: #999; margin-top: 3px; }
+.session-info { flex: 1; min-width: 0; overflow: hidden; }
+.session-btns { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.btn-sm {
+    padding: 6px 14px; border-radius: 7px; font-size: 12px; cursor: pointer;
+    border: 1px solid; transition: background 0.2s; white-space: nowrap;
+}
+.btn-present { background: #0056b3; color: #fff; border-color: #0056b3; }
+.btn-present:hover { background: #003d82; }
+.btn-edit { background: #f0f6ff; color: #0056b3; border-color: #7ab2e8; }
+.btn-edit:hover { background: #dceeff; }
+.btn-danger { background: #fff; color: #c0392b; border-color: #d4a0a0; }
+.btn-danger:hover { background: #ffeaea; }
+.btn-share { background: #f5fff7; color: #27ae60; border-color: #7dca95; }
+.btn-share:hover { background: #e0f7e9; }
+.btn-shared { background: #27ae60; color: #fff; border-color: #1e9455; }
+.btn-shared:hover { background: #1e9455; }
+.btn-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; min-width: 80px; height: 60px; padding: 4px 8px;
+    font-size: 22px; line-height: 1; border-radius: 8px; cursor: pointer; border: 2px solid;
+    transition: background 0.2s;
+}
+.btn-card small { font-size: 13px; white-space: nowrap; font-weight: 500; }
+/* 制作面板：上传 / 编写 按钮 */
+.btn-panel {
+    display: inline-flex; align-items: center; gap: 5px;
+    width: 80px; height: 40px; padding: 0 10px; justify-content: center;
+    font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer;
+    border: 2px solid; white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
+}
+.empty-tip { color: #bbb; text-align: center; padding: 40px 0; font-size: 14px; }
+
+/* 幻灯片管理面板 */
+.slide-panel {
+    display: none; border-top: 1px solid #f0f0f0;
+    padding: 18px 22px; background: #fafafa;
+}
+.slide-panel.open { display: block; }
+.slide-panel-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: nowrap;
+}
+.slide-panel-head span {
+    font-size: 12px; font-weight: 600; color: #555; flex: 1;
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.upload-btn-wrap { position: relative; overflow: hidden; display: inline-block; }
+.upload-btn-wrap input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.slide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+.slide-item {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+    overflow: hidden; position: relative;
+}
+.slide-thumb {
+    width: 100%; aspect-ratio: 16/9; display: block;
+    background-color: #111;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    object-fit: cover;      /* 对 <img> 元素仍有效 */
+    -webkit-user-drag: none;
+}
+/* 透明覆盖层：覆盖在图片上方，拦截所有鼠标事件。<div> 没有内置图片拖拽行为 */
+.slide-drag-overlay {
+    position: absolute; inset: 0; z-index: 1;
+}
+.slide-thumb-video {
+    width: 100%; aspect-ratio: 16/9; background: #111;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+}
+.slide-num {
+    position: absolute; top: 5px; left: 7px; background: rgba(0,0,0,0.6);
+    color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 4px;
+    z-index: 2;  /* 在 overlay 上方 */
+}
+.slide-actions {
+    display: flex; flex-direction: column; align-items: stretch; gap: 3px;
+    padding: 6px; background: #f8f8f8; border-top: 1px solid #eee;
+}
+.slide-act-row {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.slide-actions button {
+    flex: 1; padding: 3px 4px; border: 1px solid #ddd; border-radius: 4px;
+    font-size: 11px; cursor: pointer; background: #fff; color: #444;
+    transition: background 0.15s;
+}
+.slide-actions button:hover { background: #eee; }
+.slide-actions .move-btn { color: #4a6fa5; font-weight: 700; border-color: #b3cce8; }
+.slide-actions .move-btn:hover { background: #e8f0fb; border-color: #4a6fa5; }
+.slide-actions .play-btn { color: #0b7285; border-color: #9ad6de; }
+.slide-actions .play-btn:hover { background: #e6f8fb; border-color: #0b7285; }
+.slide-actions .goto-btn { color: #7b4ea5; border-color: #c9b3e8; cursor: grab; }
+.slide-actions .goto-btn:hover { background: #f2ecfb; border-color: #7b4ea5; }
+.slide-actions .goto-btn:active { cursor: grabbing; }
+.slide-actions .del-btn { color: #c0392b; }
+.slide-actions .del-btn:hover { background: #ffeaea; }
+
+/* ── 课程分组标签栏 ──────────────────────────────────────── */
+.ppt-group-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 2px solid #e8e8e8;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.ppt-g-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+    white-space: nowrap;
+}
+.ppt-g-tab:hover { color: #0056b3; }
+.ppt-g-tab.active { color: #0056b3; border-bottom-color: #0056b3; }
+.ppt-g-tab .g-acts { display: none; gap: 2px; align-items: center; }
+.ppt-g-tab.active .g-acts { display: flex; }
+.ppt-g-tab .g-acts button {
+    background: none; border: none; cursor: pointer;
+    font-size: 11px; color: #bbb; padding: 1px 4px; border-radius: 3px; line-height: 1.4;
+}
+.ppt-g-tab .g-acts button:hover { color: #0056b3; background: #e8f0fb; }
+.ppt-g-tab .g-acts .del-g:hover { color: #fff; background: #c0392b; }
+.ppt-g-add {
+    padding: 9px 14px;
+    font-size: 13px;
+    color: #bbb;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s;
+    user-select: none;
+    align-self: center;
+}
+.ppt-g-add:hover { color: #0056b3; }
+
+.upload-progress {
+    font-size: 12px; color: #0056b3; margin-top: 8px; min-height: 16px;
+}
+
+/* ── HTML 编辑弹窗 ───────────────────────────────────── */
+.html-modal-wrap {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.6); align-items: center; justify-content: center;
+}
+.html-modal-wrap.open { display: flex; }
+.html-modal {
+    background: #fff; border-radius: 14px; padding: 20px 24px;
+    width: min(1000px, 96vw); min-height: 70vh; max-height: 92vh;
+    display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+.html-modal h3 { font-size: 16px; color: #222; margin: 0; flex-shrink: 0; }
+.html-editor-body {
+    display: flex; gap: 14px; flex: 1; min-height: 0; overflow: hidden;
+}
+.html-editor-code {
+    flex: 1; display: flex; flex-direction: column; min-width: 0; gap: 4px;
+}
+.html-editor-preview {
+    flex: 1; display: flex; flex-direction: column; min-width: 0; gap: 4px;
+}
+.html-modal textarea {
+    flex: 1; min-height: 0;
+    font-family: 'Consolas','Courier New',monospace; font-size: 13px;
+    border: 1px solid #ccc; border-radius: 8px; padding: 12px;
+    resize: none; outline: none; line-height: 1.6; color: #222;
+    background: #fafafa;
+}
+.html-modal textarea:focus { border-color: #0056b3; background: #fff; }
+.html-preview-wrap {
+    flex: 1; min-height: 0;
+    border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
+    background: #fff;
+}
+.html-preview-wrap iframe {
+    width: 100%; height: 100%; border: none;
+}
+.html-modal-btns { display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0; }
+.btn-html-preview { padding: 8px 18px; background: #f0f6ff; color: #0056b3; border: 1px solid #b3d0f5; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.btn-html-preview:hover { background: #dceeff; }
+.btn-html-save { padding: 8px 22px; background: #27ae60; color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.btn-html-save:hover { background: #1e8449; }
+.btn-html-cancel { padding: 8px 18px; background: #f5f5f5; color: #666; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.btn-html-cancel:hover { background: #ebebeb; }
+
+/* 手机竖握：用触控+竖屏双条件判断，不依赖像素宽度（避免高DPR机型误判） */
+@media (pointer: coarse) and (orientation: portrait) {
+    .session-head {
+        padding: 10px 12px; gap: 6px;
+        flex-direction: column; align-items: stretch;
+    }
+    .session-info { overflow: visible; }
+    .session-title { font-size: 15px; white-space: normal; }
+    .session-btns {
+        gap: 5px;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .btn-card {
+        min-width: 52px; height: 46px; padding: 3px 5px;
+        font-size: 16px; gap: 2px;
+    }
+    .btn-card small { font-size: 11px; }
+}
+
+/* ── 拖拽排序（长按 1.5 秒触发）──────────────────────────── */
+.slide-item.drag-selected {
+    outline: 3px solid #2e86c1;
+    outline-offset: 2px;
+    box-shadow: 0 0 14px rgba(46,134,193,0.45);
+    z-index: 2;
+}
+#drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.9;
+    transform: translate(2px, -50%);
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
+    display: none;
+}
+#drag-insert-line {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    background: #2e86c1;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(46,134,193,0.7);
+    display: none;
+}
+
+/* ── 互动内容悬浮窗 ─────────────────────────────── */
+.btn-interact { background:#eef6ff; color:#1a73e8; border-color:#b6d4fe; }
+.btn-interact:hover { background:#dceaff; }
+#iaPopover {
+    position: fixed; z-index: 9000; display: none;
+    width: 360px; max-width: 92vw; max-height: 70vh; overflow-y: auto;
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    border: 1px solid #e3e8f0; font-size: 13px;
+}
+#iaPopover.open { display: block; }
+.ia-pop-head {
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 10px 14px; border-bottom: 1px solid #f0f0f0;
+    font-weight: 700; color: #222; position: sticky; top: 0; background: #fff;
+}
+.ia-pop-close { background:none; border:none; font-size:18px; cursor:pointer; color:#999; line-height:1; }
+.ia-pop-close:hover { color: #333; }
+.ia-item { padding: 10px 14px; border-bottom: 1px solid #f5f5f5; }
+.ia-item:last-child { border-bottom: none; }
+.ia-item.blocked { background: #fafafa; opacity: 0.7; }
+.ia-item-top { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.ia-badge { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; white-space:nowrap; }
+.ia-badge.choice { background:#e8f5e9; color:#2e7d32; }
+.ia-badge.vote   { background:#fff3e0; color:#ef6c00; }
+.ia-badge.short  { background:#f3e5f5; color:#7b1fa2; }
+.ia-q { color:#333; font-size:13px; line-height:1.4; word-break:break-word; margin-bottom:6px; }
+.ia-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:11px; color:#999; }
+.ia-meta > span { flex:1 1 auto; min-width:0; }   /* 左侧文字占余量、允许收缩，不换行被挤 */
+.ia-block-btn {
+    border:1px solid #ddd; background:#fff; color:#555; border-radius:6px;
+    padding:3px 10px; font-size:12px; cursor:pointer; white-space:nowrap;
+    flex:0 0 auto; width:auto; min-width:0;     /* 覆盖全局 button{width:100%}，按内容宽 */
+}
+.ia-block-btn:hover { background:#f5f5f5; }
+.ia-block-btn.blocked { background:#e74c3c; color:#fff; border-color:#e74c3c; }
+.ia-del-btn {
+    border:1px solid #e6c0c0; background:#fff; color:#c0392b; border-radius:6px;
+    padding:3px 8px; font-size:12px; cursor:pointer; white-space:nowrap;
+    flex:0 0 auto; width:auto; min-width:0;
+}
+.ia-del-btn:hover { background:#ffeaea; }
+.ia-cnt-blk { color:#888; }   /* 互动角标里的屏蔽数 hN，深灰 */
+.ia-pop-empty { text-align:center; color:#aaa; padding:30px 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ppt-page">
+    <h1>课堂PPT</h1>
+    <p class="subtitle">上传幻灯片（图片或视频），开始演示并与同学互动</p>
+
+    <!-- 新建课件 -->
+    <div class="create-card">
+        <h2>➕ 新建课件</h2>
+        <div class="create-row">
+            <input type="text" id="titleInput" placeholder="课件名称，如：第三章第二节（可留空）" maxlength="100">
+            <button class="btn-primary" onclick="createSession()">创 建</button>
+        </div>
+    </div>
+
+    <!-- 课程分组标签栏 -->
+    <div class="ppt-group-bar" id="groupBar"></div>
+
+    <!-- 课件列表 -->
+    <div class="session-list" id="sessionList">
+        <div class="empty-tip">加载中…</div>
+    </div>
+</div>
+
+<!-- HTML 编辑弹窗（全局唯一）-->
+<div class="html-modal-wrap" id="htmlModalWrap">
+    <div class="html-modal">
+        <h3>✏️ 编写 HTML 幻灯片</h3>
+        <div class="html-editor-body">
+            <div class="html-editor-code">
+                <label style="font-size:12px;color:#888;">HTML 代码</label>
+                <textarea id="htmlCodeInput" placeholder="在此粘贴或输入 HTML 代码（支持 CSS、JavaScript 动画等）……"></textarea>
+            </div>
+            <div class="html-editor-preview">
+                <label style="font-size:12px;color:#888;">预览（点击"刷新预览"后可交互）</label>
+                <div class="html-preview-wrap">
+                    <iframe id="htmlPreviewFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="html-modal-btns">
+            <button class="btn-html-preview" onclick="refreshHtmlPreview()">🔄 刷新预览</button>
+            <button class="btn-html-save"    id="htmlSaveBtn"   onclick="saveHtmlSlide()">💾 保存到幻灯片</button>
+            <button class="btn-html-cancel"  onclick="closeHtmlModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 互动内容悬浮窗（单例，定位到触发按钮旁） -->
+<div id="iaPopover">
+    <div class="ia-pop-head">
+        <span id="iaPopTitle">课堂互动</span>
+        <button class="ia-pop-close" onclick="closeIaPopover()">×</button>
+    </div>
+    <div id="iaPopBody"><div class="ia-pop-empty">加载中…</div></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ROOT = {{ request.script_root | tojson }};
+let allSessions  = [];
+let currentGroup = null;       // null = 无分组过滤（显示全部）
+let allGroups    = [];         // 独立维护的分组列表，不预设"默认"
+
+/* ══════════════════════════════════════════════════════
+   分组管理
+   ══════════════════════════════════════════════════════ */
+function getGroups() {
+    // 合并服务器已有的分组 + 前端新建的空分组，去重
+    const fromSessions = allSessions.map(s => s.group_label).filter(g => g && g.trim());
+    return [...new Set([...allGroups, ...fromSessions])];
+}
+
+function renderGroupBar() {
+    const groups = getGroups();
+    if (groups.length && !groups.includes(currentGroup)) currentGroup = groups[0];
+    else if (!groups.length) currentGroup = null;
+    const bar = document.getElementById('groupBar');
+    bar.innerHTML = groups.map(g => `
+        <div class="ppt-g-tab ${g === currentGroup ? 'active' : ''}"
+             data-group="${escAttr(g)}" data-action="select">
+            <span>${escHtml(g)}</span>
+            <div class="g-acts">
+                <button data-group="${escAttr(g)}" data-action="rename"
+                        title="重命名分组">✏️</button>
+                <button class="del-g" data-group="${escAttr(g)}" data-action="delgroup"
+                        title="删除分组（需为空）">✕</button>
+            </div>
+        </div>`).join('') +
+        `<div class="ppt-g-add" data-action="addgroup">＋ 新建分组</div>`;
+}
+
+/* 事件委托：groupBar 内所有点击统一在此处理，无需 inline onclick */
+document.addEventListener('click', function(e) {
+    const bar = document.getElementById('groupBar');
+    if (!bar || !bar.contains(e.target)) return;
+    const action = e.target.closest('[data-action]')?.dataset?.action;
+    const group  = e.target.closest('[data-group]')?.dataset?.group;
+    if (action === 'addgroup')  { e.stopPropagation(); addGroup(); return; }
+    if (action === 'rename')    { e.stopPropagation(); renameGroup(group); return; }
+    if (action === 'delgroup')  { e.stopPropagation(); deleteGroup(group); return; }
+    if (action === 'select' && group !== undefined) { selectGroup(group); return; }
+});
+
+function selectGroup(name) {
+    currentGroup = name;
+    renderGroupBar();
+    renderFilteredSessions();
+}
+
+function addGroup() {
+    const name = prompt('请输入新分组名称（最多20字）：');
+    if (!name || !name.trim()) return;
+    const trimmed = name.trim().slice(0, 20);
+    if (!allGroups.includes(trimmed)) allGroups.push(trimmed);
+    currentGroup = trimmed;
+    renderGroupBar();
+    renderFilteredSessions();
+}
+
+async function renameGroup(oldName) {
+    const newName = prompt(`重命名分组"${oldName}"为：`, oldName);
+    if (!newName || !newName.trim() || newName.trim() === oldName) return;
+    const trimmed = newName.trim().slice(0, 20);
+    // 更新独立分组列表
+    const idx = allGroups.indexOf(oldName);
+    if (idx !== -1) allGroups[idx] = trimmed;
+    else if (!allGroups.includes(trimmed)) allGroups.push(trimmed);
+    // 批量更新服务器上属于该分组的课件
+    const toRename = allSessions.filter(s => s.group_label === oldName);
+    for (const s of toRename) {
+        await fetch(SCRIPT_ROOT + `/api/ppt/session/${s.id}/group`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({group_label: trimmed}),
+        });
+    }
+    if (currentGroup === oldName) currentGroup = trimmed;
+    await loadSessions();   // 重新拉取数据，renderGroupBar 会用 allGroups
+}
+
+async function deleteGroup(name) {
+    const inGroup = allSessions.filter(s => s.group_label === name);
+    if (inGroup.length > 0) {
+        alert(`❌ 分组"${name}"还有 ${inGroup.length} 个课件，请先删除或移走所有课件后再删除分组。`);
+        return;
+    }
+    if (!confirm(`确认删除空分组"${name}"？`)) return;
+    allGroups = allGroups.filter(g => g !== name);
+    if (currentGroup === name) currentGroup = allGroups[0] || null;
+    renderGroupBar();
+    renderFilteredSessions();
+}
+
+async function moveSession(sid) {
+    const groups = getGroups();
+    const s = allSessions.find(s => s.id === sid);
+    if (!s) return;
+    const cur = s.group_label || '';
+    const target = prompt(
+        `将课件移至哪个分组？\n当前分组：${cur}\n\n可用分组：\n${groups.join('\n')}`,
+        cur
+    );
+    if (!target || target.trim() === cur) return;
+    const trimmed = target.trim().slice(0, 20);
+    await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/group`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({group_label: trimmed}),
+    });
+    await loadSessions();
+}
+
+/* ══════════════════════════════════════════════════════
+   课件列表加载与渲染
+   ══════════════════════════════════════════════════════ */
+async function loadSessions() {
+    const res    = await fetch(SCRIPT_ROOT + '/api/ppt/sessions');
+    allSessions  = await res.json();
+    // 把服务器上已有的非空分组合并进 allGroups（防止刷新后丢失历史分组）
+    allSessions.forEach(s => {
+        const g = s.group_label;
+        if (g && g.trim() && !allGroups.includes(g)) allGroups.push(g);
+    });
+    renderGroupBar();
+    renderFilteredSessions();
+}
+
+function renderFilteredSessions() {
+    const groups = getGroups();
+    // 无分组时展示全部；有分组时按当前分组过滤
+    const filtered = groups.length
+        ? allSessions.filter(s => s.group_label === currentGroup)
+        : allSessions;
+    const el = document.getElementById('sessionList');
+    if (!filtered.length) {
+        el.innerHTML = '<div class="empty-tip">当前分组暂无课件，点击"新建课件"创建</div>';
+        return;
+    }
+    el.innerHTML = filtered.map(s => renderSession(s)).join('');
+}
+
+function renderSession(s) {
+    const multiGroup = getGroups().length > 1;
+    return `
+    <div class="session-card" id="sc-${s.id}">
+        <div class="session-head">
+            <div class="session-info">
+                <div class="session-title">${escHtml(s.title)}</div>
+                <div class="session-meta">🖼 ${s.slide_count} 张幻灯片 &nbsp;·&nbsp; ${s.created_at}</div>
+            </div>
+            <div class="session-btns">
+                <button class="btn-card btn-present"
+                    onclick="window.open(ROOT + '/teacher/ppt/${s.token}/present','_blank')">▶<small>演示</small></button>
+                <button class="btn-card btn-edit"
+                    onclick="toggleSlides(${s.id})">⚙️<small>制作</small></button>
+                ${s.interaction_count > 0 ? `<button class="btn-card btn-interact" id="ia-btn-${s.id}"
+                    onclick="toggleInteractions(${s.id}, this)" title="查看/屏蔽课堂互动">
+                    💬<small>互动(${s.interaction_count}${s.blocked_count > 0 ? ' <span class="ia-cnt-blk">h'+s.blocked_count+'</span>' : ''})</small></button>` : ''}
+                ${multiGroup ? `<button class="btn-card btn-edit" onclick="moveSession(${s.id})" title="移到其它分组">🔀<small>移组</small></button>` : ''}
+                <button class="btn-card ${s.is_shared ? 'btn-shared' : 'btn-share'}" id="share-btn-${s.id}"
+                    onclick="toggleShare(${s.id})" title="${s.is_shared ? '取消分享（学生将看不到此课件）' : '分享给学生查看'}">
+                    📢<small>${s.is_shared ? '已分享' : '分享'}</small></button>
+                <button class="btn-card btn-danger"
+                    onclick="deleteSession(${s.id})">🗑<small>删除</small></button>
+            </div>
+        </div>
+        <div class="slide-panel" id="sp-${s.id}">
+            <div class="slide-panel-head">
+                <span title="支持图片 PNG/JPG/WEBP、视频 MP4、HTML 代码页，按顺序展示">图片 / 视频 / HTML 幻灯片</span>
+                <div class="upload-btn-wrap" style="flex-shrink:0;">
+                    <button class="btn-panel btn-edit">⬆ 上传</button>
+                    <input type="file" accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.webm,.mov"
+                           multiple onchange="uploadSlides(${s.id}, this)">
+                </div>
+                <button class="btn-panel" style="background:#e8f8ee;color:#27ae60;border-color:#7dbd9a;"
+                        onclick="openHtmlModal(${s.id})">📝 编写</button>
+            </div>
+            <div class="upload-progress" id="up-${s.id}"></div>
+            <div class="slide-grid" id="sg-${s.id}">
+                ${renderSlides(s.id, s.slides)}
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderSlides(sid, slides) {
+    if (!slides.length) return '<div style="color:#bbb;font-size:13px;padding:8px 0;">暂无幻灯片，点击"上传"或"编写"添加</div>';
+    return slides.map((sl, i) => {
+        const token = allSessions.find(s => s.id === sid)?.token || '';
+        const url   = `/static/uploads/ppt/${token}/${sl.path}`;
+        let thumb;
+        if (sl.type === 'image') {
+            // 用 <div> + background-image 代替 <img>，彻底避开 Chrome 的 OS 级原生图片拖拽
+            const safeUrl = url.replace(/'/g, '%27');
+            thumb = `<div class="slide-thumb" style="background-image:url('${safeUrl}')"></div>`;
+        } else if (sl.type === 'video') {
+            thumb = `<div class="slide-thumb-video">🎬</div>`;
+        } else {
+            // HTML 幻灯片：用小 iframe 预览
+            thumb = `<iframe class="slide-thumb"
+                        src="${url}"
+                        sandbox="allow-scripts allow-same-origin"
+                        style="border:none;pointer-events:none;"
+                        loading="lazy"></iframe>`;
+        }
+        return `
+        <div class="slide-item" id="si-${sid}-${i}" data-sid="${sid}" data-idx="${i}">
+            <div style="position:relative;">
+                ${thumb}
+                <div class="slide-drag-overlay"></div>
+                <span class="slide-num">${i + 1}</span>
+            </div>
+            <div class="slide-actions">
+                <div class="slide-act-row">
+                    <button class="move-btn" onclick="moveSlide(${sid},${i},'up')" title="上移">▲</button>
+                    <button class="move-btn" onclick="moveSlide(${sid},${i},'down')" title="下移">▼</button>
+                    <button class="del-btn" onclick="deleteSlide(${sid},${i})">删除</button>
+                </div>
+                <div class="slide-act-row">
+                    <button class="play-btn" onclick="playFromSlide(${sid},${i})" title="从此页开始演示">▶ 播放</button>
+                    <button class="goto-btn" title="单击→移到指定位置 | 长按(0.5s)→拖动排序"
+                        onmousedown="startDragPress(event,${sid},${i},${slides.length})">↕ 移到</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleSlides(sid) {
+    document.getElementById(`sp-${sid}`).classList.toggle('open');
+}
+
+async function createSession() {
+    const title = document.getElementById('titleInput').value.trim();
+    const res   = await fetch(SCRIPT_ROOT + '/api/ppt/session', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({title, group_label: currentGroup}),
+    });
+    if (res.ok) {
+        document.getElementById('titleInput').value = '';
+        loadSessions();
+    }
+}
+
+async function deleteSession(sid) {
+    if (!confirm('确定删除该课件及所有幻灯片？')) return;
+    await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}`, {method: 'DELETE'});
+    loadSessions();
+}
+
+async function toggleShare(sid) {
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/share`, {method: 'PUT'});
+    if (!res.ok) { alert('操作失败'); return; }
+    const data = await res.json();
+    const btn = document.getElementById(`share-btn-${sid}`);
+    if (btn) {
+        if (data.is_shared) {
+            btn.className = btn.className.replace('btn-share', 'btn-shared');
+            btn.title = '取消分享（学生将看不到此课件）';
+            btn.innerHTML = '📢<small>已分享</small>';
+        } else {
+            btn.className = btn.className.replace('btn-shared', 'btn-share');
+            btn.title = '分享给学生查看';
+            btn.innerHTML = '📢<small>分享</small>';
+        }
+    }
+}
+
+async function uploadSlides(sid, input) {
+    const files = Array.from(input.files);
+    if (!files.length) return;
+    const prog  = document.getElementById(`up-${sid}`);
+    prog.textContent = `正在上传 ${files.length} 个文件…`;
+    for (let i = 0; i < files.length; i++) {
+        const fd = new FormData();
+        fd.append('file', files[i]);
+        await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/slide`, {method: 'POST', body: fd});
+        prog.textContent = `已上传 ${i+1}/${files.length}`;
+    }
+    prog.textContent = '✅ 上传完成';
+    input.value = '';
+    await loadSessions();
+    document.getElementById(`sp-${sid}`).classList.add('open');
+    setTimeout(() => { prog.textContent = ''; }, 3000);
+}
+
+async function deleteSlide(sid, idx) {
+    if (!confirm(`确定删除第 ${idx+1} 张幻灯片？`)) return;
+    await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/slide/${idx}`, {method: 'DELETE'});
+    await loadSessions();
+    document.getElementById(`sp-${sid}`).classList.add('open');
+}
+
+async function moveSlide(sid, idx, dir) {
+    await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/slide/move`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({idx, dir}),
+    });
+    await loadSessions();
+    document.getElementById(`sp-${sid}`).classList.add('open');
+}
+
+async function promptMoveSlide(sid, idx, total) {
+    const answer = prompt(`将第 ${idx + 1} 页移到第几页？（1 ~ ${total}）`);
+    if (answer === null || answer.trim() === '') return;
+    const raw = parseInt(answer.trim(), 10);
+    if (isNaN(raw) || raw < 1 || raw > total) {
+        alert(`请输入 1 到 ${total} 之间的整数`);
+        return;
+    }
+    const targetIndex = raw - 1;
+    if (targetIndex === idx) return;
+    await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/slide/move`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({idx, target_index: targetIndex}),
+    });
+    await loadSessions();
+    document.getElementById(`sp-${sid}`).classList.add('open');
+}
+
+function playFromSlide(sid, idx) {
+    const session = allSessions.find(s => s.id === sid);
+    if (!session) return;
+    window.open(ROOT + `/teacher/ppt/${session.token}/present?start=${idx}`, '_blank');
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+}
+
+/* ── HTML 幻灯片编辑弹窗 ─────────────────────────────── */
+let _htmlModalSid = null;
+
+function openHtmlModal(sid) {
+    _htmlModalSid = sid;
+    document.getElementById('htmlCodeInput').value = '';
+    document.getElementById('htmlPreviewFrame').srcdoc = '';
+    document.getElementById('htmlModalWrap').classList.add('open');
+    document.getElementById('htmlCodeInput').focus();
+}
+
+function closeHtmlModal() {
+    _htmlModalSid = null;
+    document.getElementById('htmlModalWrap').classList.remove('open');
+}
+
+function refreshHtmlPreview() {
+    const code = document.getElementById('htmlCodeInput').value.trim();
+    document.getElementById('htmlPreviewFrame').srcdoc = code || '<p style="color:#aaa;padding:20px">代码为空</p>';
+}
+
+async function saveHtmlSlide() {
+    if (!_htmlModalSid) return;
+    const code = document.getElementById('htmlCodeInput').value.trim();
+    if (!code) { alert('请先输入 HTML 代码'); return; }
+    const btn = document.getElementById('htmlSaveBtn');
+    btn.disabled = true; btn.textContent = '保存中…';
+    const res = await fetch(SCRIPT_ROOT + `/api/ppt/session/${_htmlModalSid}/slide/html`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({html_code: code}),
+    });
+    btn.disabled = false; btn.textContent = '💾 保存到幻灯片';
+    if (res.ok) {
+        closeHtmlModal();
+        await loadSessions();
+        document.getElementById(`sp-${_htmlModalSid}`).classList.add('open');
+    } else {
+        const d = await res.json().catch(() => ({}));
+        alert('保存失败：' + (d.error || res.status));
+    }
+}
+
+// ESC 关闭弹窗 / 取消拖拽
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeHtmlModal();
+        if (_drag) {
+            _drag.el.classList.remove('drag-selected');
+            _drag.line.style.display = 'none';
+            document.body.style.cursor = '';
+            _drag = null;
+        }
+        if (_pressTimer) { clearTimeout(_pressTimer); _pressTimer = null; }
+    }
+});
+
+/* ══════════════════════════════════════════════════════
+   拖拽排序（鼠标长按"拖移"按钮 ≥500ms 触发，短按=移到指定位置）
+   —— 使用纯 mouse 事件，完全绕开浏览器原生图片拖拽系统
+   ══════════════════════════════════════════════════════ */
+let _drag = null;
+let _pressTimer = null;
+
+// startDragPress：↕移到 按钮 onmousedown 时调用
+// 短按(<500ms)→promptMoveSlide弹框；长按(≥500ms)→鼠标拖拽排序
+function startDragPress(e, sid, idx, total) {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    let line = document.getElementById('drag-insert-line');
+    if (!line) {
+        line = document.createElement('div');
+        line.id = 'drag-insert-line';
+        document.body.appendChild(line);
+    }
+    line.style.display = 'none';
+
+    const item = document.getElementById(`si-${sid}-${idx}`);
+
+    // 500ms 后进入拖拽模式
+    _pressTimer = setTimeout(() => {
+        _pressTimer = null;
+        _drag = { sid, idx, el: item, line, insertPos: -1 };
+        item.classList.add('drag-selected');
+        document.body.style.cursor = 'grabbing';
+    }, 500);
+
+    function onMove(ev) {
+        if (!_drag) return;
+        const rects = _getSlideRects(_drag.sid);
+        const n = rects.length;
+        if (!n) return;
+        let bestGap = 0, bestDist = Infinity;
+        for (let k = 0; k <= n; k++) {
+            let gx, gy;
+            if (k === 0) {
+                gx = rects[0].left; gy = rects[0].top + rects[0].height / 2;
+            } else if (k === n) {
+                gx = rects[n-1].right; gy = rects[n-1].top + rects[n-1].height / 2;
+            } else {
+                const prev = rects[k-1], curr = rects[k];
+                const sameRow = Math.abs(prev.top - curr.top) < prev.height * 0.6;
+                if (sameRow) { gx = (prev.right + curr.left) / 2; gy = prev.top + prev.height / 2; }
+                else { gx = (prev.left + prev.right) / 2; gy = (prev.bottom + curr.top) / 2; }
+            }
+            const dist = Math.hypot(ev.clientX - gx, ev.clientY - gy);
+            if (dist < bestDist) { bestDist = dist; bestGap = k; }
+        }
+        _drag.insertPos = bestGap;
+        _drawInsertLine(rects, bestGap);
+    }
+
+    async function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+
+        if (_pressTimer) {
+            // 短按（< 500ms）：取消计时器，弹框移到指定位置
+            clearTimeout(_pressTimer);
+            _pressTimer = null;
+            promptMoveSlide(sid, idx, total);
+            return;
+        }
+
+        // 长按（已进入拖拽模式）：完成移动
+        if (!_drag) return;  // 已被 ESC 取消
+        const { el, insertPos } = _drag;
+        _drag = null;
+        document.body.style.cursor = '';
+        el.classList.remove('drag-selected');
+        line.style.display = 'none';
+
+        if (insertPos >= 0) {
+            const targetIndex = insertPos <= idx ? insertPos : insertPos - 1;
+            if (targetIndex !== idx) {
+                await fetch(SCRIPT_ROOT + `/api/ppt/session/${sid}/slide/move`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idx, target_index: targetIndex }),
+                });
+                await loadSessions();
+                document.getElementById(`sp-${sid}`)?.classList.add('open');
+            }
+        }
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+}
+
+function _getSlideRects(sid) {
+    const session = allSessions.find(s => s.id === sid);
+    if (!session) return [];
+    return session.slides.map((_, i) => {
+        const el = document.getElementById(`si-${sid}-${i}`);
+        return el ? el.getBoundingClientRect() : null;
+    }).filter(Boolean);
+}
+
+function _drawInsertLine(rects, gap) {
+    const line = _drag.line;
+    const n = rects.length;
+    if (n === 0) { line.style.display = 'none'; return; }
+
+    if (gap === 0) {
+        _setVLine(line, rects[0].left - 5, rects[0].top, rects[0].height);
+    } else if (gap === n) {
+        const r = rects[n - 1];
+        _setVLine(line, r.right + 2, r.top, r.height);
+    } else {
+        const prev = rects[gap - 1], curr = rects[gap];
+        const sameRow = Math.abs(prev.top - curr.top) < prev.height * 0.6;
+        if (sameRow) {
+            _setVLine(line, (prev.right + curr.left) / 2 - 1.5, prev.top, prev.height);
+        } else {
+            const midY = (prev.bottom + curr.top) / 2;
+            const x1 = Math.min(...rects.map(r => r.left));
+            const x2 = Math.max(...rects.map(r => r.right));
+            _setHLine(line, x1, midY - 1.5, x2 - x1);
+        }
+    }
+}
+
+function _setVLine(el, x, top, height) {
+    el.style.cssText = `display:block;position:fixed;z-index:9998;pointer-events:none;
+        background:#2e86c1;border-radius:3px;box-shadow:0 0 8px rgba(46,134,193,0.7);
+        width:4px;height:${height}px;left:${x}px;top:${top}px;`;
+}
+function _setHLine(el, x, top, width) {
+    el.style.cssText = `display:block;position:fixed;z-index:9998;pointer-events:none;
+        background:#2e86c1;border-radius:3px;box-shadow:0 0 8px rgba(46,134,193,0.7);
+        height:4px;width:${width}px;left:${x}px;top:${top}px;`;
+}
+
+/* ── 互动内容悬浮窗 ─────────────────────────────── */
+let _iaPopoverSid = null;
+let _iaPopoverRect = null;
+
+function positionIaPopover() {
+    const pop = document.getElementById('iaPopover');
+    const rect = _iaPopoverRect || {right: 8, left: 8, top: 8};
+    const PW = 360;
+    // 水平：优先按钮右侧；右侧不够则左侧；都不够则贴右边
+    let left = rect.right + 8;
+    if (left + PW > window.innerWidth - 8) left = rect.left - 8 - PW;
+    if (left < 8 || left + PW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - PW - 8);
+    pop.style.left = left + 'px';
+    // 垂直： maxHeight 不超视口；按实际高度上移，保证底部不溢出
+    pop.style.maxHeight = (window.innerHeight - 16) + 'px';
+    let top = rect.top;
+    const ph = pop.offsetHeight || 200;
+    if (top + ph > window.innerHeight - 8) top = window.innerHeight - ph - 8;
+    if (top < 8) top = 8;
+    pop.style.top = top + 'px';
+}
+
+async function toggleInteractions(sid, btn) {
+    const pop = document.getElementById('iaPopover');
+    if (pop.classList.contains('open') && _iaPopoverSid === sid) { closeIaPopover(); return; }
+    _iaPopoverSid = sid;
+    _iaPopoverRect = btn.getBoundingClientRect();
+    document.getElementById('iaPopTitle').textContent = '课堂互动（加载中…）';
+    document.getElementById('iaPopBody').innerHTML = '<div class="ia-pop-empty">加载中…</div>';
+    pop.classList.add('open');
+    positionIaPopover();
+    try {
+        const res = await fetch(ROOT + `/api/ppt/session/${sid}/interactions`);
+        renderIaPopover(sid, await res.json());
+    } catch(e) {
+        document.getElementById('iaPopBody').innerHTML = '<div class="ia-pop-empty">加载失败，请重试</div>';
+        positionIaPopover();
+    }
+}
+
+function renderIaPopover(sid, items) {
+    const typeLabel = {choice:'选择题', vote:'投票', short:'简答'};
+    document.getElementById('iaPopTitle').textContent = `课堂互动（${items.length} 个）`;
+    const body = document.getElementById('iaPopBody');
+    if (!items.length) { body.innerHTML = '<div class="ia-pop-empty">该课件暂无互动</div>'; positionIaPopover(); return; }
+    body.innerHTML = items.map(ia => `
+        <div class="ia-item ${ia.is_blocked ? 'blocked' : ''}">
+            <div class="ia-item-top">
+                <span class="ia-badge ${ia.itype}">${typeLabel[ia.itype] || ia.itype}</span>
+                <span style="font-size:11px;color:#aaa;">${escHtml(ia.created_at)}</span>
+            </div>
+            <div class="ia-q">${escHtml(ia.question) || '(未设主题)'}</div>
+            <div class="ia-meta">
+                <span>${ia.response_count} 人回答${ia.is_blocked ? ' · 已屏蔽' : ''}</span>
+                <button class="ia-block-btn ${ia.is_blocked ? 'blocked' : ''}"
+                    onclick="toggleIaBlock(${sid}, ${ia.id}, ${!ia.is_blocked})">
+                    ${ia.is_blocked ? '恢复' : '屏蔽'}
+                </button>
+                <button class="ia-del-btn" title="删除该互动及其回答（不影响已发积分）"
+                    onclick="deleteIaInteraction(${sid}, ${ia.id})">删除</button>
+            </div>
+        </div>`).join('');
+    // 更新卡片角标
+    const card = document.getElementById('sc-' + sid);
+    if (card) {
+        const blk = items.filter(x => x.is_blocked).length;
+        const btn = document.getElementById('ia-btn-' + sid);
+        if (btn) btn.innerHTML = `💬<small>互动(${items.length}${blk>0 ? ' <span class="ia-cnt-blk">h'+blk+'</span>' : ''})</small>`;
+    }
+    positionIaPopover();   // 内容高度变了，重新钳制底部
+}
+
+async function toggleIaBlock(sid, iaId, blocked) {
+    try {
+        const r = await fetch(ROOT + `/api/ppt/session/${sid}/interaction/${iaId}/block`, {
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({blocked: blocked}),
+        });
+        if (!r.ok) {
+            const d = await r.json().catch(() => ({}));
+            alert('屏蔽失败：' + (d.error || r.status + ' ' + r.statusText));
+            return;
+        }
+        const res = await fetch(ROOT + `/api/ppt/session/${sid}/interactions`);
+        if (!res.ok) { alert('刷新互动列表失败'); return; }
+        renderIaPopover(sid, await res.json());
+    } catch(e) {
+        alert('操作失败，请重试：' + e);
+    }
+}
+
+async function deleteIaInteraction(sid, iaId) {
+    if (!confirm('确定删除该互动及其回答？已发放的积分不会回退。')) return;
+    try {
+        const r = await fetch(ROOT + `/api/ppt/session/${sid}/interaction/${iaId}`, {method:'DELETE'});
+        if (!r.ok) {
+            const d = await r.json().catch(() => ({}));
+            alert('删除失败：' + (d.error || r.status + ' ' + r.statusText));
+            return;
+        }
+        const res = await fetch(ROOT + `/api/ppt/session/${sid}/interactions`);
+        if (!res.ok) { alert('刷新互动列表失败'); return; }
+        const items = await res.json();
+        if (!items.length) { closeIaPopover(); }    // 全删空则关浮窗
+        else { renderIaPopover(sid, items); }
+        // 同步卡片角标（删空了要把按钮隐藏）
+        const card = document.getElementById('sc-' + sid);
+        if (card) {
+            const btn = document.getElementById('ia-btn-' + sid);
+            if (btn) {
+                if (!items.length) btn.remove();
+                else btn.innerHTML = `💬<small>互动(${items.length}${items.filter(x=>x.is_blocked).length>0 ? ' <span class="ia-cnt-blk">h'+items.filter(x=>x.is_blocked).length+'</span>' : ''})</small>`;
+            }
+        }
+    } catch(e) {
+        alert('操作失败，请重试：' + e);
+    }
+}
+
+function closeIaPopover() {
+    document.getElementById('iaPopover').classList.remove('open');
+    _iaPopoverSid = null;
+}
+
+document.addEventListener('click', (e) => {
+    const pop = document.getElementById('iaPopover');
+    if (!pop.classList.contains('open')) return;
+    if (pop.contains(e.target) || (e.target.closest && e.target.closest('.btn-interact'))) return;
+    closeIaPopover();
+});
+window.addEventListener('scroll', () => { if (document.getElementById('iaPopover').classList.contains('open')) closeIaPopover(); });
+
+loadSessions();
+</script>
+{% endblock %}
+

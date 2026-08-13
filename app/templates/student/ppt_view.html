@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}{{ sess.title }} — 课堂PPT{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── 全局 ──────────────────────────────────────────────── */
+body { background: #000; color: #fff; }
+#navShim { height: 0 !important; }
+
+/* ── 顶部信息条 ──────────────────────────────────────────── */
+.top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; padding: 8px 16px; gap: 12px;
+    background: linear-gradient(180deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0) 100%);
+    pointer-events: none;
+}
+.top-title {
+    flex: 1; font-size: 15px; font-weight: 600; color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+}
+.slide-counter {
+    font-size: 13px; color: rgba(255,255,255,0.7); white-space: nowrap;
+    pointer-events: auto;
+}
+.back-btn {
+    font-size: 13px; color: rgba(255,255,255,0.8);
+    text-decoration: none; padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 6px;
+    pointer-events: auto; transition: background 0.15s;
+}
+.back-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ── 幻灯片展示区 ────────────────────────────────────────── */
+.slide-wrap {
+    position: fixed; inset: 0; display: flex;
+    align-items: center; justify-content: center;
+    background: #000;
+}
+.slide-img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; user-select: none; -webkit-user-drag: none;
+    display: block;
+}
+.slide-iframe {
+    width: 100vw; height: 100vh; border: none;
+    background: #fff;
+}
+.slide-video {
+    max-width: 100%; max-height: 100%; display: block;
+}
+.slide-placeholder {
+    color: rgba(255,255,255,0.3); font-size: 20px; text-align: center;
+}
+
+/* ── 底部翻页控制栏 ─────────────────────────────────────── */
+.bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px 20px;
+    background: linear-gradient(0deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);
+    gap: 20px;
+}
+.nav-btn {
+    padding: 10px 32px; font-size: 15px; font-weight: 600;
+    border: 2px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.12); color: #fff;
+    border-radius: 10px; cursor: pointer; transition: background 0.15s;
+    user-select: none;
+}
+.nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.25); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ── 键盘提示 ───────────────────────────────────────────── */
+.hint {
+    position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: rgba(255,255,255,0.3); pointer-events: none;
+    white-space: nowrap;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 顶部信息条 -->
+<div class="top-bar">
+    <a class="back-btn" href="{{ request.script_root }}/student/ppt">← 返回</a>
+    <div class="top-title" id="slideTitle">{{ sess.title }}</div>
+    <div class="slide-counter" id="slideCounter">— / —</div>
+</div>
+
+<!-- 幻灯片区 -->
+<div class="slide-wrap" id="slideWrap">
+    <div class="slide-placeholder">加载中…</div>
+</div>
+
+<!-- 底部导航 -->
+<div class="bottom-bar">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">◀ 上一张</button>
+    <button class="nav-btn" id="nextBtn" onclick="navigate(1)">下一张 ▶</button>
+</div>
+
+<div class="hint" id="kbHint">← → 方向键翻页</div>
+
+<script>
+const TOKEN   = {{ sess.token | tojson }};
+const ROOT    = {{ request.script_root | tojson }};
+let slides    = [];
+let current   = 0;
+
+async function loadSlides() {
+    const res = await fetch(ROOT + `/api/ppt/shared/${TOKEN}/state`);
+    if (!res.ok) {
+        document.getElementById('slideWrap').innerHTML =
+            '<div class="slide-placeholder">课件加载失败，请返回重试</div>';
+        return;
+    }
+    const data = await res.json();
+    slides  = data.slides || [];
+    showSlide(0);
+}
+
+function showSlide(idx) {
+    if (!slides.length) return;
+    idx = Math.max(0, Math.min(slides.length - 1, idx));
+    current = idx;
+    const s   = slides[idx];
+    const wrap = document.getElementById('slideWrap');
+    document.getElementById('slideCounter').textContent =
+        `${idx + 1} / ${slides.length}`;
+    document.getElementById('prevBtn').disabled = (idx === 0);
+    document.getElementById('nextBtn').disabled = (idx === slides.length - 1);
+
+    if (s.type === 'image') {
+        wrap.innerHTML = `<img class="slide-img" src="${encodeURI(s.url)}" alt="${idx+1}" draggable="false">`;
+    } else if (s.type === 'html') {
+        wrap.innerHTML = `<iframe class="slide-iframe" src="${encodeURI(s.url)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
+    } else if (s.type === 'video') {
+        wrap.innerHTML = `<video class="slide-video" src="${encodeURI(s.url)}" controls autoplay></video>`;
+    } else {
+        wrap.innerHTML = '<div class="slide-placeholder">不支持的幻灯片格式</div>';
+    }
+}
+
+function navigate(delta) {
+    showSlide(current + delta);
+}
+
+// 键盘翻页
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault(); navigate(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault(); navigate(-1);
+    }
+});
+
+// 触摸滑动翻页
+let _tx = 0;
+document.addEventListener('touchstart', e => { _tx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _tx;
+    if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+}, {passive:true});
+
+// 隐藏键盘提示（移动端不需要）
+if ('ontouchstart' in window) {
+    document.getElementById('kbHint').style.display = 'none';
+}
+
+loadSlides();
+</script>
+{% endblock %}

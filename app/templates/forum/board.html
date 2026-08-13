@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="board-container" data-board-id="{{ board.id }}">
+    <!-- 板块头部信息 -->
+    <div class="board-header">
+        <div class="board-info">
+            <h1>{{ board.name }}</h1>
+            <p class="board-description">{{ board.description }}</p>
+        </div>
+        <a href="{{ url_for('main.create_post', board_id=board.id) }}" class="create-post-btn">
+            <i class="fas fa-edit"></i> 发布帖子
+        </a>
+    </div>
+
+    <!-- 帖子展示：板块1用橱窗，其他用列表 -->
+    {% if board.id == 1 %}
+    {# ── 板块1：橱窗布局（Gallery）── #}
+    <div class="gallery-grid">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="gallery-card" data-post-id="{{ post.id }}">
+                <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="gallery-link">
+                    <div class="gallery-card-thumb">
+                        {% set first_img = post.images.first() %}
+                        {% if first_img and not first_img.url.lower().endswith('.pdf') %}
+                        <img src="{{ first_img.url }}" alt="{{ post.title }}" loading="lazy">
+                        {% elif post.author.avatar_url and post.author.avatar_url != '/static/images/default_avatar.png' %}
+                        <div class="gallery-no-img" style="background: #eef2f7;">
+                            <img src="{{ post.author.avatar_url }}" class="gallery-avatar" alt="{{ post.author.username }}">
+                        </div>
+                        {% else %}
+                        <div class="gallery-no-img" style="background: #eef2f7;">
+                            <span class="gallery-icon">⚙️</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="gallery-card-body">
+                        <h3 class="gallery-title">{{ post.title }}</h3>
+                        <div class="gallery-meta">
+                            <span class="gallery-author">{{ post.author.username }}</span>
+                        </div>
+                    </div>
+                </a>
+                <div class="gallery-footer">
+                    <button class="like-btn{% if post.id in liked_post_ids %} liked{% endif %}"
+                            onclick="togglePostLike({{ post.id }}, this)"
+                            title="{{ '取消点赞' if post.id in liked_post_ids else '点赞' }}">
+                        <span class="heart-icon">&#9829;</span>
+                        <span class="like-count">{{ post.like_count }}</span>
+                    </button>
+                    <span class="gallery-replies">💬 {{ post.replies.count() }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-posts">
+                <p>暂无作品</p>
+                <p>来展示你的第一个设计吧！</p>
+            </div>
+        {% endif %}
+    </div>
+    {% else %}
+    {# ── 其他板块：传统列表 ── #}
+    <div class="posts-list">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card" data-post-id="{{ post.id }}">
+                <div class="post-main">
+                    <div class="post-info">
+                        <h2 class="post-title">
+                            <a href="{{ url_for('main.post_detail', post_id=post.id) }}">{{ post.title }}</a>
+                        </h2>
+                        <div class="post-meta">
+                            <span class="author"><i class="fas fa-user"></i> {{ post.author.username }}</span>
+                            <span class="time"><i class="far fa-clock"></i> {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    </div>
+                    {% set pcont = post.content or '' %}
+                    <div class="post-preview">{{ pcont[:200] }}{% if pcont|length > 200 %}...{% endif %}</div>
+                </div>
+                <div class="post-stats">
+                    <span class="replies"><i class="fas fa-comments"></i> {{ post.replies.count() }}</span>
+                    <span class="views"><i class="fas fa-eye"></i> {{ post.views }}</span>
+                    {% if current_user.is_authenticated and current_user.is_teacher %}
+                    <button class="delete-post-btn" onclick="deletePost({{ post.id }})">🗑 删除</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-posts"><p>暂无帖子</p><p>来发布第一个帖子吧！</p></div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 分页 -->
+    {% if pagination %}
+    <div class="pagination">
+        {% for page in pagination.iter_pages() %}
+            {% if page %}
+                <a href="{{ url_for('main.forum_board', board_id=board.id, page=page) }}"
+                   class="page-num {{ 'active' if page == pagination.page else '' }}">{{ page }}</a>
+            {% else %}
+                <span class="ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.board-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.board-info h1 { color: #2c3e50; margin-bottom: 10px; }
+.board-description { color: #666; font-size: 0.9rem; }
+.create-post-btn {
+    top: 100px; padding: 10px 20px; background-color: #3498db;
+    color: white; border-radius: 6px; text-decoration: none; transition: background-color 0.3s;
+}
+.create-post-btn:hover { background-color: #2980b9; }
+
+/* ── 列表模式（板块2、3）── */
+.post-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.post-main { margin-bottom: 15px; }
+.post-title { margin-bottom: 10px; }
+.post-title a { color: #2c3e50; text-decoration: none; font-size: 1.2rem; }
+.post-title a:hover { color: #3498db; }
+.post-meta { display: flex; gap: 20px; color: #666; font-size: 0.9rem; margin-bottom: 15px; }
+.post-meta i { margin-right: 5px; }
+.post-preview { color: #666; line-height: 1.6; }
+.post-stats { display: flex; gap: 20px; color: #666; font-size: 0.9rem; padding-top: 15px; border-top: 1px solid #eee; }
+.post-stats i { margin-right: 5px; color: #3498db; }
+.delete-post-btn { background: #e74c3c; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; width: 80px; margin-right: 10px; }
+.delete-post-btn:hover { opacity: .8; }
+
+/* ── 橱窗模式（板块1）── */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+.gallery-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; flex-direction: column;
+}
+.gallery-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+.gallery-link { text-decoration: none; color: inherit; flex: 1; display: flex; flex-direction: column; }
+.gallery-card-thumb {
+    width: 100%; height: 180px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8ecf8 100%);
+}
+.gallery-card-thumb img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+.gallery-card:hover .gallery-card-thumb img { transform: scale(1.05); }
+.gallery-no-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; box-sizing: border-box;
+}
+.gallery-avatar {
+    height: 100%; aspect-ratio: 1 / 1; object-fit: contain;
+    border-radius: 5%; border: 3px solid rgba(0,0,0,0.06);
+}
+.gallery-icon { font-size: 48px; opacity: 0.3; }
+.gallery-card-body { padding: 12px 14px 8px; flex: 1; }
+.gallery-title { font-size: 15px; font-weight: 700; color: #2c3e50; margin: 0 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gallery-meta { font-size: 12px; color: #888; }
+.gallery-author { font-weight: 500; }
+.gallery-footer {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 14px 12px;
+    border-top: 1px solid #f0f0f0;
+}
+.like-btn {
+    background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
+    font-size: 16px; color: #999; padding: 0; width: auto !important;
+    transition: color 0.2s, transform 0.1s;
+}
+.like-btn:hover { color: #e74c3c; transform: scale(1.1); }
+.like-btn.liked { color: #e74c3c; }
+.like-btn.liked .heart-icon { animation: heartPop 0.35s ease; }
+@keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.heart-icon { font-size: 18px; line-height: 1; }
+.like-count { font-size: 13px; margin-left: 1px; }
+.gallery-replies { font-size: 12px; color: #aaa; }
+
+.no-posts { text-align: center; padding: 40px; color: #666; }
+.pagination { display: flex; justify-content: center; gap: 10px; margin-top: 30px; }
+.page-num { padding: 8px 12px; border-radius: 4px; background: #f8f9fa; color: #333; text-decoration: none; }
+.page-num.active { background: #3498db; color: white; }
+.ellipsis { color: #666; }
+
+@media (max-width: 768px) {
+    .board-header { flex-direction: column; gap: 20px; text-align: center; }
+    .post-meta { flex-direction: column; gap: 10px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function deletePost(postId) {
+    if (!confirm('确认删除该帖子？此操作不可撤销。')) return;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/forum/posts/${postId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (res.ok) {
+            const card = document.querySelector(`.post-card[data-post-id="${postId}"], .gallery-card[data-post-id="${postId}"]`);
+            if (card) card.remove();
+        } else {
+            alert(data.message || '删除失败');
+        }
+    } catch (e) { alert('请求失败，请重试。'); }
+}
+
+async function togglePostLike(postId, btn) {
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/forum/posts/${postId}/like`, { method: 'POST' });
+        const d = await res.json();
+        if (res.ok) {
+            const countEl = btn.querySelector('.like-count');
+            btn.classList.toggle('liked', d.liked);
+            if (countEl) countEl.textContent = d.like_count;
+        } else {
+            if (res.status === 401) { alert('请先登录'); } else { alert(d.message || '操作失败'); }
+        }
+    } catch (e) { alert('网络错误，请重试'); }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="logo2">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="致知力行+AI">
+    </div>
+    <div style="margin-bottom: 40px;"></div>
+    <h2>用户登录</h2>
+    <form method="POST" action="{{ url_for('auth.login') }}">
+        <div class="form-group">
+            <label for="student_id">学号：</label>
+            <input type="text" id="student_id" name="student_id" required>
+        </div>
+        <div class="form-group">
+            <label for="password">密码：</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">登录</button>
+    </form>
+    <div class="auth-links">
+        还没有账号？<a href="{{ url_for('auth.register') }}">立即注册</a>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,1023 @@
+{% extends 'base.html' %}
+{% block title %}卡牌对战{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════
+   卡牌对战页样式
+══════════════════════════════════════════════════ */
+.battle-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ── 顶部状态条 ──────────────────────────────── */
+.battle-status-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #1a2340;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 8px;
+  color: #e8eaf6;
+}
+.sb-row1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.sb-row1-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e8eaf6;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+.sb-row1-hpnum {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4caf50;
+  white-space: nowrap;
+}
+.sb-row1-hpnum.low { color: #f44336; }
+.sb-row1-bar {
+  flex: 1;
+}
+.sb-row2 {
+  display: flex;
+  justify-content: space-between;
+}
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+}
+.status-label { font-size: 11px; color: #90a4ae; text-transform: uppercase; }
+.status-value { font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; }
+.status-value.hp { color: #4caf50; }
+.status-value.hp.low { color: #f44336; }
+.status-value.streak { color: #ffc107; }
+
+.hp-bar-bg { background: #37474f; border-radius: 8px; height: 10px; overflow: hidden; width: 100%; }
+.hp-bar-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #a5d6a7);
+               border-radius: 8px; transition: width .6s ease; }
+
+/* ── 主布局：三栏 ─────────────────────────────── */
+.battle-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .battle-layout { grid-template-columns: 1fr; }
+}
+
+/* ── 卡牌面板（左栏）────────────────────────── */
+.cards-panel {
+  background: #1a2340;
+  border-radius: 12px;
+  padding: 16px;
+}
+.panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #90a4ae;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* 卡牌网格 */
+.cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card-item {
+  background: #253156;
+  border-radius: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .2s, transform .15s;
+  position: relative;
+}
+.card-item:hover { transform: translateY(-2px); border-color: #4fc3f7; }
+.card-item.selected-atk  { border-color: #f44336; background: #3a1a1a; }
+.card-item.selected-def  { border-color: #1e88e5; background: #1a273a; }
+.card-img-wrap {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1a2340;
+  position: relative;
+}
+.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-dmg-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.78) 40%);
+  padding: 18px 4px 5px;
+  text-align: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}
+.card-badge {
+  position: absolute;
+  top: 4px; right: 4px;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.badge-melee  { background: #f44336; color: #fff; }
+.badge-ranged { background: #43a047; color: #fff; }
+.badge-magic  { background: #7b1fa2; color: #fff; }
+
+.card-sel-no {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #f44336;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0,0,0,.5);
+}
+
+/* 选牌区 */
+.sel-area {
+  margin-top: 14px;
+  border-top: 1px solid #253156;
+  padding-top: 12px;
+}
+.sel-slots { display: flex; gap: 8px; margin-bottom: 10px; }
+.sel-slot {
+  flex: 1;
+  aspect-ratio: 3/4;
+  border: 2px dashed #37474f;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #546e7a;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  background: #253156;
+  overflow: hidden;
+}
+.sel-slot.filled { border-style: solid; border-color: #f44336; }
+.sel-slot img { width: 100%; height: 100%; object-fit: cover; }
+.sel-mode-btns { display: flex; gap: 6px; margin-bottom: 8px; }
+.sel-mode-btn {
+  flex: 1; padding: 6px; border: none; border-radius: 6px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  background: #253156; color: #90a4ae;
+}
+.sel-mode-btn.active-atk { background: #b71c1c; color: #fff; }
+.sel-mode-btn.active-def { background: #0d47a1; color: #fff; }
+
+/* ── 对战区（中栏）────────────────────────────── */
+.arena-panel {
+  background: #1a2340;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.arena-idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #546e7a;
+  text-align: center;
+}
+.arena-idle .big-icon { font-size: 60px; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #1565c0, #0d47a1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+}
+.btn-primary:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+.btn-secondary {
+  background: #253156; color: #90a4ae; border: 1px solid #37474f;
+  border-radius: 8px; padding: 8px 20px; font-size: 14px; cursor: pointer;
+}
+.btn-danger { background: linear-gradient(135deg,#b71c1c,#c62828); color:#fff;
+              border:none; border-radius:10px; padding:10px 24px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-success { background: linear-gradient(135deg,#1b5e20,#2e7d32); color:#fff;
+               border:none; border-radius:10px; padding:10px 24px; font-size:14px; font-weight:700; cursor:pointer; }
+
+/* 对战动画区 */
+.arena-battle {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+.arena-battle.visible { display: flex; }
+
+.combatants {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.combatant {
+  flex: 1;
+  text-align: center;
+}
+.combatant-name {
+  font-size: 13px;
+  color: #90a4ae;
+  margin-bottom: 4px;
+}
+.combatant-hp-bar { background: #37474f; border-radius: 6px; height: 8px; overflow: hidden; }
+.combatant-hp-fill { height: 100%; border-radius: 6px; transition: width .6s ease; }
+.combatant-hp-fill.atk { background: #e53935; }
+.combatant-hp-fill.def { background: #1e88e5; }
+.combatant-hp-val { font-size: 12px; color: #b0bec5; margin-top: 2px; }
+
+.vs-icon { font-size: 24px; color: #ffd54f; font-weight: 900; }
+
+.round-display {
+  background: #253156;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.round-title { font-size: 12px; color: #78909c; margin-bottom: 8px; }
+.round-cards-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.mini-card {
+  flex: 1;
+  background: #1a2340;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+.mini-card img { width: 60px; height: 80px; object-fit: cover; border-radius: 4px; display: block; margin: 0 auto 4px; }
+.mini-card .mc-type { font-size: 10px; font-weight: 700; }
+.mini-card .mc-dmg  { font-size: 13px; color: #ffd54f; font-weight: 700; }
+.relation-badge {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.rel-advantage { background: #1b5e20; color: #a5d6a7; }
+.rel-disadvantage { background: #4a148c; color: #ce93d8; }
+.rel-neutral { background: #263238; color: #90a4ae; }
+
+.shout-box { font-size: 13px; color: #cfd8dc; line-height: 1.5; white-space: pre-line; }
+.shout-atk { color: #ef9a9a; }
+.shout-def { color: #90caf9; }
+
+/* 结果横幅 */
+.result-banner {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  display: none;
+}
+.result-banner.visible { display: block; }
+.result-banner.win  { background: #1b5e20; }
+.result-banner.lose { background: #4a0404; }
+.result-banner.draw { background: #1a237e; }
+.result-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.result-detail { font-size: 14px; color: #b0bec5; }
+
+/* 生成卡牌浮窗 */
+.card-gen-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.card-gen-modal.visible { display: flex; }
+.card-gen-box {
+  background: #1a2340;
+  border-radius: 16px;
+  padding: 32px 28px;
+  width: 280px;
+  text-align: center;
+  position: relative;
+}
+.gen-card-wrap {
+  width: 160px;
+  height: 210px;
+  margin: 0 auto 16px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.gen-card-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gen-dmg-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.78) 40%);
+  padding: 24px 6px 8px;
+  text-align: center;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+.gen-fire-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,120,0,.85) 0%, transparent 70%);
+  border-radius: 12px;
+  animation: fireReveal 1.5s ease-out forwards;
+}
+@keyframes fireReveal {
+  0%   { opacity: 1; transform: scale(2.2); }
+  60%  { opacity: .6; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+.gen-name  { font-size: 14px; color: #cfd8dc; margin: 8px 0 12px; }
+
+/* ── 战绩栏（右栏）────────────────────────────── */
+.history-panel {
+  background: #1a2340;
+  border-radius: 12px;
+  padding: 16px;
+}
+.history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.history-item {
+  background: #253156;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.hi-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.hi-opp { color: #e8eaf6; font-weight: 600; }
+.hi-win  { color: #4caf50; font-weight: 700; }
+.hi-lose { color: #f44336; font-weight: 700; }
+.hi-draw { color: #ffc107; font-weight: 700; }
+.hi-time { color: #546e7a; font-size: 11px; }
+.hi-detail { color: #78909c; }
+
+/* 对战池状态 */
+.pool-panel {
+  background: #1a2340;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.pool-in  { color: #4caf50; font-weight: 700; }
+.pool-out { color: #78909c; }
+
+/* 空状态 */
+.empty-tip { color: #546e7a; font-size: 13px; text-align: center; padding: 20px 0; }
+
+/* ── 攻防魔展示带 ── */
+.stats-band {
+  display: flex; gap: 10px; justify-content: center;
+  background: #1a2340; border-radius: 12px;
+  margin-top: 0; margin-bottom: 20px; padding: 10px 20px;
+  flex-wrap: wrap;
+}
+.stats-band-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: #cfd8dc;
+}
+.stats-band-bar {
+  width: 70px; height: 6px; background: #37474f;
+  border-radius: 4px; overflow: hidden;
+}
+.stats-band-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+.sb-atk { background: #ef5350; }
+.sb-def { background: #42a5f5; }
+.sb-mag { background: #ab47bc; }
+.stats-band-val { font-weight: 700; min-width: 26px; }
+
+/* ── 规则區 ── */
+.rules-section {
+  margin-top: 24px;
+  background: #1a2340;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.rules-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px;
+  cursor: pointer;
+  color: #90a4ae; font-size: 13px; font-weight: 600;
+  user-select: none;
+}
+.rules-toggle:hover { color: #cfd8dc; }
+.rules-body {
+  display: none;
+  padding: 0 18px 16px;
+  font-size: 13px; color: #b0bec5; line-height: 1.75;
+}
+.rules-body.open { display: block; }
+.rules-body li { margin-bottom: 4px; }
+
+/* ── 自动出击倒计时 ── */
+.auto-atk-row {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; margin-top: 10px;
+  font-size: 13px; color: #90a4ae;
+}
+.auto-countdown { font-weight: 700; color: #ffd54f; min-width: 28px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="battle-page">
+
+  <!-- ── 顶部状态条 ── -->
+  <div class="battle-status-bar" id="statusBar">
+    <!-- 第一行：昵称 + HP数値 + HP条 -->
+    <div class="sb-row1">
+      <span class="sb-row1-name" id="nicknameVal">--</span>
+      <span class="sb-row1-hpnum" id="hpVal">--</span>
+      <div class="sb-row1-bar">
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="hpBar" style="width:100%"></div></div>
+      </div>
+    </div>
+    <!-- 第二行：今日出战 / 连胜 / 在线对手 -->
+    <div class="sb-row2">
+      <div class="status-item">
+        <span class="status-label">今日出战</span>
+        <span class="status-value" id="atkCount">--/5</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">连胜</span>
+        <span class="status-value streak" id="streakVal">--</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">在线对手</span>
+        <span class="status-value" id="poolCount">--</span>
+      </div>
+    </div>
+  </div>
+  <!-- 攻防魔展示带 -->
+  <div class="stats-band" id="statsBand" style="display:none">
+    <div class="stats-band-item">
+      <span>🗡 攻击</span>
+      <div class="stats-band-bar"><div class="stats-band-fill sb-atk" id="sbAtk" style="width:0"></div></div>
+      <span class="stats-band-val" id="sbAtkVal">--</span>
+    </div>
+    <div class="stats-band-item">
+      <span>🛡 防御</span>
+      <div class="stats-band-bar"><div class="stats-band-fill sb-def" id="sbDef" style="width:0"></div></div>
+      <span class="stats-band-val" id="sbDefVal">--</span>
+    </div>
+    <div class="stats-band-item">
+      <span>✨ 魔力</span>
+      <div class="stats-band-bar"><div class="stats-band-fill sb-mag" id="sbMag" style="width:0"></div></div>
+      <span class="stats-band-val" id="sbMagVal">--</span>
+    </div>
+  </div>
+
+  <div class="battle-layout">
+
+    <!-- ══════ 左栏：我的卡牌 ══════ -->
+    <div>
+      <div class="cards-panel">
+        <div class="panel-title">我的卡牌</div>
+        <div class="cards-grid" id="cardsGrid">
+          <div class="empty-tip" style="grid-column:1/3">加载中…</div>
+        </div>
+
+        <!-- 选牌区 -->
+        <div class="sel-area">
+          <div class="sel-mode-btns">
+            <button class="sel-mode-btn active-atk" id="btnModeAtk" onclick="setMode('atk')">⚔ 攻击卡</button>
+            <button class="sel-mode-btn" id="btnModeDef" onclick="setMode('def')">🛡 防守卡</button>
+          </div>
+          <div class="panel-title" id="selAreaTitle">选攻击卡（顺序出击）</div>
+          <div class="sel-slots" id="selSlots">
+            <div class="sel-slot" id="slot0" onclick="removeSlot(0)">空</div>
+            <div class="sel-slot" id="slot1" onclick="removeSlot(1)">空</div>
+            <div class="sel-slot" id="slot2" onclick="removeSlot(2)">空</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 对战池控制 -->
+      <div class="pool-panel">
+        <div class="panel-title">对战池</div>
+        <div id="poolStatusText" class="pool-out">未加入对战池</div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn-success" style="flex:1;font-size:13px;padding:8px;" onclick="joinPool()">加入战局</button>
+          <button class="btn-secondary" style="flex:1;font-size:13px;padding:8px;" onclick="leavePool()">退出战局</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ 中栏：对战区 ══════ -->
+    <div class="arena-panel">
+      <!-- 空闲状态 -->
+      <div class="arena-idle" id="arenaIdle">
+        <div class="big-icon">⚔️</div>
+        <div style="color:#cfd8dc;font-size:18px;font-weight:700;">准备对战</div>
+        <div style="font-size:13px;">从左侧选择3张攻击卡，点击出击</div>
+        <button class="btn-primary" id="btnAttack" onclick="startAttack()" disabled>⚔ 出击！</button>
+      </div>
+
+      <!-- 对战动画区 -->
+      <div class="arena-battle" id="arenaBattle">
+        <div class="combatants">
+          <div class="combatant">
+            <div class="combatant-name" id="atkName">我</div>
+            <div class="combatant-hp-bar"><div class="combatant-hp-fill atk" id="atkHpBar" style="width:100%"></div></div>
+            <div class="combatant-hp-val" id="atkHpVal">100</div>
+          </div>
+          <div class="vs-icon">VS</div>
+          <div class="combatant">
+            <div class="combatant-name" id="defName">对手</div>
+            <div class="combatant-hp-bar"><div class="combatant-hp-fill def" id="defHpBar" style="width:100%"></div></div>
+            <div class="combatant-hp-val" id="defHpVal">100</div>
+          </div>
+        </div>
+
+        <div class="round-display" id="roundDisplay" style="display:none">
+          <div class="round-title" id="roundTitle">第1回合</div>
+          <div class="round-cards-row">
+            <div class="mini-card" id="atkCardMini">
+              <img id="atkCardImg" src="" alt="">
+              <div class="mc-type" id="atkCardType"></div>
+              <div class="mc-dmg"  id="atkCardDmg"></div>
+            </div>
+            <div>
+              <div class="relation-badge" id="relBadge">中立</div>
+            </div>
+            <div class="mini-card" id="defCardMini">
+              <img id="defCardImg" src="" alt="">
+              <div class="mc-type" id="defCardType"></div>
+              <div class="mc-dmg"  id="defCardDmg"></div>
+            </div>
+          </div>
+          <div class="shout-box">
+            <div class="shout-atk" id="atkShout"></div>
+            <div class="shout-def" id="defShout"></div>
+          </div>
+        </div>
+
+        <div id="resultBanner" class="result-banner">
+          <div class="result-title" id="resultTitle"></div>
+          <div class="result-detail" id="resultDetail"></div>
+          <div style="margin-top:14px;display:flex;gap:10px;justify-content:center;">
+            <button class="btn-primary" onclick="cancelAutoAtk(); resetArena()">再战一场</button>
+          </div>
+          <div class="auto-atk-row">
+            <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="checkbox" id="chkAutoAtk" checked style="width:14px;height:14px;cursor:pointer;">
+              自动出击下一场
+            </label>
+            <span id="autoCountdown" class="auto-countdown"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ 右栏：战绩 ══════ -->
+    <div>
+      <div class="history-panel">
+        <div class="panel-title">近期战绩</div>
+        <div class="history-list" id="historyList">
+          <div class="empty-tip">加载中…</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /battle-layout -->
+
+  <!-- ── 规则说明 ── -->
+  <div class="rules-section">
+    <div class="rules-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.rules-arrow').textContent=this.nextElementSibling.classList.contains('open')?'▲':'▼'">
+      <span>📜 对战规则说明</span>
+      <span class="rules-arrow">▼</span>
+    </div>
+    <div class="rules-body">
+      <ul>
+        <li>🗡 <b>近战</b>克制魔法，🎯 <b>远程</b>克制近战，✨ <b>魔法</b>克制远程；克制方伤害x1.5，被克制方x0.7</li>
+        <li>🎮 每场对战打 <b>3回合</b>，血量多者胜利；积分：胜利 <b>+1</b>（2连胜+1.5，3+连胜每场 <b>+2</b>）；失败 <b>-0.5</b>，连胜归零</li>
+        <li>❤️ 每日初始 HP=100，血量加成每日出战次数；内置上限 5 场， HP归零时本日无法出战</li>
+        <li>🃏 卡牌攻击力来自视频作业成绩，<b>展示课内容</b>赚取更强卡牌</li>
+        <li>🎓 有 10% 機率遇到教师嫹战考验，胜利可获额外奖励</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /battle-page -->
+
+<!-- ── 生成卡牌浮窗 ── -->
+<div class="card-gen-modal" id="cardGenModal">
+  <div class="card-gen-box">
+    <div style="font-size:14px;color:#90a4ae;margin-bottom:12px;">✨ 新卡生成！</div>
+    <div class="gen-card-wrap">
+      <img id="genCardImg" src="" alt="">
+      <div class="gen-dmg-overlay" id="genDmgOverlay">攻击力：0</div>
+      <div class="gen-fire-overlay" id="genFireOverlay"></div>
+    </div>
+    <div class="gen-name" id="genName"></div>
+    <button class="btn-primary" style="margin-top:14px;" onclick="closeGenModal()">收入卡组</button>
+  </div>
+</div>
+
+<script>
+const ROOT = {{ request.script_root | tojson }};
+const TYPE_CN  = {melee:'近战', ranged:'远程', magic:'魔法'};
+const TYPE_IMG = {
+  melee:  (n) => ROOT + `/static/images/近战卡-${n}星.jpg`,
+  ranged: (n) => ROOT + `/static/images/远程卡-${n}星.jpg`,
+  magic:  (n) => ROOT + `/static/images/魔法卡-${n}星.jpg`,
+};
+const REL_CN = {advantage:'克制', disadvantage:'被克制', neutral:'中立'};
+const REL_CLS = {advantage:'rel-advantage', disadvantage:'rel-disadvantage', neutral:'rel-neutral'};
+
+let allCards = [];         // 所有卡对象
+let selMode  = 'atk';      // 'atk' or 'def'
+let atkCards = [null,null,null];
+let defCards = [null,null,null];
+let isAnimating = false;
+
+// ─── 初始化 ─────────────────────────────────────────────────────────
+async function init() {
+  await Promise.all([loadStatus(), loadCards(), loadHistory()]);
+}
+init();
+
+// ─── 加载状态 ─────────────────────────────────────────────────────
+async function loadStatus() {
+  const r = await fetch(ROOT + '/api/battle/pool_status');
+  const d = await r.json();
+  if (!d.battle_open) {
+    document.getElementById('arenaIdle').innerHTML =
+      '<div class="big-icon">🔒</div><div style="color:#f44336;font-weight:700;font-size:18px;">对战功能未开放</div><div style="font-size:13px;color:#546e7a;">请等待教师开启对战</div>';
+    return;
+  }
+  const hp = d.hp;
+  document.getElementById('hpVal').textContent = hp.toFixed(1);
+  document.getElementById('hpVal').className = 'sb-row1-hpnum' + (hp <= 30 ? ' low' : '');
+  document.getElementById('hpBar').style.width = hp + '%';
+  document.getElementById('atkCount').textContent = `${d.atk_count_today}/${d.max_daily_attacks}`;
+  document.getElementById('streakVal').textContent = d.consecutive_wins;
+  document.getElementById('poolCount').textContent = d.pool_count;
+  document.getElementById('poolStatusText').textContent = d.in_pool ? '✅ 已加入对战池' : '未加入对战池';
+  document.getElementById('poolStatusText').className = d.in_pool ? 'pool-in' : 'pool-out';
+  document.getElementById('nicknameVal').textContent = d.nickname || '--';
+  // 攻防魔
+  document.getElementById('statsBand').style.display = 'flex';
+  document.getElementById('sbAtk').style.width    = (d.attack  / 10 * 100) + '%';
+  document.getElementById('sbDef').style.width    = (d.defense / 10 * 100) + '%';
+  document.getElementById('sbMag').style.width    = (d.magic   / 10 * 100) + '%';
+  document.getElementById('sbAtkVal').textContent = d.attack;
+  document.getElementById('sbDefVal').textContent = d.defense;
+  document.getElementById('sbMagVal').textContent = d.magic;
+}
+
+// ─── 加载卡牌 ─────────────────────────────────────────────────────
+async function loadCards() {
+  const r = await fetch(ROOT + '/api/battle/my_cards');
+  const d = await r.json();
+  allCards = d.cards || [];
+  renderCardsGrid();
+}
+
+function renderCardsGrid() {
+  const grid = document.getElementById('cardsGrid');
+  if (!allCards.length) {
+    grid.innerHTML = '<div class="empty-tip" style="grid-column:1/3">暂无卡牌<br>请在个人主页为视频生成技能卡</div>';
+    return;
+  }
+  grid.innerHTML = allCards.map(c => {
+    const img  = TYPE_IMG[c.card_type](c.star);
+    const typeCN = TYPE_CN[c.card_type];
+    // 攻击顺序号
+    const atkNo = atkCards.indexOf(c.id);
+    const defNo = defCards.indexOf(c.id);
+    let overlay = '';
+    if (atkNo >= 0) overlay = `<div class="card-sel-no">${atkNo+1}</div>`;
+    return `
+    <div class="card-item ${atkNo>=0?'selected-atk':''} ${defNo>=0?'selected-def':''}"
+         onclick="toggleCard(${c.id})" data-id="${c.id}">
+      ${overlay}
+      <div class="card-img-wrap">
+        <img src="${img}" alt="${typeCN}${c.star}星" loading="lazy">
+        <div class="card-dmg-overlay">攻击力 ${c.damage}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── 选牌逻辑 ─────────────────────────────────────────────────────
+function setMode(mode) {
+  selMode = mode;
+  document.getElementById('btnModeAtk').className = 'sel-mode-btn' + (mode==='atk' ? ' active-atk' : '');
+  document.getElementById('btnModeDef').className = 'sel-mode-btn' + (mode==='def' ? ' active-def' : '');
+  document.getElementById('selAreaTitle').textContent =
+    mode==='atk' ? '选攻击卡（顺序出击）' : '选防守卡（顺序防守）';
+  renderCardsGrid();
+  renderSlots();
+}
+
+function toggleCard(id) {
+  const arr = selMode === 'atk' ? atkCards : defCards;
+  const idx = arr.indexOf(id);
+  if (idx >= 0) {
+    arr[idx] = null;
+  } else {
+    const free = arr.indexOf(null);
+    if (free < 0) { showTip('已选满3张'); return; }
+    arr[free] = id;
+  }
+  renderCardsGrid();
+  renderSlots();
+  updateAttackBtn();
+}
+
+function removeSlot(i) {
+  const arr = selMode === 'atk' ? atkCards : defCards;
+  arr[i] = null;
+  renderCardsGrid();
+  renderSlots();
+  updateAttackBtn();
+}
+
+function renderSlots() {
+  const arr = selMode === 'atk' ? atkCards : defCards;
+  for (let i = 0; i < 3; i++) {
+    const slot = document.getElementById('slot' + i);
+    const id   = arr[i];
+    if (!id) {
+      slot.className = 'sel-slot';
+      slot.innerHTML = `${i+1}`;
+    } else {
+      const card = allCards.find(c => c.id === id);
+      if (!card) continue;
+      const img = TYPE_IMG[card.card_type](card.star);
+      slot.className = 'sel-slot filled';
+      slot.innerHTML = `<img src="${img}" alt="">`;
+    }
+  }
+}
+
+function updateAttackBtn() {
+  const full = atkCards.every(x => x !== null);
+  document.getElementById('btnAttack').disabled = !full || isAnimating;
+}
+
+// ─── 出击 ─────────────────────────────────────────────────────────
+async function startAttack() {
+  if (isAnimating) return;
+  const cardIds = atkCards.filter(x=>x!==null);
+  if (cardIds.length !== 3) { showTip('请选择3张攻击卡'); return; }
+
+  isAnimating = true;
+  document.getElementById('btnAttack').disabled = true;
+  document.getElementById('arenaIdle').style.display = 'none';
+  document.getElementById('arenaBattle').classList.add('visible');
+  document.getElementById('resultBanner').classList.remove('visible');
+
+  let resp, data;
+  try {
+    resp = await fetch(ROOT + '/api/battle/attack', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({card_ids: cardIds}),
+    });
+    data = await resp.json();
+  } catch(e) {
+    showTip('网络错误，请重试'); resetArena(); return;
+  }
+
+  if (!resp.ok) {
+    showTip(data.error || '出击失败'); resetArena(); return;
+  }
+
+  // 设置对手名
+  document.getElementById('atkName').textContent = '我';
+  document.getElementById('defName').textContent = data.defender;
+
+  // 逐回合动画
+  let atkHp = 100, defHp = 100;
+  for (const rd of data.rounds) {
+    await showRound(rd, atkHp, defHp);
+    atkHp = rd.atk_hp_after;
+    defHp = rd.def_hp_after;
+    updateCombatantHp(atkHp, defHp);
+    await sleep(1000);
+  }
+
+  // 结果
+  await sleep(400);
+  showResult(data);
+  await loadStatus();
+  await loadHistory();
+}
+
+async function showRound(rd, prevAtkHp, prevDefHp) {
+  document.getElementById('roundDisplay').style.display = 'block';
+  document.getElementById('roundTitle').textContent = `第 ${rd.round_no} 回合`;
+
+  const ac = rd.atk_card, dc = rd.def_card;
+  document.getElementById('atkCardImg').src  = ac ? TYPE_IMG[ac.card_type](ac.star) : '';
+  document.getElementById('atkCardType').textContent = ac ? TYPE_CN[ac.card_type] : '';
+  document.getElementById('atkCardDmg').textContent  = ac ? `造成 ${rd.atk_final_damage}` : '';
+  document.getElementById('defCardImg').src  = dc ? TYPE_IMG[dc.card_type](dc.star) : '';
+  document.getElementById('defCardType').textContent = dc ? TYPE_CN[dc.card_type] : '';
+  document.getElementById('defCardDmg').textContent  = dc ? `造成 ${rd.def_final_damage}` : '';
+
+  const relBadge = document.getElementById('relBadge');
+  relBadge.textContent  = REL_CN[rd.type_relation];
+  relBadge.className = 'relation-badge ' + REL_CLS[rd.type_relation];
+
+  document.getElementById('atkShout').textContent = rd.atk_shout || '';
+  document.getElementById('defShout').textContent = rd.def_shout || '';
+
+  await sleep(1800);
+}
+
+function updateCombatantHp(atkHp, defHp) {
+  document.getElementById('atkHpBar').style.width = Math.max(0, atkHp) + '%';
+  document.getElementById('defHpBar').style.width = Math.max(0, defHp) + '%';
+  document.getElementById('atkHpVal').textContent = atkHp.toFixed(1);
+  document.getElementById('defHpVal').textContent = defHp.toFixed(1);
+}
+
+function showResult(data) {
+  const banner = document.getElementById('resultBanner');
+  banner.classList.remove('win','lose','draw');
+  const title  = document.getElementById('resultTitle');
+  const detail = document.getElementById('resultDetail');
+
+  if (data.winner === 'attacker') {
+    banner.classList.add('win');
+    title.textContent = '🎉 胜利！';
+    detail.textContent = `连胜 ${data.consecutive} 场，获得 ${data.pts_gained} 积分`;
+  } else if (data.winner === 'defender') {
+    banner.classList.add('lose');
+    title.textContent = '💔 败北…';
+    detail.textContent = '连胜中断，扣除1积分（每日上限5）';
+  } else {
+    banner.classList.add('draw');
+    title.textContent = '🤝 平局';
+    detail.textContent = '棋逢对手，积分不变';
+  }
+  banner.classList.add('visible');  startAutoTimer();}
+
+// ── 自动出击倒计时 ──────────────────────────────────────────
+let _autoTimer = null;
+function startAutoTimer() {
+  const chk = document.getElementById('chkAutoAtk');
+  if (!chk || !chk.checked) return;
+  let n = 5;
+  const el = document.getElementById('autoCountdown');
+  el.textContent = n + 's';
+  _autoTimer = setInterval(() => {
+    n--;
+    if (!chk.checked) { clearInterval(_autoTimer); el.textContent = ''; return; }
+    if (n <= 0) {
+      clearInterval(_autoTimer);
+      el.textContent = '';
+      resetArena();
+      startAttack();
+    } else {
+      el.textContent = n + 's';
+    }
+  }, 1000);
+}
+function cancelAutoAtk() {
+  if (_autoTimer) { clearInterval(_autoTimer); _autoTimer = null; }
+  const el = document.getElementById('autoCountdown');
+  if (el) el.textContent = '';
+}
+
+function resetArena() {
+  cancelAutoAtk();
+  isAnimating = false;
+  document.getElementById('arenaBattle').classList.remove('visible');
+  document.getElementById('arenaIdle').style.display = 'flex';
+  document.getElementById('resultBanner').classList.remove('visible');
+  document.getElementById('roundDisplay').style.display = 'none';
+  updateAttackBtn();
+}
+
+// ─── 加入/退出对战池 ──────────────────────────────────────────────
+async function joinPool() {
+  const ids = defCards.filter(x=>x!==null);
+  if (ids.length !== 3) { showTip('请先在"防守卡"模式下选择3张防守卡'); return; }
+  const r = await fetch(ROOT + '/api/battle/join_pool', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({card_ids: ids}),
+  });
+  const d = await r.json();
+  if (d.ok) { showTip('✅ 已加入对战池'); loadStatus(); }
+  else showTip(d.error || '加入失败');
+}
+
+async function leavePool() {
+  await fetch(ROOT + '/api/battle/leave_pool', {method:'POST'});
+  showTip('已退出对战池');
+  loadStatus();
+}
+
+// ─── 战绩列表 ─────────────────────────────────────────────────────
+async function loadHistory() {
+  const r = await fetch(ROOT + '/api/battle/history');
+  const d = await r.json();
+  const list = document.getElementById('historyList');
+  if (!d.history || !d.history.length) {
+    list.innerHTML = '<div class="empty-tip">暂无战绩</div>';
+    return;
+  }
+  list.innerHTML = d.history.map(h => {
+    const isSelf = h.role === 'attacker';
+    let outcome, cls;
+    if (h.winner === 'draw') { outcome = '平局'; cls = 'hi-draw'; }
+    else if ((h.winner === 'attacker') === isSelf) { outcome = '胜'; cls = 'hi-win'; }
+    else { outcome = '败'; cls = 'hi-lose'; }
+    const roleStr = isSelf ? '主动出击' : '被挑战';
+    return `
+    <div class="history-item">
+      <div class="hi-header">
+        <span class="hi-opp">${h.is_teacher ? '🎓 教师' : '⚔ ' + h.opponent}</span>
+        <span class="${cls}">${outcome}</span>
+      </div>
+      <div class="hi-detail">${roleStr} · ${h.created_at}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── 生成卡牌浮窗（从 profile 页跳转携带参数时触发）────────────────
+async function showGenModal(card) {
+  const img = TYPE_IMG[card.card_type](card.star);
+  const cardImg    = document.getElementById('genCardImg');
+  const dmgOverlay = document.getElementById('genDmgOverlay');
+  const nameEl     = document.getElementById('genName');
+  const fire       = document.getElementById('genFireOverlay');
+
+  // 重置状态
+  cardImg.src = img;
+  dmgOverlay.style.opacity = '0';
+  dmgOverlay.textContent = '攻击力：0';
+  nameEl.textContent = '';
+  fire.style.animation = 'none';
+  fire.offsetHeight;
+  fire.style.animation = '';
+
+  document.getElementById('cardGenModal').classList.add('visible');
+
+  // 等火焰动画结束后显示攻击力
+  await sleep(1500);
+  dmgOverlay.style.opacity = '1';
+  nameEl.textContent = card.name || '';
+
+  // 数字滚动
+  const target = parseFloat(card.damage);
+  let cur = 0; const steps = 20;
+  for (let i = 0; i < steps; i++) {
+    cur = Math.min(cur + target / steps, target);
+    dmgOverlay.textContent = `攻击力：${cur.toFixed(1)}`;
+    await sleep(40);
+  }
+  dmgOverlay.textContent = `攻击力：${target}`;
+}
+function closeGenModal() {
+  document.getElementById('cardGenModal').classList.remove('visible');
+  loadCards();
+}
+
+// ─── 工具 ─────────────────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function showTip(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;z-index:9999;font-size:14px;pointer-events:none;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+</script>
+{% endblock %}

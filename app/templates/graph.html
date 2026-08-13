@@ -1,0 +1,971 @@
+{% extends "base.html" %}
+
+{% block title %}力学笃行 - 知识图谱{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='graph.css') }}?v=20260406b">
+{% endblock %}
+
+{% block content %}
+<div class="graph-page">
+  <!-- 图谱容器（全区域） -->
+  <div class="graph-container" id="graphContainer">
+    <canvas id="particleBg"></canvas>
+    <svg id="graphSvg"></svg>
+
+    <!-- 左上角浮动按钮：知识图谱 -->
+    <button class="graph-float-btn left-btn active" id="tab-kg" onclick="switchTab('kg')">
+      <span class="float-btn-icon">⚡</span>
+      <span class="float-btn-title">力学天赋</span>
+    </button>
+
+    <!-- 右上角浮动按钮：问题图谱 -->
+    <button class="graph-float-btn right-btn" id="tab-qg" onclick="switchTab('qg')">
+      <span class="float-btn-icon">🎯</span>
+      <span class="float-btn-title">任务指引</span>
+    </button>
+
+    <!-- level2 节点展开后的视频卡片（绝对定位浮层） -->
+    <div class="node-card" id="nodeCard" style="display:none">
+      <div class="node-card-title" id="nodeCardTitle"></div>
+      <div class="node-card-video" id="nodeCardVideo">
+        <video id="nodeCardPlayer" controls preload="none" controlsList="nodownload" oncontextmenu="return false" style="width:100%;border-radius:6px;"></video>
+        <div id="nodeCardNoVideo" style="display:none" class="no-video-hint">
+          暂无慕课视频
+          {% if current_user.is_teacher %}
+          <button class="upload-graph-btn" onclick="openGraphVideoUpload()">上传视频</button>
+          {% endif %}
+        </div>
+        {% if current_user.is_teacher %}
+        <button class="replace-graph-btn" id="replaceGraphBtn" style="display:none" onclick="openGraphVideoUpload()">替换视频</button>
+        {% endif %}
+      </div>
+      <!-- 擂主信息条（问题图谱专用） -->
+      <div id="championBar" style="display:none; margin-top:8px; padding:6px 10px;
+           background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.4);
+           border-radius:8px; font-size:13px; color:#c8860a; line-height:1.5;">
+      </div>
+      <!-- 学生互动按钮区（守擂/打擂/替换视频/所有选手，并排统一尺寸） -->
+      <div id="championBtns" style="display:none; margin-top:8px; gap:8px; flex-wrap:wrap;">
+        <button id="btnDeclare" style="display:none; flex:1 1 220px; max-width:240px; min-height:36px; padding:6px 14px; border-radius:7px;
+                background:#f5c518; border:none; font-size:13px; font-weight:700; cursor:pointer; color:#333;" onclick="declareChampion()">
+          👑 守擂
+        </button>
+        <button id="btnChallenge" style="display:none; flex:1 1 220px; max-width:240px; min-height:36px; padding:6px 14px; border-radius:7px;
+                background:#1565c0; border:none; font-size:13px; font-weight:700; cursor:pointer; color:#fff;" onclick="challengeChampion()">
+          ⚔️ 打擂
+        </button>
+        <button id="btnReplaceVideo" style="display:none; flex:1 1 220px; max-width:240px; min-height:36px; padding:6px 14px; border-radius:7px;
+                background:#e0e4ef; border:none; font-size:13px; cursor:pointer; color:#333;" onclick="openReplaceVideo()">
+          🔄 替换视频
+        </button>
+        <button id="btnAllPlayers" style="display:none; flex:1 1 220px; max-width:240px; min-height:36px; padding:6px 14px; border-radius:7px;
+                background:#f3e5f5; border:1px solid #b39ddb; font-size:13px; font-weight:600; cursor:pointer; color:#6a1b9a;" onclick="toggleAllPlayers()">
+          🏅 所有选手
+        </button>
+      </div>
+      <!-- 所有选手排名面板 -->
+      <div id="allPlayersPanel" style="display:none; margin-top:6px;">
+        <div style="padding:6px 10px; background:#ede7f6; border-radius:7px 7px 0 0;
+             font-size:12px; color:#5e35b1; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span id="allPlayersTitle" style="flex-shrink:0; white-space:nowrap;">加载中…</span>
+          <button onclick="returnToChampion()" style="width:90px; font-size:12px;
+                  background:#fff; border:1px solid #b39ddb; color:#6a1b9a; border-radius:5px;
+                  padding:2px 6px; cursor:pointer;">返回擂主</button>
+        </div>
+        <div id="allPlayersList" style="max-height:200px; overflow-y:auto; border:1px solid #e0e4ef;
+             border-top:none; border-radius:0 0 7px 7px; background:#fafbff; font-size:13px;"></div>
+      </div>
+      <button class="node-card-close" onclick="closeNodeCard()">✕</button>
+    </div>
+
+    <!-- level3 悬停信息框（仅知识图谱） -->
+    <div class="tooltip-box" id="tooltipBox" style="display:none"></div>
+  </div>
+
+  <!-- 教师上传视频的隐藏 file input -->
+  {% if current_user.is_teacher %}
+  <input type="file" id="graphVideoInput" accept="video/*" style="display:none" onchange="submitGraphVideo(this)">
+  {% endif %}
+  <!-- 替换视频的隐藏 file input（学生使用） -->
+  <input type="file" id="replaceVideoInput" accept="video/*" style="display:none" onchange="submitReplaceVideo(this)">
+  <!-- 打擂挑战的隐藏 file input（学生使用） -->
+  <input type="file" id="challengeVideoInput" accept="video/*" style="display:none" onchange="submitChallengeVideo(this)">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  配置常量
+// ═══════════════════════════════════════════════════════════════
+const IS_TEACHER = {{ 'true' if current_user.is_teacher else 'false' }};
+
+const CFG = {
+  r0: 86,      // level0 节点半径 (×1.5)
+  r1: 78,      // level1 节点半径 (×1.5)
+  r2: 58,      // level2 节点半径
+  r3: 42,      // level3 节点半径
+  d01: 0,      // level0 到 level1 距离（动态计算）
+  d12: 280,    // level1 到 level2 距离
+  d23: 200,    // level2 到 level3 距离
+  cardW: 200,  // level2 展开卡片宽
+  cardH: 160,  // level2 展开卡片高
+  // 颜色
+  c0:   '#0064FF',
+  c1:   '#4a9eff',
+  c1dim:'rgba(74,158,255,0.2)',
+  c2:   '#a78bfa',
+  c2dim:'rgba(167,139,250,0.2)',
+  c3:   '#34d399',
+  linkColor: 'rgba(255,255,255,0.25)',
+  linkDim:   'rgba(255,255,255,0.06)',
+  glowColor: '#00cfff',
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  状态
+// ═══════════════════════════════════════════════════════════════
+let currentTab = 'kg';          // 'kg' | 'qg'
+let kgData = null, qgData = null;
+let graphVideos = {};            // {node_id: {url,thumbnail}}
+let activeL1 = null;             // 当前激活的 level1 节点对象
+let activeL2 = null;             // 当前激活的 level2 节点对象
+let uploadTargetNodeId = null;   // 等待上传视频的节点 id
+
+let svg, gMain;
+let width, height;
+
+// ═══════════════════════════════════════════════════════════════
+//  初始化
+// ═══════════════════════════════════════════════════════════════
+async function init() {
+  [kgData, qgData, graphVideos] = await Promise.all([
+    fetch("{{ url_for('main.kg_json') }}?_=" + Date.now()).then(r=>r.json()).catch(()=>null),
+    fetch("{{ url_for('main.qg_json') }}?_=" + Date.now()).then(r=>r.json()).catch(()=>null),
+    fetch(SCRIPT_ROOT + '/api/graph/videos').then(r=>r.json()).catch(()=>{}),
+  ]);
+
+  if (!kgData) kgData = dummyKG();
+  if (!qgData) qgData = dummyQG();
+
+  setupSvg();
+  renderGraph(currentTab === 'kg' ? kgData : qgData);
+
+}
+
+function dummyKG() {
+  return {id:'材料力学',label:'材料力学',level:0,children:[{id:'ch1',label:'第一章 绪论',level:1,description:'',children:[{id:'s1-1',label:'1.1 任务',level:2,description:'',children:[{id:'k1',label:'知识点1',level:3,description:'测试知识点'}]}]}]};
+}
+function dummyQG() {
+  return {id:'材料力学',label:'材料力学',level:0,children:[{id:'c1',label:'第一章',level:1,children:[{id:'1-1',label:'1-1',level:2,children:[{id:'1-1-kp1',label:'知识点1',level:3,description:''}]}]}]};
+}
+
+function setupSvg() {
+  const container = document.getElementById('graphContainer');
+  width  = container.clientWidth;
+  height = container.clientHeight;
+
+  svg = d3.select('#graphSvg')
+    .attr('width',  width)
+    .attr('height', height);
+
+  // zoom
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 4])
+    .on('zoom', e => gMain.attr('transform', e.transform));
+  svg.call(zoom);
+
+  gMain = svg.append('g')
+    .attr('transform', `translate(${width/2},${height/2})`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  图谱渲染核心
+// ═══════════════════════════════════════════════════════════════
+function renderGraph(data) {
+  gMain.selectAll('*').remove();
+  activeL1 = null;
+  activeL2 = null;
+  closeNodeCard();
+
+  const isQG = currentTab === 'qg';
+  const l1nodes = data.children || [];
+  const n1 = l1nodes.length;
+
+  // 动态计算 level1 半径（根据 level1 数量，节点变大后适当扩大）
+  const R1 = Math.max(400, n1 * 55);
+
+  // ── level1 位置 ──
+  l1nodes.forEach((n, i) => {
+    const a = (2 * Math.PI * i / n1) - Math.PI/2;
+    n._x = R1 * Math.cos(a);
+    n._y = R1 * Math.sin(a);
+    n._angle = a;
+  });
+
+  // ── 绘制 level0→level1 连线 ──
+  const linkG = gMain.append('g').attr('class','links');
+  const nodeG = gMain.append('g').attr('class','nodes');
+
+  l1nodes.forEach(n1node => {
+    linkG.append('line')
+      .attr('class', 'link link-01')
+      .attr('data-l1', n1node.id)
+      .attr('x1',0).attr('y1',0)
+      .attr('x2',n1node._x).attr('y2',n1node._y)
+      .attr('stroke', CFG.linkColor).attr('stroke-width',1.5);
+  });
+
+  // ── level0 节点 ──
+  const g0 = nodeG.append('g').attr('class','node-l0').style('cursor','pointer');
+  g0.append('circle').attr('r', CFG.r0).attr('fill', CFG.c0)
+    .attr('filter','url(#glow0)');
+  addWrappedText(g0, data.label || data.id, 33, '#fff').attr('font-weight','bold');
+  g0.on('click', () => resetGraph(data));
+
+  // ── level1 节点 ──
+  l1nodes.forEach(n1node => {
+    const g = nodeG.append('g')
+      .attr('class','node-l1')
+      .attr('data-id', n1node.id)
+      .attr('transform', `translate(${n1node._x},${n1node._y})`)
+      .style('cursor','pointer');
+
+    g.append('circle').attr('r', CFG.r1)
+      .attr('fill', CFG.c1)
+      .attr('stroke', 'none');
+
+    // 发光环（默认隐藏）
+    g.append('circle').attr('class','glow-ring').attr('r', CFG.r1+6)
+      .attr('fill','none').attr('stroke', CFG.glowColor)
+      .attr('stroke-width', 2.5).attr('opacity', 0)
+      .attr('filter','url(#glow1)');
+
+    addWrappedText(g, shortLabel(n1node.label, 18), 22, '#fff', 'l1-text').attr('font-weight','bold');
+
+    g.on('click', (event) => {
+      event.stopPropagation();
+      if (activeL2) {
+        // 当前有 level2 激活 → 点 level1 收起 level2，返回 level1 展开状态
+        collapseL2();
+        return;
+      }
+      clickL1(n1node, data, isQG, R1);
+    });
+  });
+
+  // 添加 SVG 滤镜
+  addFilters();
+}
+
+// ── 点击 level1 ──
+function clickL1(n1node, data, isQG, R1) {
+  if (activeL1 && activeL1.id === n1node.id) return; // 已激活则忽略
+
+  activeL1 = n1node;
+  activeL2 = null;
+
+  const l1nodes = data.children || [];
+  const n2nodes = n1node.children || [];
+  const n2 = n2nodes.length;
+
+  // 其他 level1 变灰
+  gMain.selectAll('.node-l1').each(function(d) {
+    const g = d3.select(this);
+    const id = g.attr('data-id');
+    if (id !== n1node.id) {
+      g.select('circle').attr('fill', CFG.c1dim);
+      g.style('pointer-events','none');
+      g.select('.glow-ring').attr('opacity',0);
+      g.selectAll('.l1-text').attr('opacity', 0.25);
+    } else {
+      g.select('.glow-ring').attr('opacity',1);
+      g.selectAll('.l1-text')
+        .attr('opacity', 1)
+        .style('paint-order','stroke')
+        .attr('stroke','rgba(0,0,50,0.55)')
+        .attr('stroke-width','2.5px');
+    }
+  });
+  // 其他连线变灰
+  gMain.selectAll('.link-01').attr('stroke', ln => CFG.linkDim);
+  gMain.select('.link-01[data-l1="'+n1node.id+'"]').attr('stroke', CFG.linkColor);
+
+  // ── 计算 level2 角度布局 ──
+  // 连线数 = n2 + 1（+1 是到 level0 的线）
+  // 从 level1 出发，等角度分 360°，其中一条朝向 level0
+  const toRoot = Math.atan2(-n1node._y, -n1node._x);   // 指向 level0 的角度
+  const step = (2 * Math.PI) / (n2 + 1);
+  // 找到距 toRoot 最近的"整数步"槽，分配给 level0 连线
+  let startAngle = toRoot;  // level0 连线占这个角度
+
+  const d12 = isQG ? Math.max(CFG.d12, 100 + n2 * 8) : CFG.d12;
+
+  n2nodes.forEach((n2node, i) => {
+    const a = startAngle + step * (i + 1);
+    n2node._x = n1node._x + d12 * Math.cos(a);
+    n2node._y = n1node._y + d12 * Math.sin(a);
+    n2node._angle = a;
+    n2node._parentAngle = startAngle; // level0 方向
+  });
+
+  // 删除旧 level2 层
+  gMain.selectAll('.l2-group').remove();
+
+  // L1→L2 连线插在 .nodes 之前，不遇层节点圆
+  const l2LinkG = gMain.insert('g', '.nodes').attr('class', 'l2-group');
+  // L2 节点追加到最后，位于所有连线上方
+  const l2NodeG = gMain.append('g').attr('class', 'l2-group');
+
+  // level1 → level2 连线
+  n2nodes.forEach(n2node => {
+    l2LinkG.append('line').attr('class','link link-12').attr('data-l2', n2node.id)
+      .attr('x1',n1node._x).attr('y1',n1node._y)
+      .attr('x2',n2node._x).attr('y2',n2node._y)
+      .attr('stroke',CFG.linkColor).attr('stroke-width',1.2);
+  });
+
+  // level2 节点
+  n2nodes.forEach(n2node => {
+    const g = l2NodeG.append('g')
+      .attr('class','node-l2').attr('data-id',n2node.id)
+      .attr('transform',`translate(${n2node._x},${n2node._y})`)
+      .style('cursor','pointer');
+
+    g.append('circle').attr('r', CFG.r2)
+      .attr('fill', CFG.c2).attr('stroke','none');
+
+    g.append('circle').attr('class','glow-ring').attr('r', CFG.r2+6)
+      .attr('fill','none').attr('stroke','#c4b5fd')
+      .attr('stroke-width',2).attr('opacity',0).attr('filter','url(#glow2)');
+
+    addWrappedText(g, shortLabel(n2node.label, 18), isQG ? 32 : 17, '#fff', 'l2-text');
+
+    g.on('click', (event) => {
+      event.stopPropagation();
+      clickL2(n2node, n1node, data, isQG, d12);
+    });
+  });
+}
+
+// ── 点击 level2 ──
+function clickL2(n2node, n1node, data, isQG, d12) {
+  if (activeL2 && activeL2.id === n2node.id) return;
+  activeL2 = n2node;
+
+  const n3nodes = n2node.children || [];
+  const n3 = n3nodes.length;
+
+  // 其他 level2 变灰，当前发光
+  gMain.selectAll('.node-l2').each(function() {
+    const g = d3.select(this);
+    if (g.attr('data-id') !== n2node.id) {
+      g.select('circle').attr('fill', CFG.c2dim);
+      g.style('pointer-events','none');
+      g.selectAll('.l2-text').attr('opacity', 0);  // 隐藏未激活节点文字
+    } else {
+      g.select('.glow-ring').attr('opacity',1);
+      g.selectAll('.l2-text')
+        .attr('opacity', 1)
+        .style('paint-order','stroke')
+        .attr('stroke','rgba(0,0,50,0.6)')
+        .attr('stroke-width','2px');
+    }
+  });
+  // level1 取消发光
+  gMain.selectAll('.node-l1').each(function() {
+    const g = d3.select(this);
+    if (g.attr('data-id') === n1node.id) {
+      g.select('.glow-ring').attr('opacity',0);
+    }
+  });
+
+  // ── level3 布局 ──
+  const toParent = Math.atan2(n1node._y - n2node._y, n1node._x - n2node._x);
+  const step3 = (2 * Math.PI) / (n3 + 1);
+  const d23 = isQG ? CFG.d23 * 0.8 : CFG.d23;
+
+  n3nodes.forEach((n3node, i) => {
+    const a = toParent + step3 * (i + 1);
+    n3node._x = n2node._x + d23 * Math.cos(a);
+    n3node._y = n2node._y + d23 * Math.sin(a);
+  });
+
+  // 删除旧 level3 层
+  gMain.selectAll('.l3-group').remove();
+  // L2→L3 连线插在 .nodes 之前，不遇层任何节点圆
+  const l3LinkG = gMain.insert('g', '.nodes').attr('class', 'l3-group');
+  // L3 节点追加到最后
+  const l3NodeG = gMain.append('g').attr('class', 'l3-group');
+
+  n3nodes.forEach(n3node => {
+    // 连线
+    l3LinkG.append('line').attr('class','link link-23')
+      .attr('x1',n2node._x).attr('y1',n2node._y)
+      .attr('x2',n3node._x).attr('y2',n3node._y)
+      .attr('stroke',CFG.linkColor).attr('stroke-width',1);
+
+    // 节点
+    const g = l3NodeG.append('g').attr('class','node-l3')
+      .attr('transform',`translate(${n3node._x},${n3node._y})`)
+      .style('cursor', isQG ? 'default' : 'help');
+
+    g.append('circle').attr('r',CFG.r3).attr('fill',CFG.c3);
+    addWrappedText(g, shortLabel(n3node.label||n3node.id, 18), 17, '#111', 'l3-text')
+      .style('paint-order','stroke')
+      .attr('stroke','rgba(255,255,255,0.9)')
+      .attr('stroke-width','2px');
+
+    // 知识图谱：悬停 tooltip + 点击跳转视频时间点
+    if (!isQG) {
+      if (n3node.description) {
+        g.on('mouseover', (event) => {
+          showTooltip(event, n3node.label + '：' + n3node.description);
+        }).on('mousemove', (event) => {
+          moveTooltip(event);
+        }).on('mouseout', () => hideTooltip());
+      }
+      if (n3node.seek_time != null) {
+        g.style('cursor', 'pointer');
+        g.on('click', (event) => {
+          event.stopPropagation();
+          const player = document.getElementById('nodeCardPlayer');
+          if (player && player.src) {
+            player.currentTime = n3node.seek_time;
+            player.play();
+            showFlash('⏵ 跳转至 ' + Math.floor(n3node.seek_time/60) + ':' + String(n3node.seek_time%60).padStart(2,'0'));
+          } else {
+            showFlash('请先点击上方的知识节点打开视频');
+          }
+        });
+      }
+    }
+  });
+
+  // ── 显示节点卡片（视频区域）──
+  showNodeCard(n2node, isQG);
+}
+
+// ── 收起 level2（点 level1 触发）──
+function collapseL2() {
+  activeL2 = null;
+  gMain.selectAll('.l3-group').remove();
+  gMain.selectAll('.node-l2').each(function() {
+    const g = d3.select(this);
+    g.select('circle:first-of-type').attr('fill', CFG.c2);
+    g.style('pointer-events','auto');
+    g.select('.glow-ring').attr('opacity',0);
+    g.selectAll('.l2-text').attr('opacity', 1).attr('stroke', null).attr('stroke-width', null).style('paint-order', null);
+  });
+  // level1 恢复发光
+  gMain.selectAll('.node-l1').each(function() {
+    const g = d3.select(this);
+    if (g.attr('data-id') === activeL1.id) {
+      g.select('.glow-ring').attr('opacity',1);
+    }
+  });
+  closeNodeCard();
+}
+
+// ── 重置到初始状态（点 level0）──
+function resetGraph(data) {
+  const isQG = currentTab === 'qg';
+  renderGraph(data);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  节点卡片（视频区域）
+// ═══════════════════════════════════════════════════════════════
+function showNodeCard(n2node, isQG) {
+  const card = document.getElementById('nodeCard');
+  document.getElementById('nodeCardTitle').textContent = n2node.label || n2node.id;
+
+  const player = document.getElementById('nodeCardPlayer');
+  const noVideo = document.getElementById('nodeCardNoVideo');
+  const replaceBtn = document.getElementById('replaceGraphBtn');
+
+  uploadTargetNodeId = n2node.id;
+
+  if (isQG) {
+    // 问题图谱：显示最高分作业视频
+    loadBestHomeworkVideo(n2node.id, player, noVideo, replaceBtn);
+  } else {
+    // 知识图谱：显示慕课视频（无擂台功能，确保隐藏擂台区）
+    const champBarEl  = document.getElementById('championBar');
+    const champBtnsEl = document.getElementById('championBtns');
+    if (champBarEl)  champBarEl.style.display  = 'none';
+    if (champBtnsEl) champBtnsEl.style.display = 'none';
+    const vid = graphVideos[n2node.id];
+    if (vid && vid.url) {
+      player.src = vid.url;
+      if (vid.thumbnail) player.poster = vid.thumbnail;
+      player.style.display = 'block';
+      noVideo.style.display = 'none';
+      if (replaceBtn) replaceBtn.style.display = IS_TEACHER ? 'block' : 'none';
+    } else {
+      player.src = '';
+      player.style.display = 'none';
+      noVideo.style.display = 'flex';
+      if (replaceBtn) replaceBtn.style.display = 'none';
+    }
+  }
+
+  // 定位卡片到 svg 正中央
+  card.style.display = 'block';
+}
+
+function loadBestHomeworkVideo(nodeId, player, noVideo, replaceBtn) {
+  // nodeId 格式如 "1-1"（章-题），匹配视频 chapter+problem_no
+  const parts = nodeId.split('-');
+  const chap = parseInt(parts[0]);
+  const prob = parseInt(parts[1]);
+
+  // 隐藏擂台区域（等数据到达再显示）
+  const champBar  = document.getElementById('championBar');
+  const champBtns = document.getElementById('championBtns');
+  if (champBar) champBar.style.display = 'none';
+  if (champBtns) champBtns.style.display = 'none';
+  const btnDeclare  = document.getElementById('btnDeclare');
+  const btnChallenge = document.getElementById('btnChallenge');
+  const btnReplace  = document.getElementById('btnReplaceVideo');
+  if (btnDeclare)   btnDeclare.style.display = 'none';
+  if (btnChallenge) btnChallenge.style.display = 'none';
+  if (btnReplace)   btnReplace.style.display = 'none';
+  if (document.getElementById('btnAllPlayers')) document.getElementById('btnAllPlayers').style.display = 'none';
+
+  fetch(SCRIPT_ROOT + `/api/videos/best?chapter=${chap}&problem_no=${prob}&subject=材料力学`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.url) {
+        player.src = data.url;
+        if (data.thumbnail) player.poster = data.thumbnail;
+        player.style.display = 'block';
+        noVideo.style.display = 'none';
+        if (replaceBtn) replaceBtn.style.display = 'none';
+
+        // 保存当前最高分视频信息供按钮使用
+        window._bestVideoData = data;
+        window._bestProblemKey = nodeId;
+        showAllPlayersWrap(true);   // 显示"所有选手"按钮 + 收起排名面板 + 重置
+
+        const CURRENT_USER_ID = {{ current_user.id }};
+
+        // ── 擂主信息栏 ──
+        if (champBar) {
+          if (data.champion) {
+            champBar.innerHTML = `🏆 擂主：<strong>${data.champion.username}</strong> 👑`;
+          } else {
+            champBar.innerHTML = '🏆 该题目尚无擂主';
+          }
+          champBar.style.display = '';
+        }
+
+        // ── 操作按钮 ──（"所有选手"已随视频显示，按钮区始终展示）
+        const isAuthor = (data.author_id === CURRENT_USER_ID);
+        if (isAuthor) {
+          if (btnDeclare)  btnDeclare.style.display = '';
+          if (btnReplace)  btnReplace.style.display = '';
+        } else if (!IS_TEACHER) {
+          if (btnChallenge) btnChallenge.style.display = '';
+        }
+        if (champBtns) champBtns.style.display = 'flex';
+      } else {
+        player.src = '';
+        player.style.display = 'none';
+        noVideo.style.display = 'flex';
+        if (replaceBtn) replaceBtn.style.display = 'none';
+        window._bestVideoData  = null;
+        window._bestProblemKey = nodeId;
+        showAllPlayersWrap(false);
+        // 打擂（鼓励上传）
+        if (!IS_TEACHER && champBtns && btnChallenge) {
+          champBtns.style.display = 'flex';
+          btnChallenge.style.display = '';
+        } else if (champBtns) {
+          champBtns.style.display = 'none';
+        }
+      }
+    })
+    .catch(() => {
+      player.style.display = 'none';
+      noVideo.style.display = 'flex';
+    });
+}
+
+function closeNodeCard() {
+  const card = document.getElementById('nodeCard');
+  card.style.display = 'none';
+  const player = document.getElementById('nodeCardPlayer');
+  if (player) { player.pause(); player.src = ''; }
+  uploadTargetNodeId = null;
+  window._bestVideoData  = null;
+  window._bestProblemKey = null;
+  showAllPlayersWrap(false);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  所有选手：查看该题全部视频排名，可切换观看
+// ═══════════════════════════════════════════════════════════════
+let _rankingsData = null;     // 当前题目排名列表
+let _playingRank  = 1;        // 当前播放的排名（1=擂主）
+
+function showAllPlayersWrap(show){
+  const btn = document.getElementById('btnAllPlayers');
+  if(btn) btn.style.display = show ? '' : 'none';
+  const p = document.getElementById('allPlayersPanel');
+  if(p) p.style.display = 'none';   // 切换节点/无视频时收起排名面板
+  _rankingsData = null; _playingRank = 1;
+}
+
+function fmtRankScore(s){ return s ? s.toFixed(1) + '分' : '暂无评分'; }
+
+async function toggleAllPlayers(){
+  const panel = document.getElementById('allPlayersPanel');
+  if(!panel) return;
+  if(panel.style.display === 'block' && _rankingsData){ panel.style.display = 'none'; return; }
+  const key = window._bestProblemKey;
+  if(!key) return;
+  const [chap, prob] = key.split('-').map(Number);
+  panel.style.display = 'block';
+  document.getElementById('allPlayersTitle').textContent = '加载中…';
+  document.getElementById('allPlayersList').innerHTML = '';
+  try{
+    const res = await fetch(SCRIPT_ROOT + `/api/videos/rankings?chapter=${chap}&problem_no=${prob}&subject=材料力学`);
+    _rankingsData = await res.json();
+    _playingRank = 1;
+    renderAllPlayersList();
+  }catch(e){
+    document.getElementById('allPlayersTitle').textContent = '加载失败，请重试';
+  }
+}
+
+function renderAllPlayersList(){
+  const listEl  = document.getElementById('allPlayersList');
+  const titleEl = document.getElementById('allPlayersTitle');
+  const data = _rankingsData || [];
+  const rest = data.filter(v => v.rank >= 2);   // 排名2起（擂主为rank1，已是主视频）
+  titleEl.textContent = rest.length ? `所有选手（排名2起，共${rest.length}人）` : '所有选手';
+  if(!rest.length){
+    listEl.innerHTML = '<div style="padding:14px; text-align:center; color:#999;">该题目暂无其他选手</div>';
+    return;
+  }
+  listEl.innerHTML = rest.map(v => {
+    const cur = (_playingRank === v.rank);
+    return `<div onclick="playRankedVideo(${v.rank})" style="padding:8px 10px; cursor:pointer; border-bottom:1px solid #f0f0f0;
+         display:flex; justify-content:space-between; align-items:center; ${cur ? 'background:#e3f2fd;' : ''}">
+         <span>排名 ${v.rank}　${v.author}</span>
+         <span style="color:${cur ? '#1565c0' : '#888'}; font-weight:${cur ? '700' : '400'};">${fmtRankScore(v.score)}</span>
+       </div>`;
+  }).join('');
+}
+
+function playRankedVideo(rank){
+  const v = (_rankingsData || []).find(x => x.rank === rank);
+  if(!v) return;
+  const player = document.getElementById('nodeCardPlayer');
+  player.src = v.url;
+  if(v.thumbnail) player.poster = v.thumbnail;
+  player.play().catch(()=>{});
+  _playingRank = rank;
+  renderAllPlayersList();
+}
+
+function returnToChampion(){
+  const d = window._bestVideoData;
+  if(!d || !d.url) return;
+  const player = document.getElementById('nodeCardPlayer');
+  player.src = d.url;
+  if(d.thumbnail) player.poster = d.thumbnail;
+  player.play().catch(()=>{});
+  _playingRank = 1;
+  renderAllPlayersList();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  打擂台：守擂 / 打擂 / 替换视频
+// ═══════════════════════════════════════════════════════════════
+async function declareChampion() {
+  const d = window._bestVideoData;
+  const k = window._bestProblemKey;
+  if (!d || !k) return;
+  try {
+    const res = await fetch(SCRIPT_ROOT + '/api/champion/declare', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ video_id: d.video_id, problem_key: k }),
+    });
+    const j = await res.json();
+    if (j.success) {
+      showMsg(j.message || '守擂成功！');
+      const champBar = document.getElementById('championBar');
+      if (champBar) champBar.innerHTML = `🏆 擂主：<strong>${d.author}</strong> 👑`;
+      document.getElementById('btnDeclare').style.display = 'none';
+    } else {
+      showMsg(j.error || '守擂失败');
+    }
+  } catch(e) { showMsg('请求失败，请重试'); }
+}
+
+function challengeChampion() {
+  const k = window._bestProblemKey;
+  if (!k) return;
+  document.getElementById('challengeVideoInput').click();
+}
+
+async function submitChallengeVideo(input) {
+  const k = window._bestProblemKey;
+  if (!input.files || !input.files[0] || !k) return;
+  const parts = k.split('-');
+  const chap  = parts[0] || '';
+  const prob  = parts[1] || '';
+
+  showMsg('正在上传视频，请稍候…');
+
+  const formData = new FormData();
+  formData.append('video', input.files[0]);
+  formData.append('video_type', 'homework');
+  formData.append('subject', '材料力学');
+  formData.append('chapter', chap);
+  formData.append('problem_no', prob);
+
+  try {
+    const res = await fetch(SCRIPT_ROOT + '/api/videos/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    const j = await res.json();
+    if (res.ok) {
+      showMsg('上传成功！即将跳转到作业页…');
+      setTimeout(() => { window.location.href = '{{ url_for("main.homework") }}'; }, 1500);
+    } else {
+      showMsg('上传失败：' + (j.message || j.error || '未知错误'));
+    }
+  } catch(e) { showMsg('上传失败，请重试'); }
+  input.value = '';
+}
+
+function openReplaceVideo() {
+  document.getElementById('replaceVideoInput').click();
+}
+
+async function submitReplaceVideo(input) {
+  const d = window._bestVideoData;
+  if (!input.files || !input.files[0] || !d) return;
+  const formData = new FormData();
+  formData.append('video', input.files[0]);
+  try {
+    const res = await fetch(SCRIPT_ROOT + `/api/videos/${d.video_id}/replace`, {
+      method: 'POST',
+      body:   formData,
+    });
+    const j = await res.json();
+    showMsg(j.message || (j.error ? '替换失败：' + j.error : '替换成功'));
+    if (j.success) {
+      // 重新加载该节点视频
+      const player  = document.getElementById('nodeCardPlayer');
+      const noVideo = document.getElementById('nodeCardNoVideo');
+      const replBtn = document.getElementById('replaceGraphBtn');
+      loadBestHomeworkVideo(window._bestProblemKey, player, noVideo, replBtn);
+    }
+  } catch(e) { showMsg('上传失败，请重试'); }
+  input.value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  教师上传图谱视频
+// ═══════════════════════════════════════════════════════════════
+function openGraphVideoUpload() {
+  if (!uploadTargetNodeId) return;
+  document.getElementById('graphVideoInput').click();
+}
+
+function submitGraphVideo(input) {
+  if (!input.files || !input.files[0] || !uploadTargetNodeId) return;
+  const formData = new FormData();
+  formData.append('video', input.files[0]);
+
+  fetch(SCRIPT_ROOT + `/api/graph/videos/${encodeURIComponent(uploadTargetNodeId)}`, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.url) {
+      graphVideos[uploadTargetNodeId] = data;
+      const player = document.getElementById('nodeCardPlayer');
+      player.src = data.url;
+      if (data.thumbnail) player.poster = data.thumbnail;
+      player.style.display = 'block';
+      document.getElementById('nodeCardNoVideo').style.display = 'none';
+      const replaceBtn = document.getElementById('replaceGraphBtn');
+      if (replaceBtn) replaceBtn.style.display = 'block';
+      showMsg('视频上传成功！');
+    }
+  })
+  .catch(() => showMsg('上传失败，请重试'));
+
+  input.value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Tooltip（level3 悬停）
+// ═══════════════════════════════════════════════════════════════
+function showTooltip(event, text) {
+  const box = document.getElementById('tooltipBox');
+  box.textContent = text;
+  box.style.display = 'block';
+  moveTooltip(event);
+}
+function moveTooltip(event) {
+  const box = document.getElementById('tooltipBox');
+  const rect = document.getElementById('graphContainer').getBoundingClientRect();
+  let x = event.clientX - rect.left + 12;
+  let y = event.clientY - rect.top + 12;
+  if (x + 200 > rect.width) x -= 220;
+  box.style.left = x + 'px';
+  box.style.top  = y + 'px';
+}
+function hideTooltip() {
+  document.getElementById('tooltipBox').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  标签切换
+// ═══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  if (tab === currentTab) return;
+  currentTab = tab;
+  document.getElementById('tab-kg').classList.toggle('active', tab==='kg');
+  document.getElementById('tab-qg').classList.toggle('active', tab==='qg');
+  renderGraph(tab === 'kg' ? kgData : qgData);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  工具函数
+// ═══════════════════════════════════════════════════════════════
+// 按照指定规则将标签切分为多行
+function wrapChars(s) {
+  const n = s.length;
+  if (n <= 5)  return [s];
+  if (n === 6) return [s.slice(0,3), s.slice(3)];
+  if (n === 7) return [s.slice(0,4), s.slice(4)];
+  if (n === 8) return [s.slice(0,4), s.slice(4)];
+  if (n === 9) return [s.slice(0,4), s.slice(4)];
+  if (n === 10) return [s.slice(0,5), s.slice(5)];
+  if (n <= 15)  return [s.slice(0,5), s.slice(5,10), s.slice(10)];
+  if (n === 16) return [s.slice(0,5), s.slice(5,11), s.slice(11)];
+  if (n === 17) return [s.slice(0,6), s.slice(6,12), s.slice(12)];
+  return [s.slice(0,6), s.slice(6,12), s.slice(12,18)];
+}
+
+// SVG 多行换行文本：使用 dominant-baseline:central 确保垂直居中，返回 text 元素
+function addWrappedText(gElem, label, fontSize, fillColor, extraClass) {
+  if (!label) return null;
+  const lines = wrapChars(String(label));
+  const lineH = fontSize * 1.35;
+  const el = gElem.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'central')
+    .attr('fill', fillColor)
+    .attr('font-size', fontSize + 'px')
+    .style('user-select', 'none')
+    .style('pointer-events', 'none');
+  if (extraClass) el.attr('class', extraClass);
+  lines.forEach((line, i) => {
+    el.append('tspan')
+      .attr('x', 0)
+      .attr('y', ((i - (lines.length - 1) / 2) * lineH) + 'px')
+      .text(line);
+  });
+  return el;
+}
+
+function shortLabel(s, maxLen) {
+  if (!s) return '';
+  // 截取最后的有效内容
+  const parts = s.split(/[\s　]/);
+  const last = parts[parts.length-1] || s;
+  return last.length > maxLen ? last.slice(0,maxLen) : last;
+}
+
+function showMsg(text) {
+  const d = document.createElement('div');
+  d.className = 'flash-msg';
+  d.textContent = text;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2500);
+}
+
+function addFilters() {
+  const defs = svg.append('defs');
+  ['glow0','glow1','glow2'].forEach((id, i) => {
+    const f = defs.append('filter').attr('id', id).attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+    f.append('feGaussianBlur').attr('stdDeviation', 4+i*2).attr('result','blur');
+    const merge = f.append('feMerge');
+    merge.append('feMergeNode').attr('in','blur');
+    merge.append('feMergeNode').attr('in','SourceGraphic');
+  });
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', init);
+
+// 粒子背景动画
+;(function() {
+  const canvas = document.getElementById('particleBg');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  let N = 0;
+  const LINK = 120;
+  function resize() {
+    const c = document.getElementById('graphContainer');
+    W = canvas.width  = c.clientWidth;
+    H = canvas.height = c.clientHeight;
+    N = Math.min(80, Math.floor(W * H / 14000));
+  }
+  function mkP() {
+    return { x: Math.random()*W, y: Math.random()*H,
+             r: 0.5+Math.random()*2, vx:(Math.random()-0.5)*0.35,
+             vy:(Math.random()-0.5)*0.35, a:0.2+Math.random()*0.5 };
+  }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(120,170,255,${p.a})`; ctx.fill();
+    });
+    for(let i=0;i<particles.length;i++)
+      for(let j=i+1;j<particles.length;j++) {
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<LINK) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(100,160,255,${(1-d/LINK)*0.18})`;
+          ctx.lineWidth=0.7; ctx.stroke();
+        }
+      }
+    requestAnimationFrame(draw);
+  }
+  // 脚本在body末尾执行时DOM已就绪，直接初始化
+  resize();
+  for(let i=0;i<N;i++) particles.push(mkP());
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// 响应窗口缩放
+window.addEventListener('resize', () => {
+  const container = document.getElementById('graphContainer');
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  svg.attr('width',w).attr('height',h);
+});
+</script>
+{% endblock %}

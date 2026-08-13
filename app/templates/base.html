@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} - {{ site.site_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260406b">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homework.css') }}?v=20260730a">
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload_video.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='shared/nav.css') }}?v=20260723n">
+    <script>const SCRIPT_ROOT = {{ request.script_root | tojson }};</script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'shared/nav.html' %}
+    <!-- navShim: 占位元素，高度 = 导航栏实际高度，由 JS 实时同步，默认 96px = logo 60px + 上下 padding 各 1rem -->
+    <div id="navShim" style="height:96px;"></div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+
+    <!-- ── 知知 AI 聊天面板 ──────────────────────────────────── -->
+    <!-- 定位容器：overflow:visible 使吉祥物图片可超出面板顶部 -->
+    <div id="aiChatWrap" style="display:none; position:fixed; right:20px; top:50%;
+         transform:translateY(-50%); z-index:8000; width:600px;">
+        <!-- 吉祥物图片：浮于面板顶部外侧 -->
+        <img src="{{ url_for('static', filename='images/Wave-s.png') }}"
+             style="position:absolute; top:-6px; left:10px; width:62px; height:auto;
+                    pointer-events:none; z-index:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+        <div id="aiChatPanel" style="width:100%; max-height:80vh;
+             background:#fff; border-radius:16px; box-shadow:0 8px 40px rgba(0,0,0,0.18);
+             border:1px solid #e0e4ef; display:flex; flex-direction:column; overflow:hidden;
+             font-size:16px;">
+        <!-- 标题栏 -->
+        <div style="display:flex; align-items:center; justify-content:space-between;
+             background:linear-gradient(90deg,#0056b3,#4fc3f7); color:#fff;
+             padding:12px 16px; flex-shrink:0;">
+            <span style="font-weight:700; font-size:17px; margin-left:80px;">{{ site.ai_panel_title }}</span>
+            <button onclick="toggleAiChat()" style="background:rgba(255,255,255,0.2);border:none;
+                    color:#fff;font-size:18px;cursor:pointer;line-height:1;
+                    width:28px;height:28px;border-radius:50%;flex-shrink:0;
+                    display:flex;align-items:center;justify-content:center;
+                    padding:0;">×</button>
+        </div>
+        <!-- 消息区 -->
+        <div id="aiMessages" style="flex:1; overflow-y:auto; padding:14px 14px 8px;
+             min-height:200px; max-height:48vh; display:flex; flex-direction:column; gap:10px;">
+            <div class="ai-msg ai" style="align-self:flex-start;">
+                你好！我是<strong>{{ site.ai_name }}</strong>，你的力学课程助手 😊<br>
+                {{ site.ai_intro }}
+            </div>
+        </div>
+        <!-- 输入区 -->
+        <div style="display:flex; gap:8px; padding:10px 12px 12px; border-top:1px solid #eee;
+             background:#fafbfd; flex-shrink:0; align-items:flex-end;">
+            <textarea id="aiInput" rows="2" placeholder="输入你的问题…（Shift+Enter换行，Enter发送）"
+                   style="flex:1; border:1px solid #d0d7e8; border-radius:8px; padding:8px 12px;
+                          font-size:15px; outline:none; resize:none; line-height:1.5;
+                          font-family:inherit; overflow-y:auto;"
+                   onkeydown="if(event.key==='Enter'&&!event.shiftKey){sendAiMsg();event.preventDefault();}"></textarea>
+            <button onclick="sendAiMsg()" style="background:#0056b3;color:#fff;border:none;
+                    border-radius:8px;padding:8px 0;font-size:15px;cursor:pointer;
+                    white-space:nowrap;width:70px !important;flex-shrink:0;">发送</button>
+        </div>
+        </div><!-- /#aiChatPanel -->
+    </div><!-- /#aiChatWrap -->
+    <style>
+    .ai-msg { max-width:82%; padding:9px 13px; border-radius:12px; line-height:1.55;
+              font-size:15px; word-break:break-word; }
+    .ai-msg.user { background:#0056b3; color:#fff; align-self:flex-end;
+                   border-bottom-right-radius:3px; }
+    .ai-msg.ai   { background:#f0f4ff; color:#222; align-self:flex-start;
+                   border-bottom-left-radius:3px; }
+    .ai-msg.typing { color:#999; font-style:italic; }
+    /* AI 面板显隐由外层容器控制 */
+    #aiChatWrap { display:none; }
+    #aiChatWrap.open { display:block !important; }
+    /* 移动端响应式：横跨全屏宽度 */
+    @media (max-width: 640px) {
+        #aiChatWrap {
+            right: 16px !important;
+            left: 16px !important;
+            width: auto !important;
+        }
+    }
+    </style>
+    <script>
+    /* ── 知知 AI 对话 ──────────────────────────────────────── */
+    let _aiHistory = [];  // {role, content}
+
+    function toggleAiChat() {
+        const wrap = document.getElementById('aiChatWrap');
+        wrap.classList.toggle('open');
+        if (wrap.classList.contains('open')) {
+            document.getElementById('aiInput').focus();
+        }
+    }
+
+    async function sendAiMsg() {
+        const input = document.getElementById('aiInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        input.disabled = true;
+
+        appendAiMsg('user', text);
+        _aiHistory.push({role: 'user', content: text});
+
+        // 打字提示
+        const typingEl = appendAiMsg('ai typing', '{{ site.ai_name }}正在思考…');
+
+        try {
+            const res = await fetch(SCRIPT_ROOT + '/api/ai/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({messages: _aiHistory})
+            });
+            const data = await res.json();
+            typingEl.remove();
+            if (data.error) {
+                appendAiMsg('ai', '⚠️ 出错了：' + data.error);
+            } else {
+                appendAiMsg('ai', data.reply);
+                _aiHistory.push({role: 'assistant', content: data.reply});
+            }
+        } catch(e) {
+            typingEl.remove();
+            appendAiMsg('ai', '⚠️ 网络错误，请稍后重试');
+        }
+        input.disabled = false;
+        input.focus();
+    }
+
+    function appendAiMsg(cls, html) {
+        const box = document.getElementById('aiMessages');
+        const div = document.createElement('div');
+        div.className = 'ai-msg ' + cls;
+        div.innerHTML = html.replace(/\n/g, '<br>');
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+        return div;
+    }
+    </script>
+    
+    {% block content %}{% endblock %}
+    
+    {% block scripts %}{% endblock %}
+
+    <!-- 全局：同一时刻只允许一个视频播放 -->
+    <script>
+    document.addEventListener('play', function(e) {
+        if (e.target.tagName !== 'VIDEO') return;
+        document.querySelectorAll('video').forEach(function(v) {
+            if (v !== e.target && !v.paused) v.pause();
+        });
+    }, true);
+    </script>
+
+    <!-- 全局悬浮个人名片 -->
+    <div id="userHoverCard" style="display:none; position:fixed; z-index:9000;
+         background:#fff; border-radius:12px; padding:14px 16px; width:250px;
+         box-shadow:0 8px 32px rgba(0,0,0,0.15); pointer-events:none;
+         border:1px solid #e8e8e8; transition:opacity 0.2s;">
+        <!-- 顶部：头像 + (名字+星级 / 身份标签) -->
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <img id="hcAvatar" src="" style="width:52px;height:52px;border-radius:50%;
+                 object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:2px solid #fff;
+                 flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+                <!-- 第一行：姓名（左，宽度约至中线）+ 星级（从中线起） -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="hcName" style="font-weight:700;font-size:14px;color:#222;
+                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                         width:76px;flex-shrink:0;"></div>
+                    <div id="hcStars" style="font-size:28px;line-height:1;letter-spacing:-10px;
+                         flex-shrink:0;"></div>
+                </div>
+                <!-- 第二行：身份标签 -->
+                <div id="hcBadge" style="font-size:11px;margin-top:3px;"></div>
+            </div>
+        </div>
+        <div id="hcBio" style="font-size:12px;color:#666;margin-bottom:9px;
+             line-height:1.5;"></div>
+        <!-- 三栏状态条 -->
+        <div id="hcBars" style="margin-bottom:9px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center;
+                    background:#f8f9fa;border-radius:8px;padding:8px 0;">
+            <div><div id="hcVideos" style="font-weight:700;font-size:14px;color:#0056b3;"></div>
+                 <div style="font-size:10px;color:#999;">视频</div></div>
+            <div><div id="hcRating" style="font-weight:700;font-size:14px;color:#0056b3;"></div>
+                 <div style="font-size:10px;color:#999;">讨论</div></div>
+            <div><div id="hcViews" style="font-weight:700;font-size:14px;color:#0056b3;"></div>
+                 <div style="font-size:10px;color:#999;">收藏</div></div>
+        </div>
+        <div id="hcSince" style="font-size:10px;color:#bbb;text-align:right;margin-top:6px;"></div>
+    </div>
+
+    <script>
+    /* ── 悬浮个人名片 ── */
+    ;(function() {
+        const card = document.getElementById('userHoverCard');
+        let hoverTimer = null;
+        let currentUid = null;
+
+        function showCard(uid, anchorEl) {
+            if (currentUid === uid && card.style.display !== 'none') return;
+            currentUid = uid;
+            fetch(SCRIPT_ROOT + '/api/user/' + uid + '/stats')
+                .then(r => r.json())
+                .then(d => {
+                    if (currentUid !== uid) return;
+                    document.getElementById('hcAvatar').src = d.avatar_url;
+                    document.getElementById('hcName').textContent  = d.username;
+                    document.getElementById('hcBadge').innerHTML   = d.is_teacher
+                        ? '<span style="background:#0056b3;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;">教师</span>'
+                        : '<span style="color:#888;">学生</span>';
+                    document.getElementById('hcBio').textContent = d.bio || '尚未填写个人简介';
+                    // 应用个人主页背景色
+                    card.style.background = d.profile_bg_color || '#fff';
+                    // 星级（头像右侧，多重叠）
+                    const stars = d.stars || 0;
+                    document.getElementById('hcStars').innerHTML =
+                        [1,2,3,4,5].map(i => {
+                            const lit = i <= stars;
+                            return `<span style="color:${lit?'#ffd700':'#e0e0e0'};`+
+                                `-webkit-text-stroke:1px ${lit?'#c8860a':'#bbb'};`+
+                                `text-shadow:${lit?'0 0 5px rgba(255,210,0,0.7)':'none'};`+
+                                `position:relative;z-index:${6-i};">★</span>`;
+                        }).join('');
+                    // 三栏状态条
+                    const bars = [
+                        {label:'🟥 攻击', val: d.attack||0,  color:'#e74c3c'},
+                        {label:'🟦 防御', val: d.defense||0, color:'#3498db'},
+                        {label:'🟣 魔力',  val: d.magic||0,  color:'#9b59b6'},
+                    ];
+                    document.getElementById('hcBars').innerHTML = bars.map(b =>
+                        `<div style="margin-bottom:4px;">
+                            <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;">
+                                <span>${b.label}</span><span>${b.val}/10</span></div>
+                            <div style="height:5px;background:rgba(0,0,0,0.07);border-radius:3px;overflow:hidden;">
+                                <div style="height:100%;width:${b.val/10*100}%;background:${b.color};border-radius:3px;"></div>
+                            </div></div>`
+                    ).join('');
+                    document.getElementById('hcVideos').textContent = d.video_count;
+                    document.getElementById('hcRating').textContent = d.comment_count || 0;
+                    document.getElementById('hcViews').textContent  = d.favorite_count || 0;
+                    document.getElementById('hcSince').textContent  = d.created_at ? '加入于 ' + d.created_at : '';
+
+                    const rect = anchorEl.getBoundingClientRect();
+                    let left = rect.left;
+                    let top  = rect.bottom + 6;
+                    if (left + 240 > window.innerWidth - 10) left = window.innerWidth - 250;
+                    card.style.left    = left + 'px';
+                    card.style.top     = top + 'px';
+                    card.style.display = 'block';
+                    card.style.opacity = '1';
+                });
+        }
+
+        function hideCard() {
+            clearTimeout(hoverTimer);
+            hoverTimer = null;
+            currentUid = null;
+            card.style.opacity = '0';
+            setTimeout(() => { card.style.display = 'none'; }, 200);
+        }
+
+        // 事件委托：监听所有带 data-user-id 的元素
+        document.addEventListener('mouseover', function(e) {
+            const el = e.target.closest('[data-user-id]');
+            if (!el) return;
+            const uid = el.dataset.userId;
+            if (!uid) return;
+            clearTimeout(hoverTimer);
+            hoverTimer = setTimeout(() => showCard(uid, el), 800);
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            const el = e.target.closest('[data-user-id]');
+            if (!el) return;
+            hideCard();
+        });
+    })();
+    </script>
+
+    <!-- 全局：实时同步导航栏高度到 navShim（居中展开内容）和 --nav-h（供 calc等 CSS 使用） -->
+    <script>
+    (function(){
+      function _syncNavH() {
+        var nav = document.querySelector('.header');
+        var shim = document.getElementById('navShim');
+        if (!nav || !shim) return;
+        var h = nav.offsetHeight;
+        shim.style.height = h + 'px';
+        document.documentElement.style.setProperty('--nav-h', h + 'px');
+      }
+      // 立即执行（页面底部脚本，DOM 已就绪）
+      _syncNavH();
+      // 所有资源加载完毕后再同步一次（防止字体/CSS 延迟影响高度）
+      window.addEventListener('load', _syncNavH);
+      // 窗口缩放时重新计算（导航栏文字换行会改变高度）
+      window.addEventListener('resize', _syncNavH);
+    })();
+    </script>
+</body>
+</html>

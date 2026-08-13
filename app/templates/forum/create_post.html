@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="create-post-container">
+    <div class="create-post-card">
+        <h1 class="page-title">发布帖子</h1>
+
+        <form id="createPostForm" method="POST" action="{{ url_for('main.create_post') }}" enctype="multipart/form-data">
+            <!-- 选择板块 -->
+            <div class="form-group">
+                <label for="board">选择板块</label>
+                <select name="board_id" id="board" required onchange="toggleHtmlSection()">
+                    <option value="" disabled selected>请选择板块</option>
+                    {% for board in boards %}
+                    <option value="{{ board.id }}" {{ 'selected' if selected_board_id == board.id }}>
+                        {{ board.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 帖子标题 -->
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" id="title" name="title" required
+                       placeholder="请输入帖子标题（5-50字）"
+                       minlength="5" maxlength="50">
+            </div>
+
+            <!-- 帖子内容 -->
+            <div class="form-group">
+                <label for="content">内容</label>
+                <textarea id="content" name="content" required
+                          placeholder="请输入帖子内容..."
+                          minlength="10"></textarea>
+            </div>
+
+            <!-- HTML 代码（板块1专用） -->
+            <div class="form-group" id="htmlSection" style="display:none">
+                <label>HTML 代码展示（可选）</label>
+                <div class="html-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="openHtmlEditor()">✏️ 编写/粘贴 HTML</button>
+                    <button type="button" class="toolbar-btn preview-btn" onclick="toggleHtmlPreview()">👁 预览</button>
+                </div>
+                <textarea id="html_code" name="html_code" rows="6"
+                          placeholder="点击"编写/粘贴 HTML"按钮编写交互式 HTML 代码..."
+                          style="display:none; margin-top:8px;"></textarea>
+                <div class="html-preview-wrap" id="htmlPreviewWrap" style="display:none; margin-top:8px;">
+                    <iframe id="htmlPreviewFrame" sandbox="allow-scripts allow-same-origin"
+                            style="width:100%;height:300px;border:1px solid #ddd;border-radius:6px;"></iframe>
+                </div>
+            </div>
+
+            <!-- 图片上传 -->
+            <div class="form-group">
+                <label for="images">添加图片/PDF（可选）</label>
+                <div class="image-upload-container">
+                    <div class="upload-button">
+                        <input type="file" id="images" name="images"
+                               multiple accept="image/*,.pdf"
+                               onchange="handleImageSelect(event)">
+                        <label for="images">
+                            <i class="fas fa-image"></i> 选择图片/PDF
+                        </label>
+                    </div>
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+                <p class="upload-tip">最多可上传5个文件（图片或PDF），每个不超过5MB</p>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="history.back()">取消</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> 发布帖子
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- HTML 编辑弹窗 -->
+    <div class="html-modal-wrap" id="htmlModalWrap">
+        <div class="html-modal">
+            <h3>✏️ 编写 HTML 代码</h3>
+            <textarea id="htmlCodeInput" placeholder="在此粘贴或输入 HTML 代码（支持 CSS、JavaScript）…"></textarea>
+            <div class="html-preview-label">预览：</div>
+            <div class="html-preview-inline">
+                <iframe id="htmlPreviewInline" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+            <div class="html-modal-btns">
+                <button type="button" class="btn-preview" onclick="refreshHtmlPreview()">🔄 刷新预览</button>
+                <button type="button" class="btn-save" onclick="saveHtmlToForm()">💾 保存到帖子</button>
+                <button type="button" class="btn-cancel" onclick="closeHtmlEditor()">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.create-post-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.create-post-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.page-title { color: #2c3e50; margin-bottom: 30px; text-align: center; font-size: 1.8rem; }
+.form-group { margin-bottom: 25px; }
+.form-group label { display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 500; }
+.form-group select, .form-group input[type="text"], .form-group textarea {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 1rem; transition: border-color 0.3s; box-sizing: border-box;
+}
+.form-group select:focus, .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #3498db; outline: none; }
+.form-group textarea { min-height: 150px; resize: vertical; }
+.html-toolbar { display: flex; gap: 8px; }
+.toolbar-btn {
+    padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px;
+    background: #f8f9fa; cursor: pointer; font-size: 13px; transition: background 0.15s;
+}
+.toolbar-btn:hover { background: #e9ecef; }
+.preview-btn { background: #e8f4fd; border-color: #b3d8f0; }
+.image-upload-container { margin-top: 10px; }
+.upload-button input[type="file"] { display: none; }
+.upload-button label { display: inline-block; padding: 10px 20px; background: #f8f9fa; border-radius: 6px; cursor: pointer; }
+.upload-button label:hover { background: #e9ecef; }
+.upload-tip { margin-top: 8px; font-size: 0.9rem; color: #666; }
+.image-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+.preview-item { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; }
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.remove-image { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.remove-image:hover { background: rgba(0,0,0,0.7); }
+.form-actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; }
+.cancel-btn, .submit-btn { padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+.cancel-btn { background: #f8f9fa; color: #666; }
+.cancel-btn:hover { background: #e9ecef; }
+.submit-btn { background: #3498db; color: white; }
+.submit-btn:hover { background: #2980b9; }
+
+/* ── HTML 编辑弹窗 ── */
+.html-modal-wrap { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9900; align-items: center; justify-content: center; }
+.html-modal-wrap.open { display: flex; }
+.html-modal {
+    background: #fff; border-radius: 14px; width: min(92vw, 820px); max-height: 92vh;
+    padding: 22px 24px; display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.html-modal h3 { margin: 0; font-size: 17px; color: #1a1a2e; }
+.html-modal textarea { width: 100%; min-height: 180px; border: 1px solid #ccc; border-radius: 8px; padding: 10px 12px; font-family: 'Consolas','Monaco',monospace; font-size: 13px; resize: vertical; box-sizing: border-box; }
+.html-preview-label { font-size: 12px; color: #888; }
+.html-preview-inline { width: 100%; height: 200px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+.html-preview-inline iframe { width: 100%; height: 100%; border: none; }
+.html-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+.btn-preview, .btn-save, .btn-cancel {
+    padding: 7px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.btn-preview { background: #e8f4fd; color: #2c6faa; }
+.btn-save { background: #0056b3; color: #fff; }
+.btn-cancel { background: #f0f0f0; color: #555; }
+
+@media (max-width: 768px) {
+    .create-post-card { padding: 20px; }
+    .form-actions { flex-direction: column; }
+    .cancel-btn, .submit-btn { width: 100%; }
+}
+</style>
+
+<script>
+function toggleHtmlSection() {
+    const sel = document.getElementById('board');
+    const sec = document.getElementById('htmlSection');
+    sec.style.display = sel.value === '1' ? 'block' : 'none';
+}
+// 页面加载时检查
+document.addEventListener('DOMContentLoaded', function() {
+    toggleHtmlSection();
+});
+
+/* ── HTML 编辑器 ── */
+function openHtmlEditor() {
+    document.getElementById('htmlCodeInput').value = document.getElementById('html_code').value;
+    document.getElementById('htmlPreviewInline').srcdoc = document.getElementById('html_code').value || '<p style="color:#aaa;padding:20px">点击刷新预览</p>';
+    document.getElementById('htmlModalWrap').classList.add('open');
+}
+function closeHtmlEditor() { document.getElementById('htmlModalWrap').classList.remove('open'); }
+function refreshHtmlPreview() {
+    const code = document.getElementById('htmlCodeInput').value.trim();
+    document.getElementById('htmlPreviewInline').srcdoc = code || '<p style="color:#aaa;padding:20px">代码为空</p>';
+}
+function saveHtmlToForm() {
+    const code = document.getElementById('htmlCodeInput').value.trim();
+    document.getElementById('html_code').value = code;
+    document.getElementById('html_code').style.display = 'block';
+    document.getElementById('htmlPreviewWrap').style.display = document.getElementById('html_code').value ? 'block' : 'none';
+    if (code) {
+        document.getElementById('htmlPreviewFrame').srcdoc = code;
+    }
+    closeHtmlEditor();
+}
+function toggleHtmlPreview() {
+    const code = document.getElementById('html_code').value.trim();
+    if (!code) { openHtmlEditor(); return; }
+    const wrap = document.getElementById('htmlPreviewWrap');
+    wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    if (wrap.style.display !== 'none') {
+        document.getElementById('htmlPreviewFrame').srcdoc = code;
+    }
+}
+
+/* ── 图片预览 ── */
+function handleImageSelect(event) {
+    const files = event.target.files;
+    const preview = document.getElementById('imagePreview');
+    if (files.length > 5) { alert('最多只能上传5个文件'); event.target.value = ''; return; }
+    preview.innerHTML = '';
+    Array.from(files).forEach((file, index) => {
+        if (file.size > 5*1024*1024) { alert(`文件 ${file.name} 超过5MB`); return; }
+        const div = document.createElement('div'); div.className = 'preview-item';
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+            div.innerHTML = `<div class="pdf-preview-thumb"><div class="pdf-icon-big">📄</div><div class="pdf-preview-name">${file.name}</div></div><div class="remove-image" onclick="removeImage(${index})">×</div>`;
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) { div.innerHTML = `<img src="${e.target.result}" alt="预览"><div class="remove-image" onclick="removeImage(${index})">×</div>`; };
+            reader.readAsDataURL(file);
+        }
+        preview.appendChild(div);
+    });
+}
+function removeImage(index) {
+    const input = document.getElementById('images');
+    const dt = new DataTransfer();
+    for (let i = 0; i < input.files.length; i++) { if (i !== index) dt.items.add(input.files[i]); }
+    input.files = dt.files;
+    const items = document.getElementById('imagePreview').getElementsByClassName('preview-item');
+    if (items[index]) items[index].remove();
+}
+document.getElementById('createPostForm').onsubmit = function(e) {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    if (title.length < 5 || title.length > 50) { alert('标题长度应在5-50字'); e.preventDefault(); return false; }
+    if (content.length < 10) { alert('内容至少需要10个字'); e.preventDefault(); return false; }
+    return true;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,81 @@
+<nav class="header">
+    <div class="logo">
+        <a href="#" onclick="toggleAiChat(); return false;" title="点击打开/关闭 AI 助手" style="cursor:pointer; display:inline-block;">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="{{ site.logo_alt }}">
+        </a>
+    </div>
+    <div class="nav-links">
+        <a href="{{ url_for('main.homework') }}" class="nav-item {{ 'active' if active_page == 'homework' }}">{{ site.nav.homework }}</a>
+        <a href="{{ url_for('main.cooperation') }}" class="nav-item {{ 'active' if active_page == 'cooperation' }}">{{ site.nav.defense }}</a>
+        <a href="{{ url_for('main.graph') }}" class="nav-item {{ 'active' if active_page == 'graph' }}">{{ site.nav.graph }}</a>
+        {% if forum_hidden_flag != '1' or (current_user.is_authenticated and current_user.is_teacher) %}
+        <a href="{{ url_for('main.forum') }}" class="nav-item {{ 'active' if active_page == 'forum' }}">{{ site.nav.forum }}</a>
+        {% endif %}
+        {% if current_user.is_authenticated and (current_user.is_teacher or current_user.is_adv_test) %}
+        <a href="{{ url_for('main.teacher_wordcloud') }}" class="nav-item nav-item-teacher {{ 'active' if active_page == 'wordcloud' }}">词云签到</a>
+        <a href="{{ url_for('main.teacher_ppt') }}" class="nav-item nav-item-teacher {{ 'active' if active_page == 'ppt' }}">课堂PPT</a>
+        <a href="{{ url_for('main.teacher_course_mgmt') }}" class="nav-item nav-item-teacher {{ 'active' if active_page == 'course_mgmt' }}">课程管理</a>
+        {% elif current_user.is_authenticated and not current_user.is_teacher %}
+        <a href="{{ url_for('main.student_ppt_browse') }}" class="nav-item {{ 'active' if active_page == 'student_ppt' }}">课堂PPT</a>
+        {% endif %}
+    </div>
+    <div class="user-actions">
+        {% if current_user.is_authenticated %}
+            <button onclick="openSearchModal()" class="search-btn">搜索</button>
+
+            <!-- 通知铃铛 -->
+            <div class="notif-wrapper" id="notifWrapper">
+                <button class="notif-bell-btn" onclick="toggleNotifPanel()" title="通知">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+                </button>
+
+                <!-- 通知下拉面板 -->
+                <div class="notif-panel" id="notifPanel" style="display:none">
+                    <div class="notif-panel-header">
+                        <span>通知</span>
+                        <button class="notif-read-all" onclick="markAllRead()">全部已读</button>
+                    </div>
+                    <div class="notif-list" id="notifList">
+                        <div class="notif-empty">加载中…</div>
+                    </div>
+                    <div class="notif-panel-footer">
+                        <a href="{{ url_for('main.profile') }}#notifications">查看全部</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ url_for('main.profile') }}" class="username">{{ current_user.username }}</a>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">退出</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}">登录</a>
+            <a href="{{ url_for('auth.register') }}">注册</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div id="searchModal" class="search-modal">
+    <div class="search-modal-content">
+        <span class="close-modal" onclick="closeSearchModal()">&times;</span>
+        <h2>视频搜索</h2>
+        <div class="search-filters">
+            <label>
+                <input type="radio" name="videoType" id="homeworkFilter" value="homework" checked> 作业视频
+            </label>
+            <label>
+                <input type="radio" name="videoType" id="cooperationFilter" value="cooperation"> 翻转课堂
+            </label>
+        </div>
+        <div class="search-input-group">
+            <input type="text" id="searchInput" placeholder="输入关键词搜索...">
+            <button onclick="performSearch()">搜索</button>
+        </div>
+    </div>
+</div>
+<!-- nav 样式与脚本已抽离至 static/shared/nav.css 与 nav.js（base.html <head> 引入 css）-->
+<script src="{{ url_for('static', filename='shared/nav.js') }}?v=20260723n"></script>

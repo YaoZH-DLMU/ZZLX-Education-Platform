@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="post-detail-container">
+    <!-- 帖子内容 -->
+    <div class="post-content-card">
+        <div class="post-header">
+            <h1 class="post-title">{{ post.title }}</h1>
+            <div class="post-meta">
+                <span class="author"><i class="fas fa-user"></i> {{ post.author.username }}</span>
+                <span class="time"><i class="far fa-clock"></i> {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                <span class="board"><i class="fas fa-folder"></i> {{ post.board.name }}</span>
+            </div>
+            <div class="post-actions">
+                <button class="like-btn{% if liked %} liked{% endif %}"
+                        onclick="togglePostLike({{ post.id }}, this)">
+                    <span class="heart-icon">&#9829;</span>
+                    <span class="like-count">{{ post.like_count }}</span>
+                </button>
+                {% if current_user.is_authenticated and current_user.is_teacher %}
+                <button class="delete-post-inline-btn"
+                        onclick="deletePostAndGo({{ post.id }}, '{{ url_for('main.forum_board', board_id=post.board_id) }}')"
+                        title="删除该帖子（教师权限）">🗑 删除帖子</button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="post-content">
+            <div class="post-text">{{ post.content }}</div>
+            {% if post.html_code %}
+            <div class="html-embed">
+                <div class="html-embed-header">
+                    <span>🖥️ 互动展示</span>
+                    <a href="{{ url_for('main.download_post_html', post_id=post.id) }}"
+                       class="html-download-link" download>📥 下载代码</a>
+                </div>
+                <iframe sandbox="allow-scripts allow-same-origin" srcdoc="{{ post.html_code | e }}"></iframe>
+            </div>
+            {% endif %}
+            {% if post.images.all() %}
+                <div class="post-images">
+                    {% for image in post.images.all() %}
+                    <div class="image-container">
+                        {% if image.url.lower().endswith('.pdf') %}
+                        <div class="pdf-attachment">
+                            <a href="{{ image.url }}" target="_blank" class="pdf-open-link">
+                                <div class="pdf-icon">📄</div>
+                                <div class="pdf-name">{{ image.display_name }}</div>
+                            </a>
+                            <a href="{{ url_for('main.download_forum_attachment', kind='post', attachment_id=image.id) }}"
+                               class="pdf-download-link">下载</a>
+                        </div>
+                        {% else %}
+                        <img src="{{ image.url }}" alt="帖子图片" onclick="showAttachment('{{ image.url }}')"
+                             onerror="this.style.display='none'">
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 回复列表 -->
+    <div class="replies-section">
+        <h2 class="replies-title">
+            <i class="fas fa-comments"></i> 回复 ({{ replies_count }})
+        </h2>
+        
+        {% if replies %}
+            {% for reply in replies %}
+            <div class="reply-card">
+                <div class="reply-header">
+                    <span class="reply-author">{{ reply.author.username }}</span>
+                    <span class="reply-time">{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="reply-content">
+                    {{ reply.content }}
+                    {% if reply.images.all() %}
+                        <div class="reply-images">
+                            {% for image in reply.images.all() %}
+                            <div class="image-container">
+                                {% if image.url.lower().endswith('.pdf') %}
+                                <div class="pdf-attachment">
+                                    <a href="{{ image.url }}" target="_blank" class="pdf-open-link">
+                                        <div class="pdf-icon">📄</div>
+                                        <div class="pdf-name">{{ image.display_name }}</div>
+                                    </a>
+                                    <a href="{{ url_for('main.download_forum_attachment', kind='reply', attachment_id=image.id) }}"
+                                       class="pdf-download-link">下载</a>
+                                </div>
+                                {% else %}
+                                <img src="{{ image.url }}" alt="回复图片" onclick="showImage(this.src)">
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-replies">暂无回复</div>
+        {% endif %}
+    </div>
+
+    <!-- 回复框 -->
+    {% if current_user.is_authenticated %}
+    <div class="reply-form-container">
+        <h3>发表回复</h3>
+        <form id="replyForm" method="POST" action="{{ url_for('main.add_reply', post_id=post.id) }}" enctype="multipart/form-data">
+            <textarea name="content" placeholder="写下你的回复..." required></textarea>
+            <div class="form-actions">
+                <div class="image-upload">
+                    <input type="file" id="imageInput" name="images" multiple accept="image/*,.pdf">
+                    <label for="imageInput">
+                        <i class="fas fa-image"></i> 添加图片
+                    </label>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> 发表回复
+                </button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="login-prompt">
+        <a href="{{ url_for('auth.login') }}">登录</a> 后参与讨论
+    </div>
+    {% endif %}
+</div>
+
+<!-- 图片预览模态框 -->
+<div id="imageModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img id="modalImage" src="" alt="预览图片">
+</div>
+
+<style>
+.post-detail-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.post-content-card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 20px;  /* body padding-top 已处理导航栏偏移，此处仅保留 20px 呼吸感 */
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.post-header {
+    margin-bottom: 20px;
+}
+
+.post-title {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.post-meta {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.post-meta i {
+    margin-right: 5px;
+    color: #3498db;
+}
+
+/* 点赞按钮 */
+.post-actions {
+    display: flex; align-items: center; gap: 12px;
+    padding-top: 10px; border-top: 1px solid #f0f0f0; margin-top: 10px;
+}
+.like-btn {
+    background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
+    font-size: 18px; color: #999; padding: 0; width: auto !important;
+    transition: color 0.2s, transform 0.1s;
+}
+.like-btn:hover { color: #e74c3c; transform: scale(1.1); }
+.like-btn.liked { color: #e74c3c; }
+.like-btn.liked .heart-icon { animation: heartPop 0.35s ease; }
+@keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.heart-icon { font-size: 22px; line-height: 1; }
+.like-count { font-size: 15px; font-weight: 600; }
+
+/* HTML 嵌入展示 */
+.html-embed {
+    margin-top: 20px;
+    height: 1200px;
+    border: 1px solid #e0e4ef; border-radius: 10px; overflow: hidden;
+}
+.html-embed-header {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: #888; padding: 6px 12px;
+    background: #f8f9fc; border-bottom: 1px solid #e0e4ef;
+}
+.html-download-link {
+    font-size: 12px; color: #0056b3; text-decoration: none;
+    border: 1px solid #b8d0f0; border-radius: 4px;
+    padding: 2px 8px; background: #f0f6ff; transition: background 0.2s;
+}
+.html-download-link:hover { background: #d8e8fc; }
+.html-embed iframe {
+    width: 100%; height: 1100px; border: none;
+    background: #fff;
+}
+
+/* 文本格式化 */
+.post-text {
+    color: #333; line-height: 1.8; font-size: 1.05rem;
+    white-space: pre-wrap; word-break: break-word;
+}
+
+.delete-post-inline-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 12px !important;  /* 覆盖 style.css 全局 button{padding:0.75rem} */
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: auto;
+    width: auto !important;        /* 覆盖 style.css 全局 button{width:100%} */
+    flex-shrink: 0;
+    align-self: center;            /* 不随 flex 容器拉伸高度 */
+    transition: opacity .2s;
+}
+.delete-post-inline-btn:hover { opacity: .8; }
+
+.post-content {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.post-images, .reply-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.image-container img {
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.image-container img:hover {
+    transform: scale(1.05);
+}
+
+.pdf-attachment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f0f4ff;
+    border: 1.5px solid #c8d8f8;
+    border-radius: 8px;
+    padding: 16px 10px;
+    color: #0056b3;
+    transition: background 0.2s;
+    min-height: 100px;
+    gap: 8px;
+}
+.pdf-attachment:hover { background: #e0eaff; }
+.pdf-open-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.pdf-download-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #0056b3;
+    color: #fff;
+    font-size: 12px;
+    text-decoration: none;
+}
+.pdf-download-link:hover { background: #003d80; }
+.pdf-icon  { font-size: 32px; }
+.pdf-name  { font-size: 12px; word-break: break-all; text-align: center; line-height: 1.4; }
+
+.replies-section {
+    margin-top: 40px;
+}
+
+.replies-title {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.reply-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.reply-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.reply-content {
+    color: #333; line-height: 1.6;
+    white-space: pre-wrap; word-break: break-word;
+}
+
+.reply-form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.reply-form-container h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+#replyForm textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.image-upload input[type="file"] {
+    display: none;
+}
+
+.image-upload label {
+    cursor: pointer;
+    padding: 8px 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    color: #666;
+}
+
+.image-upload label:hover {
+    background: #e9ecef;
+}
+
+.submit-btn {
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: #2980b9;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+/* 图片预览模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+}
+
+.modal img {
+    max-width: 90%;
+    max-height: 90vh;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@media (max-width: 768px) {
+    .post-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+</style>
+
+<script>
+// 图片预览功能
+function showAttachment(src) {
+    if (src.toLowerCase().endsWith('.pdf')) {
+        window.open(src, '_blank');
+        return;
+    }
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = src;
+}
+
+// 兼容旧调用
+function showImage(src) { showAttachment(src); }
+
+// 关闭模态框
+document.querySelector('.close-modal').onclick = function() {
+    document.getElementById('imageModal').style.display = "none";
+}
+
+// 点击模态框外部关闭
+window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+async function deletePostAndGo(postId, boardUrl) {
+    if (!confirm('确认删除该帖子？此操作不可撤销。')) return;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/forum/posts/${postId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (res.ok) {
+            window.location.href = boardUrl;
+        } else {
+            alert(data.message || '删除失败');
+        }
+    } catch (e) {
+        alert('请求失败，请重试。');
+    }
+}
+
+async function togglePostLike(postId, btn) {
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/forum/posts/${postId}/like`, { method: 'POST' });
+        const d = await res.json();
+        if (res.ok) {
+            const countEl = btn.querySelector('.like-count');
+            btn.classList.toggle('liked', d.liked);
+            if (countEl) countEl.textContent = d.like_count;
+        } else {
+            if (res.status === 401) { alert('请先登录'); } else { alert(d.message || '操作失败'); }
+        }
+    } catch (e) { alert('网络错误，请重试'); }
+}
+</script>
+{% endblock %}

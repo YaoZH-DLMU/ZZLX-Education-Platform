@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="board-container">
+    <!-- 板块头部信息 -->
+    <div class="board-header">
+        <div class="board-info">
+            <h1>{{ board.name }}</h1>
+            <p class="board-description">{{ board.description }}</p>
+        </div>
+        <a href="{{ url_for('main.create_post', board_id=board.id) }}" class="create-post-btn">
+            <i class="fas fa-edit"></i> 发布帖子
+        </a>
+    </div>
+
+    <!-- 帖子列表 -->
+    <div class="posts-list">
+        {% if posts.items %}
+            {% for post in posts.items %}
+            <div class="post-card">
+                <div class="post-main">
+                    <div class="post-info">
+                        <h2 class="post-title">
+                            <a href="{{ url_for('main.post_detail', post_id=post.id) }}">{{ post.title }}</a>
+                        </h2>
+                        <div class="post-meta">
+                            <span class="author">
+                                <i class="fas fa-user"></i> {{ post.author.username }}
+                            </span>
+                            <span class="time">
+                                <i class="far fa-clock"></i> {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="post-preview">
+                        {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
+                    </div>
+                </div>
+                <div class="post-stats">
+                    <span class="replies">
+                        <i class="fas fa-comments"></i> {{ post.replies.count() }} 回复
+                    </span>
+                    <span class="views">
+                        <i class="fas fa-eye"></i> {{ post.views }} 浏览
+                    </span>
+                    {% if current_user.is_authenticated and current_user.is_teacher %}
+                    <button class="delete-post-btn" onclick="deletePost({{ post.id }}, this)">🗑 删除</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-posts">
+                <p>暂无帖子</p>
+                <p>来发布第一个帖子吧！</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 分页 -->
+    {% if pagination %}
+    <div class="pagination">
+        {% for page in pagination.iter_pages() %}
+            {% if page %}
+                <a href="{{ url_for('main.board', board_id=board.id, page=page) }}" 
+                   class="page-num {{ 'active' if page == pagination.page else '' }}">
+                    {{ page }}
+                </a>
+            {% else %}
+                <span class="ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.board-container {
+    position: relative;  /* 添加这行 */
+    top: 100px; /* 调整位置，确保在导航栏下方 */
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.board-info h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.board-description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.create-post-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.create-post-btn:hover {
+    background-color: #2980b9;
+}
+
+.post-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.post-main {
+    margin-bottom: 15px;
+}
+
+.post-title {
+    margin-bottom: 10px;
+}
+
+.post-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.post-title a:hover {
+    color: #3498db;
+}
+
+.post-meta {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.post-meta i {
+    margin-right: 5px;
+}
+
+.post-preview {
+    color: #666;
+    line-height: 1.6;
+}
+
+.post-stats {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.post-stats i {
+    margin-right: 5px;
+    color: #3498db;
+}
+
+.delete-post-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    margin-left: auto;
+    transition: opacity .2s;
+    width: auto !important;
+}
+.delete-post-btn:hover { opacity: .8; }
+
+.no-posts {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.page-num {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+}
+
+.page-num.active {
+    background: #3498db;
+    color: white;
+}
+
+.ellipsis {
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .board-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .post-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function deletePost(postId, btn) {
+    if (!confirm('确认删除该帖子？此操作不可撤销。')) return;
+    btn.disabled = true;
+    try {
+        const res = await fetch(SCRIPT_ROOT + `/api/forum/posts/${postId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (res.ok) {
+            btn.closest('.post-card').remove();
+        } else {
+            alert(data.message || '删除失败');
+            btn.disabled = false;
+        }
+    } catch (e) {
+        alert('请求失败，请重试。');
+        btn.disabled = false;
+    }
+}
+</script>
+{% endblock %}

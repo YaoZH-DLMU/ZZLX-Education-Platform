@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+/* ── AI 总结（defense 页）── */
+.video-item { position: relative; }
+
+/* 标题行：题目 + 右侧按钮组 */
+.title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 0.5rem;
+}
+.title-row .title {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 右侧按钮组：AI总结在上、删除在下，均靠右 */
+.title-row-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* AI总结触发按钮 */
+.ai-summary-btn {
+    flex-shrink: 0;
+    width: auto !important;
+    background: linear-gradient(135deg, #4a6fa5, #6a9fd8);
+    color: #fff; border: none; border-radius: 10px;
+    padding: 3px 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 1px 4px rgba(74,111,165,0.35);
+    transition: opacity .2s; white-space: nowrap;
+}
+.ai-summary-btn:hover { opacity: .82; }
+
+/* 教师删除按钮 */
+.delete-video-btn {
+    flex-shrink: 0;
+    width: auto !important;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 3px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+    white-space: nowrap;
+}
+.delete-video-btn:hover { opacity: .8; }
+
+/* 视频统计行：评分收藏评论 + 教师删除按钮同行 */
+.video-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+}
+.video-stats .delete-video-btn { margin-left: auto; }
+.ai-summary-popup {
+    position: absolute; top: 50%; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.97);
+    border-radius: 0 0 4px 4px;
+    border-top: 1.5px solid #4a6fa5;
+    z-index: 30; display: flex; flex-direction: column; overflow: hidden;
+}
+.ai-summary-header {
+    display: flex; align-items: center;
+    padding: 8px 20px 8px 12px;
+    border-bottom: 1px solid #e0e8f4;
+    font-weight: 700; color: #4a6fa5; font-size: 14px; flex-shrink: 0; gap: 8px;
+}
+.ai-summary-header > span { flex: 1; white-space: nowrap; }
+.ai-summary-close {
+    width: 30px !important; height: 20px;
+    background: #e8eef7; border: none; border-radius: 4px;
+    cursor: pointer; font-size: 13px; color: #555;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; padding: 0;
+}
+.ai-summary-close:hover { background: #fde; color: #c0392b; }
+.ai-summary-body {
+    padding: 8px 12px 10px; color: #333;
+    font-size: 12.5px; line-height: 1.65;
+    white-space: pre-wrap; overflow-y: auto; flex: 1;
+}
+</style>
+    <!-- 引入共享导航栏样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='shared/nav.css') }}?v=20260406b">
+    <!-- 引入defense模块自己的样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='defense.css') }}?v=20260407a">
+{% endblock %}
+
+{% block content %}
+<div style="margin-top: 0; padding: 20px;">
+    <!-- 上传按钮（固定在页面右上角，与 homework 页风格一致） -->
+    <div class="upload-button-container">
+        <a href="{{ url_for('main.upload_defense_video') }}" class="upload-button">
+            <i class="fas fa-upload"></i>上传答辩视频
+        </a>
+    </div>
+
+    <!-- 双臂立卷夹钳：答辩次数卡片（工程黄色调） -->
+    <div class="all-videos">
+        <h2>双臂立卷夹钳
+            <span style="font-size:14px; font-weight:400; color:#8a7030; margin-left:8px;">
+                共 {{ crane_total }} 个视频
+            </span>
+        </h2>
+        <div class="session-grid">
+            {% for s in crane_sessions %}
+            <a href="{{ url_for('main.cooperation_session', subject='crane', session_no=s.session) }}"
+               class="session-card session-crane {% if s.video_count == 0 %}session-empty{% endif %}">
+                <div class="session-num">第 {{ s.session }} 次</div>
+                <div class="session-label">答辩</div>
+                <div class="session-count">{{ s.video_count }} 个视频</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 全机械式翻车机：答辩次数卡片（蓝灰色调） -->
+    <div class="all-videos" style="margin-top: 32px;">
+        <h2>全机械式翻车机
+            <span style="font-size:14px; font-weight:400; color:#4a5a78; margin-left:8px;">
+                共 {{ dumper_total }} 个视频
+            </span>
+        </h2>
+        <div class="session-grid">
+            {% for s in dumper_sessions %}
+            <a href="{{ url_for('main.cooperation_session', subject='dumper', session_no=s.session) }}"
+               class="session-card session-dumper {% if s.video_count == 0 %}session-empty{% endif %}">
+                <div class="session-num">第 {{ s.session }} 次</div>
+                <div class="session-label">答辩</div>
+                <div class="session-count">{{ s.video_count }} 个视频</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.session-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 8px 0 20px;
+    max-width: 720px;
+}
+.session-card {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px 10px 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    min-height: 100px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.session-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+/* 夹钳：工程黄 */
+.session-crane {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ffd54f;
+    color: #7a5800;
+}
+.session-crane:hover { border-color: #ffb300; }
+/* 翻车机：蓝灰 */
+.session-dumper {
+    background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+    border: 2px solid #9fa8da;
+    color: #283593;
+}
+.session-dumper:hover { border-color: #5c6bc0; }
+/* 无视频时灰显 */
+.session-empty {
+    background: #f5f5f5 !important;
+    border-color: #ddd !important;
+    color: #999 !important;
+    box-shadow: none;
+}
+.session-empty:hover { transform: none; box-shadow: none; }
+.session-num {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+.session-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    opacity: 0.75;
+}
+.session-count {
+    font-size: 13px;
+    opacity: 0.7;
+}
+@media (max-width: 600px) {
+    .session-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 100%; }
+    .session-num { font-size: 20px; }
+}
+</style>
+
+{% endblock %}

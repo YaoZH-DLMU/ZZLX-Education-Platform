@@ -1,0 +1,849 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ user.username }} 的个人主页{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── 页面总体布局 ── */
+.profile-page {
+    max-width: 1200px;
+    margin: 0 auto 40px;  /* body padding-top 已处理导航栏偏移 */
+    padding: 0 20px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* ── 左侧卡片 ── */
+.profile-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 28px 20px 24px;
+    text-align: center;
+    position: sticky;
+    top: var(--nav-h, 80px);  /* 跟随导航栏高度 */
+    transition: background-color 0.3s;
+}
+
+/* 头像区域 */
+.avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+.avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    border: 3px solid #fff;
+    display: block;
+}
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background 0.2s;
+}
+.avatar-upload-btn:hover { background: #003d80; }
+
+/* 用户名 / 学号 */
+.profile-username { font-size: 18px; font-weight: 700; color: #222; margin: 0 0 4px; }
+.profile-student-id { font-size: 13px; color: #999; margin: 0 0 10px; }
+.profile-teacher-badge {
+    display: inline-block;
+    background: #0056b3; color: #fff;
+    font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-bottom: 10px;
+}
+
+/* 简介 */
+.bio-area {
+    width: 100%; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 8px 10px; font-size: 13px; color: #555; resize: none;
+    background: rgba(255,255,255,0.7); font-family: "Microsoft YaHei", sans-serif;
+    margin-bottom: 8px; line-height: 1.5;
+}
+.bio-save-btn {
+    font-size: 12px; color: #0056b3; background: none;
+    border: 1px solid #0056b3; border-radius: 6px;
+    padding: 3px 12px; cursor: pointer; margin-bottom: 18px;
+}
+.bio-save-btn:hover { background: #0056b3; color: #fff; }
+
+/* 五星成就 */
+.star-achievement-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 14px 0 6px;
+    gap: 0;
+}
+.ach-star {
+    font-size: 38px;
+    line-height: 1;
+    position: relative;
+    margin-left: -11px;
+    transition: color 0.3s, text-shadow 0.3s;
+    cursor: default;
+}
+.ach-star:first-child { margin-left: 0; }
+.ach-star:nth-child(1) { z-index: 5; }
+.ach-star:nth-child(2) { z-index: 4; }
+.ach-star:nth-child(3) { z-index: 3; }
+.ach-star:nth-child(4) { z-index: 2; }
+.ach-star:nth-child(5) { z-index: 1; }
+.ach-star.lit  {
+    color: #ffd700;
+    -webkit-text-stroke: 1.5px #c8860a;
+    text-shadow: 0 0 10px rgba(255, 210, 0, 0.75), 0 1px 2px rgba(0,0,0,0.15);
+}
+.ach-star.dim  {
+    color: #e8e8e8;
+    -webkit-text-stroke: 1.5px #bbb;
+    text-shadow: none;
+}
+.star-hint { font-size: 11px; color: #999; margin-bottom: 14px; min-height: 16px; }
+.star-hint.unlocked { color: #888; font-style: italic; }
+
+/* 三栏状态条 */
+.stat-bars { margin: 14px 0; width: 100%; }
+.sb-row { margin-bottom: 8px; }
+.sb-label { display: flex; justify-content: space-between; font-size: 11px;
+            color: #666; margin-bottom: 3px; }
+.sb-track { height: 7px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+.sb-fill   { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.sb-attack  { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+.sb-defense { background: linear-gradient(90deg, #3498db, #1a78b8); }
+.sb-magic   { background: linear-gradient(90deg, #9b59b6, #7d3c98); }
+
+/* 背景色 */
+.bg-color-label { font-size: 12px; color: #888; display: block; margin-bottom: 6px; text-align:left; }
+.bg-color-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.color-swatch {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+}
+.color-swatch:hover  { transform: scale(1.2); }
+.color-swatch.active { border-color: #0056b3; }
+.color-swatch.locked { opacity: 0.3; cursor: not-allowed; }
+
+/* 统计 */
+.stats-row { display: flex; justify-content: space-around; margin-top: 18px; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 14px; }
+.stat-item { text-align: center; }
+.stat-num { font-size: 18px; font-weight: 700; color: #0056b3; }
+.stat-lbl { font-size: 11px; color: #888; margin-top: 2px; }
+
+/* ── 右侧 ── */
+.profile-main { flex: 1; min-width: 0; }
+
+.profile-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid #e8e8e8; }
+.ptab {
+    padding: 10px 22px; font-size: 14px; color: #666;
+    cursor: pointer; border-radius: 8px 8px 0 0;
+    background: none; border: none;
+    font-family: "Microsoft YaHei", sans-serif;
+    transition: color 0.2s; position: relative; bottom: -2px;
+}
+.ptab:hover { color: #0056b3; }
+.ptab.active { color: #0056b3; font-weight: 700; border-bottom: 2px solid #0056b3; background: #fff; }
+.tab-badge { background: #e74c3c; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* 视频网格 */
+.pv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+.pv-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
+.pv-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.pv-thumb { aspect-ratio: 16/9; background: #f0f0f0; overflow: hidden; }
+.pv-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-info { padding: 10px 12px 6px; }
+.pv-title { font-size: 13px; font-weight: 600; color: #333; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-meta  { font-size: 11px; color: #999; }
+.pv-actions { padding: 4px 12px 10px; }
+.pv-replace-btn { font-size: 11px; padding: 3px 10px; background: #f0f7ff; color: #0056b3; border: 1px solid #cce0f5; border-radius: 6px; cursor: pointer; }
+.pv-replace-btn:hover { background: #0056b3; color: #fff; }
+
+/* 帖子 */
+.post-item { background: #fff; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.post-item-title { font-size: 15px; font-weight: 600; color: #222; text-decoration: none; display: block; margin-bottom: 8px; }
+.post-item-title:hover { color: #0056b3; }
+.post-item-meta { display: flex; gap: 16px; font-size: 12px; color: #999; }
+
+/* 通知 */
+.notif-full-item { display: flex; align-items: flex-start; gap: 12px; background: #fff; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; text-decoration: none; color: inherit; transition: background 0.15s; }
+.notif-full-item.unread { background: #f0f7ff; }
+.notif-full-item:hover  { background: #e8f2fc; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #e74c3c; margin-top: 6px; flex-shrink: 0; }
+.notif-dot.read { background: #ddd; }
+.notif-full-title   { font-size: 14px; font-weight: 600; color: #222; margin-bottom: 4px; }
+.notif-full-content { font-size: 13px; color: #666; margin-bottom: 4px; }
+.notif-full-time    { font-size: 11px; color: #bbb; }
+.notif-mark-all { font-size: 12px; color: #0056b3; background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 12px; }
+.notif-mark-all:hover { text-decoration: underline; }
+
+.empty-tip { text-align: center; color: #bbb; font-size: 14px; padding: 48px 0; }
+
+/* ── 抽卡动画模态框 ── */
+.pcm-mask {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.75); z-index: 9500;
+  align-items: center; justify-content: center;
+}
+.pcm-mask.visible { display: flex; }
+.pcm-box {
+  background: #1a2340; border-radius: 16px;
+  padding: 28px 24px; width: 240px; text-align: center;
+}
+.pcm-card-wrap {
+  width: 150px; height: 200px;
+  margin: 0 auto 14px;
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: #0d1a3a;
+}
+.pcm-card-back {
+  position: absolute; inset: 0; border-radius: 12px;
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+.pcm-card-img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; opacity: 0;
+}
+.pcm-dmg-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.78) 40%);
+  padding: 20px 4px 6px;
+  color: #fff; font-size: 14px; font-weight: 700;
+  text-align: center; opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+.pcm-glow {
+  position: absolute; inset: 0; border-radius: 12px;
+  background: radial-gradient(circle at center, rgba(255,160,0,.9) 0%, transparent 65%);
+  opacity: 0; pointer-events: none;
+}
+@keyframes pcmGlowPulse {
+  0%   { opacity: 0; transform: scale(0.5); }
+  40%  { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(2);   }
+}
+.pcm-glow.pulse { animation: pcmGlowPulse .9s ease-out forwards; }
+.pcm-title { font-size: 13px; color: #90a4ae; margin-bottom: 6px; }
+.pcm-name  { font-size: 13px; color: #cfd8dc; min-height: 18px; margin-bottom: 10px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+
+<div class="profile-page">
+
+    <!-- ── 左侧边栏 ── -->
+    <div class="profile-sidebar" id="profileSidebar"
+         style="background-color: {{ user.profile_bg_color or '#ffffff' }};">
+
+        <div class="avatar-wrap">
+            <img src="{{ user.avatar_url }}" alt="头像" class="avatar-img" id="avatarImg">
+            <button class="avatar-upload-btn" title="更换头像"
+                    onclick="document.getElementById('avatarInput').click()">＋</button>
+        </div>
+
+        <p class="profile-username">{{ user.username }}</p>
+        <p class="profile-student-id">学号：{{ user.student_id }}</p>
+        {% if user.is_teacher %}<span class="profile-teacher-badge">教师</span>{% endif %}
+
+        <!-- 积分显示 -->
+        {% if not user.is_teacher %}
+        <div style="display:inline-flex;align-items:center;gap:5px;background:#fff8e1;
+                    border:1px solid #ffe082;border-radius:20px;padding:3px 12px;
+                    margin:6px 0 14px;font-size:13px;">
+            <span style="color:#f59e0b;font-size:15px;">&#9733;</span>
+            <span style="font-weight:700;color:#d97706;">{{ user.reward_points or 0 }}</span>
+            <span style="color:#92400e;">积分</span>
+            {% if reward_rank %}
+            <span style="color:#aaa;font-size:11px;margin-left:4px;">· 排名第{{ reward_rank }}位</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- 五星成就 -->
+        <div class="star-achievement-row">
+            {% for i in range(1, 6) %}
+            <span class="ach-star {{ 'lit' if i <= user_stars else 'dim' }}"
+                  title="第{{ i }}星">★</span>
+            {% endfor %}
+        </div>
+        <p class="star-hint{% if user_stars >= 4 %} unlocked{% endif %}">
+            {%- if user_stars == 0 -%}
+                完成所有基础功能即可点亮第1星
+            {%- elif user_stars == 1 -%}
+                还需累计评分达到10次可解锁第2星
+            {%- elif user_stars == 2 -%}
+                还需有意义<b>视频评论</b>达到10次可解锁第3星
+            {%- elif user_stars == 3 -%}
+                请继续努力探寻新的星级
+            {%- elif user_stars == 4 -%}
+                满足视频观看和收藏条件，已解锁⭐第4星
+            {%- elif user_stars >= 5 -%}
+                恭喜解锁所有星级！🌟
+            {%- endif -%}
+        </p>
+
+        <!-- 三栏状态条 -->
+        <div class="stat-bars">
+            <div class="sb-row">
+                <div class="sb-label">
+                    <span>🟥 攻击力</span>
+                    <span>{{ user_stats.attack }} / 10</span>
+                </div>
+                <div class="sb-track"><div class="sb-fill sb-attack"
+                    style="width:{{ (user_stats.attack / 10 * 100)|round(1) }}%"></div></div>
+            </div>
+            <div class="sb-row">
+                <div class="sb-label">
+                    <span>🟦 防御力</span>
+                    <span>{{ user_stats.defense }} / 10</span>
+                </div>
+                <div class="sb-track"><div class="sb-fill sb-defense"
+                    style="width:{{ (user_stats.defense / 10 * 100)|round(1) }}%"></div></div>
+            </div>
+            <div class="sb-row">
+                <div class="sb-label">
+                    <span>🟣 魔力</span>
+                    <span>{{ user_stats.magic }} / 10</span>
+                </div>
+                <div class="sb-track"><div class="sb-fill sb-magic"
+                    style="width:{{ (user_stats.magic / 10 * 100)|round(1) }}%"></div></div>
+            </div>
+        </div>
+
+        <textarea class="bio-area" id="bioArea" rows="3"
+                  placeholder="写一句话介绍自己...">{{ user.bio or '' }}</textarea>
+        <button class="bio-save-btn" onclick="saveBio()">保存简介</button>
+
+        <!-- 对战昵称 -->
+        {% if not user.is_teacher %}
+        <div style="margin-top:14px;border-top:1px solid #e0e0e0;padding-top:12px;">
+            <div class="bg-color-label" style="margin-bottom:6px;">⚔ 对战昵称（最多8字）</div>
+            <div style="display:flex;gap:6px;">
+                <input type="text" id="nicknameInput" maxlength="8"
+                       placeholder="对战中显示的名称"
+                       style="flex:1;border:1px solid #ddd;border-radius:8px;padding:7px 10px;font-size:13px;">
+                <button class="bio-save-btn" style="white-space:nowrap;" onclick="saveNickname()">保存</button>
+            </div>
+            <div id="nicknameMsg" style="font-size:12px;margin-top:4px;min-height:16px;color:#666;"></div>
+        </div>
+        {% endif %}
+
+        <!-- 修改密码 -->
+        <div id="change-password" style="margin-top:18px;border-top:1px solid #e0e0e0;padding-top:14px;">
+            <div class="bg-color-label" style="margin-bottom:8px;">🔒 修改密码</div>
+            <input type="password" id="pwOld" placeholder="旧密码" autocomplete="current-password"
+                   style="width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;padding:7px 10px;font-size:13px;margin-bottom:6px;">
+            <input type="password" id="pwNew" placeholder="新密码（至少6位）" autocomplete="new-password"
+                   style="width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;padding:7px 10px;font-size:13px;margin-bottom:6px;">
+            <input type="password" id="pwNew2" placeholder="再次输入新密码" autocomplete="new-password"
+                   style="width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;padding:7px 10px;font-size:13px;margin-bottom:8px;">
+            <button class="bio-save-btn" style="width:100%;" onclick="changePassword()">确认修改</button>
+            <div id="pwMsg" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
+        </div>
+
+        <span class="bg-color-label">主页背景色</span>
+        <div class="bg-color-swatches" id="colorSwatches"></div>
+
+        <div class="stats-row">
+            <div class="stat-item"><div class="stat-num">{{ videos|length }}</div><div class="stat-lbl">视频</div></div>
+            <div class="stat-item"><div class="stat-num">{{ favorited_videos|length }}</div><div class="stat-lbl">收藏</div></div>
+            <div class="stat-item"><div class="stat-num">{{ video_comments_count }}</div><div class="stat-lbl">评价</div></div>
+            {% if not user.is_teacher %}
+            <div class="stat-item"><div class="stat-num" style="color:#16a34a;">{{ user.meaningful_replies_count or 0 }}</div><div class="stat-lbl">有意义<br>回复</div></div>
+            {% endif %}
+        </div>
+
+        <!-- 视频作业对战 -->
+        {% if not user.is_teacher %}
+        <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px;">
+            {% if battle_open %}
+            <a href="{{ request.script_root }}/battle"
+               style="display:block;width:100%;padding:8px;border-radius:8px;font-size:13px;
+                      background:linear-gradient(135deg,#0056b3,#1a7fd4);color:#fff;
+                      border:none;cursor:pointer;font-family:inherit;text-align:center;
+                      text-decoration:none;box-sizing:border-box;font-weight:700;">
+                &#9876; 进入卡牌对战
+            </a>
+            {% else %}
+            <button disabled
+                    style="width:100%;padding:8px;border-radius:8px;font-size:13px;
+                           background:#f0f4ff;color:#a0aec0;border:1.5px dashed #cbd5e0;
+                           cursor:not-allowed;font-family:inherit;">
+                &#9876; 视频作业对战（未开放）
+            </button>
+            {% endif %}
+        </div>
+        {% else %}
+        <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px;display:flex;gap:8px;">
+            <button id="btnOpenBattle"
+                    onclick="setBattleMode(true)"
+                    style="flex:1;padding:7px;border-radius:8px;font-size:12px;
+                           background:#0056b3;color:#fff;border:none;cursor:pointer;
+                           font-family:inherit;">
+                开打对战
+            </button>
+            <button id="btnCloseBattle"
+                    onclick="setBattleMode(false)"
+                    style="flex:1;padding:7px;border-radius:8px;font-size:12px;
+                           background:#e74c3c;color:#fff;border:none;cursor:pointer;
+                           font-family:inherit;">
+                关闭对战
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ── 右侧主内容 ── -->
+    <div class="profile-main">
+        <div class="profile-tabs">
+            <button class="ptab active" onclick="switchTab('videos', this)">我的视频</button>
+            <button class="ptab" onclick="switchTab('favorites', this)">收藏的视频</button>
+            <button class="ptab" onclick="switchTab('posts', this)">我的帖子</button>
+            <button class="ptab" id="notifTab" onclick="switchTab('notifications', this)">
+                通知中心{% if unread_count > 0 %}<span class="tab-badge">{{ unread_count }}</span>{% endif %}
+            </button>
+        </div>
+
+        <!-- 我的视频 -->
+        <div class="tab-panel active" id="panel-videos">
+            {% if videos %}
+            <div class="pv-grid">
+                {% for v in videos %}
+                <div class="pv-card">
+                    <a href="{{ url_for('main.homework') }}?video_id={{ v.id }}" style="text-decoration:none;">
+                        <div class="pv-thumb"><video src="{{ v.url }}" preload="none" {% if v.thumbnail %}poster="{{ v.thumbnail }}"{% endif %}></video></div>
+                        <div class="pv-info">
+                            <p class="pv-title">{{ v.title }}</p>
+                            <p class="pv-meta">{{ v.created_at.strftime('%Y-%m-%d') }} · {{ v.views }} 次观看</p>
+                        </div>
+                    </a>
+                    <div class="pv-actions">
+                        <button class="pv-replace-btn"
+                                onclick="openReplaceModal({{ v.id }}, '{{ v.title }}')">替换视频</button>
+                        {% if not user.is_teacher %}
+                        {% if v.id in carded_video_ids %}
+                        <button class="pv-replace-btn" disabled
+                                style="background:#1b5e20;color:#fff;cursor:default;">已生成卡牌</button>
+                        {% else %}
+                        <button class="pv-replace-btn"
+                                style="background:#0d47a1;color:#fff;"
+                                onclick="generateCard({{ v.id }}, this)">生成卡牌</button>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}<div class="empty-tip">还没有上传过视频</div>{% endif %}
+        </div>
+
+        <!-- 收藏的视频 -->
+        <div class="tab-panel" id="panel-favorites">
+            {% if favorited_videos %}
+            <div class="pv-grid">
+                {% for v in favorited_videos %}
+                <div class="pv-card">
+                    <a href="{{ url_for('main.homework') }}?video_id={{ v.id }}" style="text-decoration:none;">
+                        <div class="pv-thumb"><video src="{{ v.url }}" preload="none" {% if v.thumbnail %}poster="{{ v.thumbnail }}"{% endif %}></video></div>
+                        <div class="pv-info">
+                            <p class="pv-title">{{ v.title }}</p>
+                            <p class="pv-meta">{{ v.author.username }} · ★ {{ '%.1f'|format(v.average_rating) }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}<div class="empty-tip">还没有收藏任何视频</div>{% endif %}
+        </div>
+
+        <!-- 我的帖子 -->
+        <div class="tab-panel" id="panel-posts">
+            {% if forum_posts %}
+                {% for p in forum_posts %}
+                <div class="post-item">
+                    <a href="{{ url_for('main.post_detail', post_id=p.id) }}" class="post-item-title">{{ p.title }}</a>
+                    <div class="post-item-meta">
+                        <span>{{ p.board.name }}</span>
+                        <span>{{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span>{{ p.replies.count() }} 回复</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}<div class="empty-tip">还没有发布过帖子</div>{% endif %}
+        </div>
+
+        <!-- 通知中心 -->
+        <div class="tab-panel" id="panel-notifications">
+            {% if notifications %}
+            <button class="notif-mark-all" onclick="markAllReadFull()">全部标为已读</button>
+            {% for n in notifications %}
+            <a class="notif-full-item {{ '' if n.is_read else 'unread' }}"
+               href="{{ (request.script_root + n.link) if n.link else '#' }}"
+               onclick="markReadFull({{ n.id }}, this, event)">
+                <div class="notif-dot {{ 'read' if n.is_read else '' }}"></div>
+                <div>
+                    <div class="notif-full-title">{{ n.title }}</div>
+                    <div class="notif-full-content">{{ n.content }}</div>
+                    <div class="notif-full-time">{{ n.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                </div>
+            </a>
+            {% endfor %}
+            {% else %}<div class="empty-tip">暂无通知</div>{% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 替换视频弹窗 -->
+<div id="replaceModal" style="display:none; position:fixed; inset:0;
+     background:rgba(0,0,0,0.5); z-index:3000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:28px 32px; width:360px; position:relative;">
+        <button onclick="closeReplaceModal()"
+                style="position:absolute;right:14px;top:10px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+        <h3 style="margin:0 0 8px; font-size:16px;">替换视频</h3>
+        <p id="replaceVideoTitle" style="font-size:13px; color:#888; margin-bottom:18px;"></p>
+        <input type="file" id="replaceFileInput" accept="video/*" style="width:100%; margin-bottom:16px;">
+        <button onclick="submitReplace()"
+                style="width:100%; padding:10px; background:#0056b3; color:#fff;
+                       border:none; border-radius:8px; font-size:14px; cursor:pointer;">确认替换</button>
+        <div id="replaceProgress" style="display:none; margin-top:10px; font-size:13px; color:#0056b3;"></div>
+    </div>
+</div>
+<!-- ── 抽卡动画模态框 ── -->
+<div class="pcm-mask" id="pcmMask">
+  <div class="pcm-box">
+    <div class="pcm-title">✨ 新卡生成！</div>
+    <div class="pcm-card-wrap" id="pcmCardWrap">
+      <img class="pcm-card-back" id="pcmBack" src="" alt="卡背">
+      <img class="pcm-card-img" id="pcmCardImg" src="" alt="">
+      <div class="pcm-dmg-overlay" id="pcmDmgOverlay">攻击力：0</div>
+      <div class="pcm-glow" id="pcmGlow"></div>
+    </div>
+    <div class="pcm-name" id="pcmCardName"></div>
+    <button onclick="closePcm()"
+            style="background:#0d47a1;color:#fff;border:none;border-radius:8px;
+                   padding:9px 28px;font-size:14px;font-weight:700;cursor:pointer;">
+      收入卡组
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* ── Tab 切换 ── */
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+}
+if (location.hash === '#notifications') {
+    switchTab('notifications', document.getElementById('notifTab'));
+}
+
+/* ── 对战模式 ── */
+const ROOT_PROFILE = {{ request.script_root | tojson }};
+async function setBattleMode(open) {
+    const r = await fetch(ROOT_PROFILE + '/api/admin/battle/toggle', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({open: open}),
+    });
+    const d = await r.json();
+    if (d.ok) {
+        alert(open ? '✅ 对战已开放，学生可进入对战页' : '❌ 对战已关闭');
+    } else {
+        alert(d.error || '操作失败');
+    }
+}
+async function generateCard(videoId, btn) {
+    btn.disabled = true; btn.textContent = '生成中…';
+    const r = await fetch(ROOT_PROFILE + '/api/battle/generate_card/' + videoId, {method:'POST'});
+    const d = await r.json();
+    if (d.ok) {
+        btn.textContent = '已生成卡牌';
+        btn.style.background = '#1b5e20'; btn.style.color = '#fff';
+        btn.style.cursor = 'default';
+        await showPcmModal(d.card);
+    } else {
+        btn.textContent = '生成卡牌'; btn.disabled = false;
+        alert(d.error || '生成失败');
+    }
+}
+
+function _sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function showPcmModal(card) {
+    const TYPE_IMG_P = {
+        melee:  `${ROOT_PROFILE}/static/images/近战卡-${card.star}星.jpg`,
+        ranged: `${ROOT_PROFILE}/static/images/远程卡-${card.star}星.jpg`,
+        magic:  `${ROOT_PROFILE}/static/images/魔法卡-${card.star}星.jpg`,
+    };
+    const back    = document.getElementById('pcmBack');
+    const cardImg = document.getElementById('pcmCardImg');
+    const dmgOvl  = document.getElementById('pcmDmgOverlay');
+    const nameEl  = document.getElementById('pcmCardName');
+    const glow    = document.getElementById('pcmGlow');
+
+    // 重置
+    const bcIdx = Math.floor(Math.random() * 5) + 1;
+    back.src              = `${ROOT_PROFILE}/static/images/BC-${bcIdx}.jpg`;
+    back.style.display    = 'block';
+    cardImg.style.opacity = '0';
+    cardImg.src           = '';
+    dmgOvl.style.opacity  = '0';
+    dmgOvl.textContent    = '攻击力：0';
+    nameEl.textContent    = '';
+    glow.className        = 'pcm-glow';
+    document.getElementById('pcmMask').classList.add('visible');
+
+    await _sleep(600);
+
+    // 火光奔溃
+    glow.className = 'pcm-glow pulse';
+    await _sleep(500);
+
+    // 翻转：scaleX 1→0
+    cardImg.src = TYPE_IMG_P[card.card_type];
+    const wrap = document.getElementById('pcmCardWrap');
+    wrap.style.transition  = 'transform .25s ease-in';
+    wrap.style.transform   = 'scaleX(0)';
+    await _sleep(250);
+
+    // 切换正面
+    back.style.display    = 'none';
+    cardImg.style.opacity = '1';
+    wrap.style.transition = 'transform .25s ease-out';
+    wrap.style.transform  = 'scaleX(1)';
+    await _sleep(250);
+
+    // 显示攻击力叠层
+    dmgOvl.style.opacity = '1';
+    nameEl.textContent   = card.name || '';
+
+    // 数字滚动
+    const target = parseFloat(card.damage);
+    let cur = 0;
+    for (let i = 0; i < 20; i++) {
+        cur = Math.min(cur + target / 20, target);
+        dmgOvl.textContent = `攻击力：${cur.toFixed(1)}`;
+        await _sleep(40);
+    }
+    dmgOvl.textContent = `攻击力：${target}`;
+}
+
+function closePcm() {
+    document.getElementById('pcmMask').classList.remove('visible');
+    document.getElementById('pcmCardWrap').style.transform = '';
+}
+
+/* ── 头像上传 ── */
+document.getElementById('avatarInput').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('avatar', file);
+    fetch(SCRIPT_ROOT + '/api/user/avatar', { method: 'POST', body: fd })
+        .then(r => r.json()).then(data => {
+            if (data.success) {
+                document.getElementById('avatarImg').src = data.avatar_url + '?t=' + Date.now();
+                showToast('头像已更新');
+            } else alert(data.error || '上传失败');
+        });
+});
+
+/* ── 个人简介 ── */
+function saveBio() {
+    const bio = document.getElementById('bioArea').value.trim();
+    fetch(SCRIPT_ROOT + '/api/user/profile', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bio })
+    }).then(r => r.json()).then(d => {
+        d.success ? showToast('简介已保存') : alert(d.error || '保存失败');
+    });
+}
+
+/* ── 对战昵称 ── */
+async function saveNickname() {
+    const input = document.getElementById('nicknameInput');
+    const msg   = document.getElementById('nicknameMsg');
+    if (!input) return;
+    const nickname = input.value.trim();
+    if (!nickname) { msg.textContent = '请输入昵称'; msg.style.color = '#e74c3c'; return; }
+    const r = await fetch(ROOT_PROFILE + '/api/battle/set_nickname', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ nickname })
+    });
+    const d = await r.json();
+    if (d.ok) {
+        msg.textContent = '✅ 昵称已保存：' + d.nickname;
+        msg.style.color = '#16a34a';
+    } else {
+        msg.textContent = d.error || '保存失败';
+        msg.style.color = '#e74c3c';
+    }
+}
+
+// 加载当前昵称
+(function loadNickname() {
+    const input = document.getElementById('nicknameInput');
+    if (!input) return;
+    fetch(ROOT_PROFILE + '/api/battle/pool_status')
+        .then(r => r.json())
+        .then(d => { if (d.nickname) input.placeholder = '当前：' + d.nickname; })
+        .catch(() => {});
+})();
+
+/* ── 背景色 ── */
+const BG_COLORS = [
+    { hex: '#ffffff', label: '白色',   stars: 0 },
+    { hex: '#e8f4f8', label: '冰蓝',   stars: 1 }, { hex: '#dce8f5', label: '天蓝',   stars: 1 },
+    { hex: '#e0eaf8', label: '淡蓝',   stars: 1 }, { hex: '#e4f0fb', label: '水蓝',   stars: 1 },
+    { hex: '#e8f3ec', label: '薄荷',   stars: 1 }, { hex: '#e0f0ea', label: '浅绿',   stars: 1 },
+    { hex: '#eaf4e8', label: '草绿',   stars: 1 }, { hex: '#e6f0dc', label: '嫩绿',   stars: 1 },
+    { hex: '#f5f5f0', label: '米白',   stars: 4 }, { hex: '#f0f0e8', label: '米黄',   stars: 4 },
+    { hex: '#ede8e0', label: '暖灰',   stars: 4 }, { hex: '#e8e4dc', label: '浅棕',   stars: 4 },
+    { hex: '#fdf5e8', label: '奶油',   stars: 5 }, { hex: '#fceee0', label: '蜜桔',   stars: 5 },
+    { hex: '#fde8e0', label: '玫瑰',   stars: 5 }, { hex: '#fce8ec', label: '粉紫',   stars: 5 },
+];
+const currentBg  = '{{ user.profile_bg_color or "#ffffff" }}';
+const userStars  = {{ user_stars }};  // 第4阶段赋实际星级
+
+(function renderSwatches() {
+    document.getElementById('colorSwatches').innerHTML = BG_COLORS.map(c => {
+        const locked = c.stars > userStars;
+        const active = c.hex === currentBg ? 'active' : '';
+        return `<span class="color-swatch ${active} ${locked ? 'locked' : ''}"
+                     style="background:${c.hex};" title="${locked ? '需 ' + c.stars + ' 星解锁' : c.label}"
+                     onclick="${locked ? '' : `selectBg('${c.hex}', this)`}"></span>`;
+    }).join('');
+})();
+
+function selectBg(hex, el) {
+    fetch(SCRIPT_ROOT + '/api/user/profile', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile_bg_color: hex })
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            document.getElementById('profileSidebar').style.backgroundColor = hex;
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        } else alert(d.error || '设置失败');
+    });
+}
+
+/* ── 通知标记 ── */
+function markReadFull(id, el, event) {
+    fetch(SCRIPT_ROOT + `/api/notifications/${id}/read`, { method: 'POST' });
+    el.classList.remove('unread');
+    const dot = el.querySelector('.notif-dot');
+    if (dot) dot.classList.add('read');
+    const href = el.getAttribute('href');
+    if (!href || href === '#') event.preventDefault();
+}
+function markAllReadFull() {
+    fetch(SCRIPT_ROOT + '/api/notifications/read_all', { method: 'POST' }).then(r => r.json()).then(d => {
+        if (d.success) {
+            document.querySelectorAll('.notif-full-item.unread').forEach(el => {
+                el.classList.remove('unread');
+                const dot = el.querySelector('.notif-dot'); if (dot) dot.classList.add('read');
+            });
+            const badge = document.querySelector('#notifTab .tab-badge');
+            if (badge) badge.remove();
+            showToast('已全部标为已读');
+        }
+    });
+}
+
+/* ── 替换视频 ── */
+let replaceVideoId = null;
+function openReplaceModal(id, title) {
+    replaceVideoId = id;
+    document.getElementById('replaceVideoTitle').textContent = '《' + title + '》';
+    document.getElementById('replaceFileInput').value = '';
+    document.getElementById('replaceProgress').style.display = 'none';
+    document.getElementById('replaceModal').style.display = 'flex';
+}
+function closeReplaceModal() { document.getElementById('replaceModal').style.display = 'none'; }
+function submitReplace() {
+    const file = document.getElementById('replaceFileInput').files[0];
+    if (!file) { alert('请先选择视频文件'); return; }
+    const fd = new FormData(); fd.append('video', file);
+    const prog = document.getElementById('replaceProgress');
+    prog.style.display = 'block'; prog.textContent = '上传中，请稍候…';
+    fetch(SCRIPT_ROOT + `/api/videos/${replaceVideoId}/replace`, { method: 'POST', body: fd })
+        .then(r => r.json()).then(data => {
+            if (data.success) {
+                prog.textContent = '替换成功！通知已发送给相关同学。';
+                setTimeout(() => { closeReplaceModal(); location.reload(); }, 1500);
+            } else prog.textContent = data.error || '替换失败，请重试';
+        }).catch(() => { prog.textContent = '网络错误，请重试'; });
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;';
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 2000);
+}
+
+/* ── 修改密码 ── */
+function changePassword() {
+    const oldPw  = document.getElementById('pwOld').value;
+    const newPw  = document.getElementById('pwNew').value;
+    const newPw2 = document.getElementById('pwNew2').value;
+    const msg    = document.getElementById('pwMsg');
+    msg.style.color = '#c0392b';
+    if (!oldPw || !newPw || !newPw2) { msg.textContent = '请填写所有字段'; return; }
+    if (newPw !== newPw2)            { msg.textContent = '两次输入的新密码不一致'; return; }
+    fetch(SCRIPT_ROOT + '/api/user/password', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ old_password: oldPw, new_password: newPw })
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            msg.style.color = '#27ae60';
+            msg.textContent = '✅ 密码修改成功！';
+            document.getElementById('pwOld').value = '';
+            document.getElementById('pwNew').value = '';
+            document.getElementById('pwNew2').value = '';
+        } else {
+            msg.textContent = d.error || '修改失败';
+        }
+    });
+}
+
+/* 跳转到密码区域（登录时初始密码提示用）*/
+if (location.hash === '#change-password') {
+    setTimeout(() => {
+        const el = document.getElementById('change-password');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 400);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,702 @@
+{% extends "base.html" %}
+{% block title %}词云签到管理{% endblock %}
+
+{% block extra_css %}
+<style>
+.sign-page {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+}
+.sign-page h1 {
+    font-size: 24px;
+    color: #222;
+    margin-bottom: 6px;
+}
+.sign-page .subtitle {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 30px;
+}
+
+/* 创建表单卡片 */
+.create-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.create-card h2 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 14px;
+}
+.create-card textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: none;
+    height: 72px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+.create-card textarea:focus { border-color: #0056b3; }
+.btn-create {
+    margin-top: 10px;
+    padding: 9px 28px;
+    background: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-create:hover { background: #003d82; }
+
+/* 会话列表 */
+.session-list { display: flex; flex-direction: column; gap: 16px; }
+.session-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+.session-info { flex: 1; min-width: 0; }
+.session-question {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 6px;
+    word-break: break-all;
+}
+.session-meta {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.badge-active {
+    display: inline-block;
+    background: #d4edda;
+    color: #155724;
+    font-size: 11px;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-weight: 600;
+}
+.badge-closed {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #888;
+    font-size: 11px;
+    border-radius: 20px;
+    padding: 2px 10px;
+}
+.badge-suspicious {
+    display: inline-block;
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+    font-size: 11px;
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-weight: 600;
+    cursor: help;
+}
+
+/* QR 图片弹窗 */
+.qr-wrap { flex-shrink: 0; text-align: center; }
+.qr-img {
+    width: 90px;
+    height: 90px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.qr-img:hover { transform: scale(1.05); }
+.qr-label { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+/* 操作按钮 */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex-shrink: 0;
+}
+.btn-sm {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    white-space: nowrap;
+}
+.btn-cloud  { background: #0056b3; color: #fff; }
+.btn-cloud:hover  { background: #003d82; }
+.btn-toggle { background: #f0ad00; color: #fff; }
+.btn-toggle:hover { background: #c88a00; }
+.btn-delete { background: #f8f8f8; color: #c0392b; border: 1px solid #e0e0e0; }
+.btn-delete:hover { background: #ffe0e0; }
+
+/* URL 提示 */
+.url-chip {
+    font-size: 11px;
+    color: #555;
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 3px 8px;
+    word-break: break-all;
+    cursor: text;
+    user-select: all;
+}
+
+/* 大QR弹窗 */
+.qr-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+.qr-modal-overlay.open { display: flex; }
+.qr-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+    max-width: 340px;
+    width: 90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.qr-modal img { width: 240px; height: 240px; }
+.qr-modal-url {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #555;
+    word-break: break-all;
+    background: #f5f5f5;
+    padding: 6px 10px;
+    border-radius: 6px;
+    user-select: all;
+    cursor: text;
+}
+.qr-modal-question {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #333;
+    font-weight: 600;
+}
+.qr-modal-close {
+    margin-top: 16px;
+    padding: 8px 28px;
+    background: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.empty-tip { color: #bbb; text-align: center; padding: 40px 0; font-size: 14px; }
+
+/* 语音录入标志 */
+.voice-status-bar {
+    display: none;
+    align-items: center; gap: 10px;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #fff3e0; border: 1px solid #ffb74d;
+    border-radius: 8px; font-size: 13px; color: #e65100;
+}
+.voice-status-bar.active { display: flex; }
+.voice-pulse {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #e53935;
+    animation: pulse 0.8s ease-in-out infinite alternate;
+    flex-shrink: 0;
+}
+@keyframes pulse { from { opacity: 1; transform: scale(1); } to { opacity: 0.4; transform: scale(0.7); } }
+.btn-voice {
+    margin-top: 10px; margin-left: 8px;
+    padding: 9px 20px;
+    background: #fff3e0; color: #e65100;
+    border: 1px solid #ffb74d;
+    border-radius: 8px; font-size: 14px; cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-voice:hover { background: #ffe0b2; }
+.btn-voice:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sign-page">
+    <h1>词云签到</h1>
+    <p class="subtitle">创建签到会话，学生扫码或通过链接提交词语，实时生成词云</p>
+
+    <!-- 创建新会话 -->
+    <div class="create-card">
+        <h2>➕ 新建签到</h2>
+        <textarea id="questionInput" placeholder="输入签到问题，如：请用一个词描述今天的学习收获（留空则点击按钮语音输入）"></textarea>
+        <div class="voice-status-bar" id="voiceStatusBar">
+            <div class="voice-pulse"></div>
+            <span id="voiceStatusTxt">正在监听，请说出签到问题…说出"请签到"或等待10秒自动停止</span>
+            <span id="voiceCountdown" style="margin-left:auto;font-weight:700;">10</span>秒
+        </div>
+        <br>
+        <button class="btn-create" onclick="createSession()">&#127908; 创建签到</button>
+    </div>
+
+    <!-- 会话列表 -->
+    <div class="session-list" id="sessionList">
+        <div class="empty-tip">加载中…</div>
+    </div>
+</div>
+
+<!-- QR 大图弹窗 -->
+<div class="qr-modal-overlay" id="qrOverlay" onclick="closeQr(event)">
+    <div class="qr-modal">
+        <img id="qrBigImg" src="" alt="二维码">
+        <div class="qr-modal-question" id="qrQuestion"></div>
+        <div class="qr-modal-url" id="qrUrl"></div>
+        <button class="qr-modal-close" onclick="document.getElementById('qrOverlay').classList.remove('open')">关 闭</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ROOT = {{ request.script_root | tojson }};
+function getOrigin() { return window.location.origin + ROOT; }
+
+/* ──────────────────────────────────────────────────────────
+   语音输入模块（词云签到问题）
+   录音：MediaRecorder（无需科学上网）
+   字幕：Web Speech API（可用则显示，不可用则静默录制）
+   识别：/api/voice/asr → 阿里云NLS
+   ────────────────────────────────────────────────────────── */
+const HAS_MIC = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia &&
+                  (location.protocol === 'https:' || location.hostname === 'localhost'));
+
+// 预请求麦克风权限
+if (HAS_MIC) {
+    navigator.mediaDevices.getUserMedia({audio: true})
+        .then(s => s.getTracks().forEach(t => t.stop()))
+        .catch(() => {});
+}
+
+let _voiceTimer      = null;
+let _voiceCountdown  = 40;
+let _voiceTranscript = '';
+let _voiceMediaRec   = null;
+let _voiceStopping   = false;
+let _voiceStream     = null;
+let _voiceMimeType   = '';
+let _voiceSegChunks  = [];
+let _voiceProbeBusy  = false;
+let _voiceLastAsrErr = '';
+let _voiceStopWaiter = null;
+let _voiceEmptySegs  = 0;        // 连续无语音片段计数（≥3次≈5s自动停止）
+let _voiceCloudWin   = null;     // 在用户手势上下文里预先打开，用于绕过弹窗拦截
+
+async function recognizeSignBlob(blob) {
+    const mimeType = blob.type || _voiceMimeType || 'audio/webm';
+    const ext = mimeType.includes('ogg') ? 'ogg' : 'webm';
+    const fd = new FormData();
+    fd.append('audio', blob, `segment.${ext}`);
+    const res = await fetch(SCRIPT_ROOT + '/api/voice/asr', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok && data.error) throw new Error(data.error);
+    if (data.error) throw new Error(data.error);
+    return (data.text || '').trim();
+}
+
+function _normStop(s) {
+    return (s || '').replace(/[\s\u3000，。？！、,.?!…·～—\-]/g, '');
+}
+
+/* ── 词云大屏等待页：录音期间注入空白窗口，避免白屏 ────────────── */
+const _CLOUD_LOADING_HTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>准备中…</title>
+<style>* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0a0e1a; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.wrap { text-align: center; max-width: 460px; padding: 40px 24px; }
+.mic-ring {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(79,195,247,0.08);
+    border: 2px solid rgba(79,195,247,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+    animation: ring-pulse 1.6s ease-in-out infinite;
+}
+@keyframes ring-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(79,195,247,0.4),0 0 0 0 rgba(79,195,247,0.12); }
+    50%      { box-shadow: 0 0 0 16px rgba(79,195,247,0.15),0 0 0 32px rgba(79,195,247,0.04); }
+}
+.mic-icon { font-size: 44px; line-height: 1; }
+.title { font-size: 22px; font-weight: 700; color: #f0f4ff; margin-bottom: 10px; }
+.subtitle { font-size: 14px; color: #7a8fb5; line-height: 1.8; margin-bottom: 36px; }
+.dots span {
+    display: inline-block; width: 10px; height: 10px;
+    border-radius: 50%; background: #4fc3f7; margin: 0 5px;
+    animation: dot-bounce 1.4s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: .22s; }
+.dots span:nth-child(3) { animation-delay: .44s; }
+@keyframes dot-bounce {
+    0%,80%,100% { transform: translateY(0); opacity: .45; }
+    40%         { transform: translateY(-12px); opacity: 1; }
+}
+.brand { margin-top: 40px; font-size: 13px; color: rgba(255,255,255,0.18); letter-spacing: 2px; }
+.done-btn {
+    margin-top: 32px;
+    padding: 13px 46px;
+    background: rgba(79,195,247,0.10);
+    color: #b3e5fc;
+    border: 1px solid rgba(79,195,247,0.45);
+    border-radius: 30px;
+    font-size: 16px; font-weight: 600; letter-spacing: 2px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.done-btn:hover {
+    background: rgba(79,195,247,0.20);
+    border-color: rgba(79,195,247,0.7);
+    transform: translateY(-2px);
+}
+.done-btn:active { transform: translateY(0); }
+.done-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+</style></head>
+<body><div class="wrap">
+  <div class="mic-ring"><div class="mic-icon">🎤</div></div>
+  <div class="title">正在录入签到问题…</div>
+  <div class="subtitle">请在说出签到问题<br>说出“请签到”或等待自动停止<br>完成后将自动打开词云大屏</div>
+  <div class="dots"><span></span><span></span><span></span></div>
+  <button class="done-btn" onclick="this.disabled=true;this.textContent='⏳ 整理中…';if(window.opener)window.opener.stopVoiceSignIn(true)">✅ 完成</button>
+  <div class="brand">✶ 致知力行</div>
+</div></body></html>`;
+
+async function handleSignSegmentStop() {
+    const blob = _voiceSegChunks.length ? new Blob(_voiceSegChunks, { type: _voiceMimeType || 'audio/webm' }) : null;
+    _voiceSegChunks = [];
+
+    if (blob && blob.size > 0) {
+        try {
+            _voiceProbeBusy = true;
+            const chunkText = await recognizeSignBlob(blob);
+            _voiceLastAsrErr = '';
+            if (chunkText && chunkText.trim()) {
+                _voiceEmptySegs = 0;  // 有内容，重置静音计数
+                _voiceTranscript = (_voiceTranscript + chunkText).slice(-500);
+                document.getElementById('voiceStatusTxt').textContent = '识别中：' + _voiceTranscript.slice(-40) + '…';
+                if (_normStop(_voiceTranscript).includes('请签到')) {
+                    stopVoiceSignIn(true);
+                    return;
+                }
+            } else {
+                _voiceEmptySegs++;
+                if (_voiceEmptySegs >= 3) {
+                    document.getElementById('voiceStatusTxt').textContent = '（持续静音，已自动停止）';
+                    stopVoiceSignIn(true);
+                    return;
+                }
+            }
+        } catch(e) {
+            _voiceLastAsrErr = String(e);
+            _voiceEmptySegs++;
+            if (_voiceEmptySegs >= 3) {
+                stopVoiceSignIn(true);
+                return;
+            }
+        } finally {
+            _voiceProbeBusy = false;
+        }
+    } else {
+        _voiceEmptySegs++;
+        if (_voiceEmptySegs >= 3) {
+            stopVoiceSignIn(true);
+            return;
+        }
+    }
+
+    if (_voiceStopping) {
+        if (_voiceStopWaiter) {
+            _voiceStopWaiter();
+            _voiceStopWaiter = null;
+        }
+        return;
+    }
+    startSignSegmentRecorder();
+}
+
+function startSignSegmentRecorder() {
+    if (_voiceStopping || !_voiceStream) return;
+    _voiceSegChunks = [];
+    _voiceMediaRec = new MediaRecorder(_voiceStream, _voiceMimeType ? { mimeType: _voiceMimeType } : {});
+    _voiceMediaRec.ondataavailable = e => {
+        if (e.data && e.data.size > 0) _voiceSegChunks.push(e.data);
+    };
+    _voiceMediaRec.onstop = () => {
+        handleSignSegmentStop().catch(() => {});
+    };
+    _voiceMediaRec.start();
+    setTimeout(() => {
+        if (_voiceMediaRec && _voiceMediaRec.state !== 'inactive' && !_voiceStopping) {
+            try { _voiceMediaRec.stop(); } catch(e) {}
+        }
+    }, 1600);
+}
+
+function startVoiceSignIn() {
+    if (!HAS_MIC) {
+        alert('语音录音需要 HTTPS 环境，请通过 https://example.com 访问');
+        return;
+    }
+
+    // 此处仍在用户手势上下文内，预先打开空白窗口
+    // 避免后续多次 await 后浏览器拦截 window.open
+    if (_voiceCloudWin && !_voiceCloudWin.closed) _voiceCloudWin.close();
+    _voiceCloudWin = window.open('', '_blank');
+    // 注入等待页，避免录音期间白屏
+    if (_voiceCloudWin) {
+        _voiceCloudWin.document.write(_CLOUD_LOADING_HTML);
+        _voiceCloudWin.document.close();
+    }
+
+    _voiceTranscript = '';
+    _voiceCountdown  = 40;
+    _voiceStopping   = false;
+    _voiceProbeBusy  = false;
+    _voiceLastAsrErr = '';
+    _voiceStopWaiter = null;
+    _voiceEmptySegs  = 0;
+
+    document.getElementById('voiceStatusBar').classList.add('active');
+    document.getElementById('voiceCountdown').textContent = _voiceCountdown;
+
+    // 倒计时
+    _voiceTimer = setInterval(() => {
+        _voiceCountdown--;
+        document.getElementById('voiceCountdown').textContent = _voiceCountdown;
+        if (_voiceCountdown <= 0) stopVoiceSignIn(true);
+    }, 1000);
+
+    // 启动 MediaRecorder 主录音
+    navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
+    .then(stream => {
+        _voiceStream = stream;
+        _voiceMimeType = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg']
+            .find(t => MediaRecorder.isTypeSupported(t)) || '';
+        document.getElementById('voiceStatusTxt').textContent = '🎙️ 录音中（每约2秒识别一次，检测停止词）…';
+        startSignSegmentRecorder();
+    })
+    .catch(err => {
+        clearInterval(_voiceTimer);
+        document.getElementById('voiceStatusBar').classList.remove('active');
+        alert('麦克风获取失败：' + err.message);
+    });
+}
+
+async function stopVoiceSignIn(process) {
+    if (_voiceStopping) return;
+    _voiceStopping = true;
+    clearInterval(_voiceTimer);
+
+    if (_voiceMediaRec && _voiceMediaRec.state !== 'inactive') {
+        await new Promise(resolve => {
+            _voiceStopWaiter = resolve;
+            try { _voiceMediaRec.stop(); } catch(e) { resolve(); }
+            setTimeout(resolve, 4000);
+        });
+    }
+    if (_voiceStream) {
+        _voiceStream.getTracks().forEach(t => t.stop());
+        _voiceStream = null;
+    }
+    while (_voiceProbeBusy) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    document.getElementById('voiceStatusBar').classList.remove('active');
+
+    if (!process) {
+        // 取消录音，关闭预开的空白窗口
+        if (_voiceCloudWin && !_voiceCloudWin.closed) { _voiceCloudWin.close(); }
+        _voiceCloudWin = null;
+        return;
+    }
+
+    let subtitleText = _voiceTranscript;
+    const stopIdx = subtitleText.indexOf('请签到');
+    if (stopIdx > 0) subtitleText = subtitleText.slice(0, stopIdx).trim();
+
+    if (!subtitleText.trim()) {
+        alert('语音识别失败：' + (_voiceLastAsrErr || '未识别到有效语音，请重试'));
+        if (_voiceCloudWin && !_voiceCloudWin.closed) { _voiceCloudWin.close(); }
+        _voiceCloudWin = null;
+        return;
+    }
+
+    document.getElementById('voiceStatusBar').classList.add('active');
+    document.getElementById('voiceStatusTxt').textContent = '⏳ AI整理中…';
+
+    let recognizedText = subtitleText;
+    const idx2 = recognizedText.indexOf('请签到');
+    if (idx2 > 0) recognizedText = recognizedText.slice(0, idx2).trim();
+
+    try {
+        const res  = await fetch(SCRIPT_ROOT + '/api/voice/process', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ text: recognizedText, type: 'sign_question' }),
+        });
+        const data = await res.json();
+        if (data.error) {
+            alert('AI整理失败：' + data.error);
+            if (_voiceCloudWin && !_voiceCloudWin.closed) { _voiceCloudWin.close(); }
+            _voiceCloudWin = null;
+        } else {
+            document.getElementById('questionInput').value = data.question;
+            createSession();
+        }
+    } catch(e) {
+        alert('网络错误：' + e);
+    }
+    document.getElementById('voiceStatusBar').classList.remove('active');
+}
+
+async function loadSessions() {
+    const res  = await fetch(SCRIPT_ROOT + '/api/sign/sessions');
+    const list = await res.json();
+    const el   = document.getElementById('sessionList');
+    if (!list.length) {
+        el.innerHTML = '<div class="empty-tip">暂无签到，点击上方"新建签到"开始</div>';
+        return;
+    }
+    el.innerHTML = list.map(s => {
+        const studentUrl = `${getOrigin()}/s/${s.token}`;
+        const badge = s.is_active
+          ? `<span class="badge-active">进行中</span>`
+          : `<span class="badge-closed">已关闭</span>`;
+        return `
+        <div class="session-card" id="sc-${s.id}">
+            <div class="qr-wrap">
+                <img class="qr-img" src="${SCRIPT_ROOT}/api/sign/${s.token}/qr.png"
+                     onclick="showQr('${SCRIPT_ROOT}/api/sign/${s.token}/qr.png','${studentUrl.replace(/'/g,"\\'")}','${s.question.replace(/'/g,"\\'")}')">
+                <div class="qr-label">点击放大</div>
+            </div>
+            <div class="session-info">
+                <div class="session-question">${escHtml(s.question)}</div>
+                <div class="session-meta">
+                    ${badge}
+                    ${s.suspicious > 0 ? `<span class="badge-suspicious" title="存在 ${s.suspicious} 条回答使用了相同设备，可能有替签，请到词云大屏核查">⚠️ ${s.suspicious} 可疑</span>` : ''}
+                    <span>📝 ${s.count} 条回答</span>
+                    <span>🕐 ${s.created_at}</span>
+                </div>
+                <div class="url-chip" style="margin-top:8px;" title="复制链接">${studentUrl}</div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-sm btn-cloud"
+                    onclick="window.open(ROOT + '/teacher/sign/${s.token}/cloud','_blank')">📊 词云大屏</button>
+                <button class="btn-sm btn-toggle"
+                    onclick="toggleSession(${s.id},'${s.token}')">
+                    ${s.is_active ? '⏸ 关闭签到' : '▶ 重新开放'}</button>
+                <button class="btn-sm btn-delete"
+                    onclick="deleteSession(${s.id})">🗑 删除</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+async function createSession() {
+    const q   = document.getElementById('questionInput').value.trim();
+    if (!q) {
+        if (HAS_MIC) {
+            // 问题框为空时，直接进入当前的语音录入流程
+            startVoiceSignIn();
+            return;
+        }
+        alert('请先输入签到问题，或在 HTTPS 环境下使用语音录入');
+        return;
+    }
+    // 优先使用语音流程里预先打开的窗口（避免 await 后被弹窗拦截）
+    // 若是直接点击按钮创建，则同步打开新窗口（仍在用户手势上下文内）
+    const cloudWin = (_voiceCloudWin && !_voiceCloudWin.closed)
+        ? _voiceCloudWin
+        : window.open('', '_blank');
+    _voiceCloudWin = null;   // 消费掉，避免二次使用
+    const res = await fetch(SCRIPT_ROOT + '/api/sign/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q }),
+    });
+    if (res.ok) {
+        const data = await res.json();
+        document.getElementById('questionInput').value = '';
+        loadSessions();
+        // 创建成功后跳转到词云大屏
+        if (data.token && cloudWin) {
+            cloudWin.location.href = ROOT + '/teacher/sign/' + data.token + '/cloud';
+        } else if (cloudWin) {
+            cloudWin.close();  // 创建失败则关掉空白页
+        }
+    } else {
+        if (cloudWin) cloudWin.close();  // 请求失败，关掉空白页
+    }
+}
+
+async function toggleSession(id, token) {
+    const res = await fetch(SCRIPT_ROOT + `/api/sign/session/${id}/toggle`, { method: 'PUT' });
+    if (res.ok) loadSessions();
+}
+
+async function deleteSession(id) {
+    if (!confirm('确定删除此签到及所有回答？')) return;
+    const res = await fetch(SCRIPT_ROOT + `/api/sign/session/${id}`, { method: 'DELETE' });
+    if (res.ok) loadSessions();
+}
+
+function showQr(imgSrc, url, question) {
+    document.getElementById('qrBigImg').src    = imgSrc;
+    document.getElementById('qrUrl').textContent  = url;
+    document.getElementById('qrQuestion').textContent = question;
+    document.getElementById('qrOverlay').classList.add('open');
+}
+
+function closeQr(e) {
+    if (e.target === document.getElementById('qrOverlay'))
+        document.getElementById('qrOverlay').classList.remove('open');
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+loadSessions();
+</script>
+{% endblock %}

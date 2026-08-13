@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>词云签到 · 大屏展示</title>
+<!-- wordcloud2.js -->
+<script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+<style>
+/* ── CSS 变量双主题 ───────────────────────────── */
+:root, [data-theme="dark"] {
+    --bg:            #0a0e1a;
+    --bar-bg:        rgba(255,255,255,0.03);
+    --bar-border:    rgba(255,255,255,0.07);
+    --question-color:#f0f4ff;
+    --count-color:   #4fc3f7;
+    --label-color:   #888;
+    --status-color:  #aaa;
+    --hint-color:    rgba(255,255,255,0.2);
+    --body-color:    #fff;
+    --url-color:     #4fc3f7;
+    --back-bg:       rgba(255,255,255,0.08);
+    --back-color:    #ccc;
+    --back-border:   rgba(255,255,255,0.12);
+    --back-hover:    rgba(255,255,255,0.16);
+    --toggle-bg:     rgba(255,255,255,0.10);
+    --toggle-color:  #e0e0e0;
+    --toggle-border: rgba(255,255,255,0.15);
+    --toggle-hover:  rgba(255,255,255,0.18);
+}
+[data-theme="light"] {
+    --bg:            #f4f6fb;
+    --bar-bg:        rgba(255,255,255,0.88);
+    --bar-border:    #dde2ec;
+    --question-color:#1a1a2e;
+    --count-color:   #0056b3;
+    --label-color:   #888;
+    --status-color:  #666;
+    --hint-color:    rgba(0,0,0,0.18);
+    --body-color:    #222;
+    --url-color:     #0056b3;
+    --back-bg:       #ececec;
+    --back-color:    #444;
+    --back-border:   #ccc;
+    --back-hover:    #e0e0e0;
+    --toggle-bg:     #e2e8f4;
+    --toggle-color:  #333;
+    --toggle-border: #bbb;
+    --toggle-hover:  #d4daf0;
+}
+
+/* ── 基础布局 ─────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: var(--bg);
+    color: var(--body-color);
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.35s, color 0.35s;
+}
+
+/* ── 顶部信息栏 ────────────────────────────── */
+.top-bar {
+    padding: 18px 32px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--bar-border);
+    background: var(--bar-bg);
+    flex-shrink: 0;
+    transition: background 0.35s, border-color 0.35s;
+    backdrop-filter: blur(4px);
+}
+.top-question {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--question-color);
+    max-width: 70%;
+    transition: color 0.35s;
+}
+.top-right { display: flex; align-items: center; gap: 20px; }
+.count-badge {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--count-color);
+    transition: color 0.35s;
+}
+.count-label { font-size: 12px; color: var(--label-color); }
+.status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #4caf50;
+    box-shadow: 0 0 8px #4caf50;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+.status-dot.closed { background: #888; box-shadow: none; animation: none; }
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(0.85); }
+}
+.status-text { font-size: 12px; color: var(--status-color); transition: color 0.35s; }
+
+/* ── 词云畫布区 ─────────────────────────────── */
+.cloud-wrap { flex: 1; position: relative; overflow: hidden; }
+#cloudCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+.empty-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--hint-color);
+    pointer-events: none;
+    transition: color 0.35s;
+}
+.empty-hint .icon { font-size: 64px; }
+.empty-hint .text { font-size: 18px; margin-top: 12px; }
+
+/* ── 底部状态栏 ─────────────────────────────── */
+/* 左下角固定大尺寸二维码（可切换） */
+.qr-wrap {
+    position: fixed;
+    bottom: min(20px, 3vmin); left: min(20px, 3vmin);
+    z-index: 50;
+    /* 自适应：手机(vmin≈390px)→80px，桌面(vmin≈1080px)→221px→上限220px */
+    width: clamp(70px, 20.5vmin, 220px);
+    text-align: center;
+    transition: top 0.35s ease, bottom 0.35s ease;
+}
+.qr-wrap.top-left {
+    bottom: auto;
+    top: 90px;
+}
+.qr-wrap img {
+    width: clamp(70px, 20.5vmin, 220px); height: clamp(70px, 20.5vmin, 220px);
+    border-radius: 10px; padding: 4px; background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+    display: block;
+}
+/* 固定水印 */
+.qr-watermark {
+    position: fixed;
+    /* 与 QR 同步缩放：left = QR左偏移 + 约9%QR宽；font/spacing 用 vmin 等比 */
+    left: calc(min(20px, 3vmin) + clamp(6px, 1.8vmin, 20px));
+    bottom: min(20px, 3vmin);
+    z-index: 49;
+    font-size: clamp(8px, 2.2vmin, 24px);
+    font-weight: 900;
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(90deg, #007BFF, #00C6FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: clamp(1px, 0.6vmin, 6px);
+    line-height: 1.4;
+    user-select: none;
+    pointer-events: none;
+}
+.bottom-bar {
+    padding: 8px 32px 8px calc(clamp(70px, 20.5vmin, 220px) + min(20px, 3vmin) * 2 + 16px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 1px solid var(--bar-border);
+    background: var(--bar-bg);
+    flex-shrink: 0;
+    transition: background 0.35s, border-color 0.35s;
+    backdrop-filter: blur(4px);
+}
+.scan-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--body-color);
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--bar-border);
+    background: var(--toggle-bg);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── 操作按鈕组 ─────────────────────────────── */
+.btn-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.back-btn, .theme-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+    border: 1px solid;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.back-btn {
+    background: var(--back-bg);
+    color: var(--back-color);
+    border-color: var(--back-border);
+}
+.back-btn:hover { background: var(--back-hover); }
+.theme-btn {
+    background: var(--toggle-bg);
+    color: var(--toggle-color);
+    border-color: var(--toggle-border);
+}
+.theme-btn:hover { background: var(--toggle-hover); }
+/* ── 手机竖屏适配（QR已由vmin自动缩放，此处仅调整其余元素）─── */
+@media (max-width: 768px) {
+    .qr-watermark { display: none !important; }
+    .bottom-bar {
+        padding-right: 10px !important;
+        gap: 8px;
+    }
+    .scan-label { font-size: 12px; padding: 4px 8px; }
+}
+/* ── 手机横屏 16:9 适配 ─────────────────────── */
+@media (max-width: 900px) and (orientation: landscape) {
+    html, body { height: 100%; overflow: hidden; }
+    body {
+        /* 强制按屏幕宽高填满，不允许多余滚动 */
+        height: 100vh;
+    }
+    .top-bar {
+        padding: 8px 16px 6px;
+    }
+    .top-question { font-size: 15px; }
+    .count-badge  { font-size: 15px; }
+    .count-label  { font-size: 10px; }
+    .status-text  { display: none; }
+}
+</style>
+</head>
+<body>
+<!-- 顶部栏 -->
+<div class="top-bar">
+    <div class="top-question" id="topQuestion">{{ sess.question }}</div>
+    <div class="top-right">
+        <div style="text-align:center;">
+            <div class="count-badge" id="countNum">0</div>
+            <div class="count-label">条回答</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+            <div class="status-dot" id="statusDot"></div>
+            <div class="status-text" id="statusText">进行中</div>
+        </div>
+    </div>
+</div>
+
+<!-- 词云 -->
+<div class="cloud-wrap">
+    <canvas id="cloudCanvas"></canvas>
+    <div class="empty-hint" id="emptyHint">
+        <div class="icon">💬</div>
+        <div class="text">等待学生提交回答…</div>
+    </div>
+</div>
+
+<!-- 固定水印 -->
+<div class="qr-watermark">致知力行</div>
+<!-- 左下角固定大二维码 -->
+<div class="qr-wrap" id="qrWrap">
+    <img src="{{ request.script_root }}/api/sign/{{ sess.token }}/qr.png" alt="二维码">
+</div>
+
+<!-- 底部引导栏 -->
+<div class="bottom-bar">
+    <div class="scan-label">请扫码参与签到</div>
+    <div class="btn-group">
+        <button class="theme-btn" id="qrPosBtn" onclick="toggleQrPos()" title="切换二维码位置">
+            <span id="qrPosLabel">左下</span>
+        </button>
+        <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">
+            <span id="themeIcon">🌙</span>
+            <span id="themeLabel">深色模式</span>
+        </button>
+        <a class="back-btn" href="{{ url_for('main.teacher_wordcloud') }}">← 返回管理</a>
+    </div>
+</div>
+
+<script>
+const TOKEN = "{{ sess.token }}";
+const SCRIPT_ROOT = {{ request.script_root | tojson }};
+
+/* ── 关闭签到后自动截图并导出 ────────────── */
+let wasActive = null;   // null = 首次贺值未知
+
+async function exportOnClose() {
+    // 截取词云 canvas
+    const canvas = document.getElementById('cloudCanvas');
+    let pngData = '';
+    try { pngData = canvas.toDataURL('image/png'); } catch(e) {}
+    try {
+        await fetch(SCRIPT_ROOT + '/api/sign/' + TOKEN + '/export', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({png: pngData}),
+        });
+    } catch(e) {}
+}
+
+/* ── 二维码位置切换 ─────────────────────── */
+let qrAtBottom = true;
+function toggleQrPos() {
+    qrAtBottom = !qrAtBottom;
+    const wrap = document.getElementById('qrWrap');
+    const lbl  = document.getElementById('qrPosLabel');
+    if (qrAtBottom) {
+        wrap.classList.remove('top-left');
+        lbl.textContent = '左下';
+    } else {
+        wrap.classList.add('top-left');
+        lbl.textContent = '左上';
+    }
+}
+
+/* ── 主题切换 ─────────────────────────────── */
+let isDark = false;
+const DARK_COLORS  = [
+    '#4fc3f7','#81d4fa','#e040fb','#f48fb1','#ffcc02',
+    '#69f0ae','#ff6e40','#40c4ff','#ea80fc','#ccff90',
+];
+const LIGHT_COLORS = [
+    '#0d47a1','#1565c0','#6a1b9a','#ad1457','#e65100',
+    '#2e7d32','#00695c','#283593','#4527a0','#c62828',
+];
+function randColor() {
+    const pool = isDark ? DARK_COLORS : LIGHT_COLORS;
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+function toggleTheme() {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.getElementById('themeIcon').textContent  = isDark ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = isDark ? '浅色模式' : '深色模式';
+    if (lastWords.length > 0) drawCloud(lastWords);
+}
+
+/* ── 词云渲染 ──────────────────────────────── */
+let lastTotal = -1;
+let lastWords = [];
+let isRendering = false;
+
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function drawCloud(words) {
+    if (isRendering) return;
+    isRendering = true;
+    lastWords = words;
+    const canvas = document.getElementById('cloudCanvas');
+    canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    canvas.height = canvas.offsetHeight || (window.innerHeight - 140);
+
+    // 仅按屏幕短边判断是否为手机竖屏（触控一体机/触屏笔记本 maxTouchPoints>0 但属桌面，不能用触控点数判断）
+    const isMobile = Math.min(window.innerWidth, window.innerHeight) < 600;
+    const widthScale  = canvas.width / 1440;
+    const heightScale = canvas.height / 860;
+    const screenScale = clamp(Math.min(widthScale, heightScale), 0.82, 1.7);
+    const minFont  = isMobile ? clamp(8 * screenScale, 8, 16) : clamp(22 * screenScale, 18, 42);
+    const maxFont  = isMobile ? clamp(28 * screenScale, 24, 46) : clamp(74 * screenScale, 56, 128);
+    const maxW     = Math.max(...words.map(w => w[1]), 1);
+    const entries  = words.map(([w, c]) =>
+        [w, Math.round(minFont + (c / maxW) * maxFont)]
+    );
+    // 浅色时清除旧绘制
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+    WordCloud(canvas, {
+        list:            entries,
+        gridSize:        Math.round((isMobile ? 6 : 16) * Math.min(canvas.width, canvas.height) / 900),
+        weightFactor:    1,
+        fontFamily:      '"PingFang SC","Microsoft YaHei",sans-serif',
+        fontWeight:      'bold',
+        color:           randColor,
+        rotateRatio:     0.35,
+        rotationSteps:   2,
+        backgroundColor: 'transparent',
+        clearCanvas:     true,
+        shuffle:         true,
+        drawOutOfBound:  false,
+    });
+    setTimeout(() => { isRendering = false; }, 800);
+}
+
+let resizeTimer = null;
+window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        if (lastWords.length > 0) {
+            lastTotal = -1;
+            drawCloud(lastWords);
+        }
+    }, 180);
+});
+
+async function poll() {
+    try {
+        const res  = await fetch(SCRIPT_ROOT + '/api/sign/' + TOKEN + '/words');
+        const data = await res.json();
+
+        document.getElementById('countNum').textContent = data.total;
+        document.getElementById('topQuestion').textContent = data.question;
+
+        const dot  = document.getElementById('statusDot');
+        const txt  = document.getElementById('statusText');
+        if (data.is_active) {
+            dot.classList.remove('closed');
+            txt.textContent = '进行中';
+        } else {
+            dot.classList.add('closed');
+            txt.textContent = '已关闭';
+        }
+
+        // 检测签到活跃状态由 true → false，触发自动导出
+        if (wasActive === true && !data.is_active) {
+            exportOnClose();
+        }
+        if (wasActive === null || data.is_active !== wasActive) {
+            wasActive = data.is_active;
+        }
+
+        const hint = document.getElementById('emptyHint');
+        if (data.words.length === 0) {
+            hint.style.display = 'block';
+        } else {
+            hint.style.display = 'none';
+            if (data.total !== lastTotal) {
+                lastTotal = data.total;
+                drawCloud(data.words);
+            }
+        }
+    } catch(e) {}
+}
+
+poll();
+setInterval(poll, 3000);
+
+// QR 尺寸已由 CSS clamp(60px, 18vmin, 220px) 自动适配，无需 JS 干预
+</script>
+</body>
+</html>

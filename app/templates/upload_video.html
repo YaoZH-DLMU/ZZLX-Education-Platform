@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="upload-page">
+    <div class="upload-container">
+        <h2>上传视频</h2>
+        <form id="upload-form" method="POST" enctype="multipart/form-data">
+            {% if site.upload_subjects and site.upload_subjects|length > 1 %}
+            <div class="form-group">
+                <label>科目：</label>
+                <div class="subject-options">
+                    {% for subj in site.upload_subjects %}
+                    <label>
+                        <input type="radio" name="subject" value="{{ subj }}" required> {{ subj }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% elif site.upload_subject_fixed %}
+            <input type="hidden" name="subject" value="{{ site.upload_subject_fixed }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="chapter">章节：</label>
+                <select id="chapter" name="chapter" required>
+                    {% for i in range(1, 15) %}
+                    <option value="{{ i }}">{{ i }}章</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="problem_no">题目：</label>
+                <select id="problem_no" name="problem_no" required>
+                    {% for i in range(1, 55) %}
+                    <option value="{{ i }}">{{ i }}题</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="video-file">选择视频：</label>
+                <input type="file" id="video-file" name="video" accept="video/*" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">上传</button>
+                <a href="{{ url_for('main.homework') }}" class="cancel-btn">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* 从打擂台入口跳转过来时，自动预填章节/题号/科目 */
+(function() {
+    const p = new URLSearchParams(location.search);
+    const chapter    = p.get('chapter');
+    const problem_no = p.get('problem_no');
+    const subject    = p.get('subject');
+    const fromChallenge = p.get('from_challenge');
+
+    if (chapter) {
+        const sel = document.getElementById('chapter');
+        if (sel) sel.value = chapter;
+    }
+    if (problem_no) {
+        const sel = document.getElementById('problem_no');
+        if (sel) sel.value = problem_no;
+    }
+    if (subject) {
+        document.querySelectorAll('input[name="subject"]').forEach(function(r) {
+            r.checked = (r.value === subject);
+        });
+    }
+    if (fromChallenge === '1') {
+        const h2 = document.querySelector('h2');
+        if (h2) h2.textContent = '打擂台 · 上传挑战视频';
+    }
+})();
+</script>
+{% endblock %}
